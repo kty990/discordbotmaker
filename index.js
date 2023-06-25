@@ -343,6 +343,6 @@ if (process.platform === 'win32') {
 autoUpdater.setFeedURL({
     provider: 'github',
     repo: 'kty990/discordbotmaker',
-    owner: 'your-repo-owner',
+    owner: 'kty990',
     private: false // set to true if your repository is private
 });
