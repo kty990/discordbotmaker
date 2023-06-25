@@ -1,0 +1,13 @@
+{
+    "name": "Light",
+    "body": "#cccccc",
+    "menu": "#9c9c9c",
+    "interaction": "#dfddd8",
+    "text": "#000000",
+    "text-hover": "#343434",
+    "active": "#7289d9",
+    "border": "00000066",
+    "notes": [
+        "Light theme"
+    ]
+}

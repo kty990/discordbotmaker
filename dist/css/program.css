@@ -1,0 +1,19 @@
+html,
+body,
+input:hover,
+button:hover,
+a:hover {
+    cursor: url('../images/cursor_mk1.png'), auto;
+}
+
+input:focus,
+a:focus,
+button:focus {
+    cursor: url('../images/cursor_mk1.png'), auto;
+}
+
+input:not(:focus):hover,
+button:not(:focus):hover,
+a:not(:focus):hover {
+    cursor: url('../images/cursor_mk1.png'), auto;
+}

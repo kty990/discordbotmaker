@@ -1,0 +1,51 @@
+{
+  "name": "discordbotmaker",
+  "version": "0.1.1",
+  "main": "index.js",
+  "author": "Ty Kutcher",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build": "electron-builder",
+    "package": "electron-packager . \"Discord Bot Maker\" --platform=win32 --arch=x64 --out=build/ --overwrite"
+  },
+  "build": {
+    "appId": "me.bot.maker",
+    "productName": "Discord Bot Maker",
+    "directories": {
+      "output": "dist/installers"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "./dist/images/icon.ico",
+      "fileAssociations": [
+        {
+          "ext": "dbm",
+          "name": "Discord Bot Maker",
+          "description": "Make custom discord bots!"
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "license": "license.md"
+    }
+  },
+  "keywords": [],
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "@discordjs/rest": "^0.5.0",
+    "@discordjs/voice": "^0.10.0",
+    "axios": "^0.27.2",
+    "discord-api-types": "^0.34.0",
+    "discord.js": "^14.0.3"
+  },
+  "devDependencies": {
+    "electron": "12.0.0"
+  }
+}

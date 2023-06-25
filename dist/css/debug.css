@@ -1,0 +1,54 @@
+:root {
+    --vwh: 10px;
+}
+
+#debug {
+    position: fixed;
+    left: 22vw;
+    font-size: var(--vwh);
+    top: 3vh;
+    background-color: #0000007d;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 1vw;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    width: 6vw;
+    border-radius: 20px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #7d7d7dcc;
+
+
+    visibility: visible;
+}
+
+
+
+#down {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 2vh;
+}
+
+#moving {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 2vh;
+}
+
+#exists {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 2vh;
+}
+
+#size {
+    position: relative;
+    padding: 0;
+    margin: 0;
+}

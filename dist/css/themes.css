@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tilt+Prism&display=swap');
+
+:root {
+    --body: #1e1f22;
+    --menu: #2b2d31;
+    --interaction: #313338;
+    --text: #f2f3f5;
+    --text-hover: #7d7d7d;
+    --border: #ffffff66;
+    --active: #7289d9;
+}
+
+body,
+html {
+    overflow: hidden;
+    user-select: none;
+    font-family: 'Rajdhani', sans-serif;
+    background-color: var(--body);
+    color: var(--text);
+}
+
+form {
+    background-color: var(--menu);
+    position: fixed;
+    width: 50vw;
+    height: 93vh;
+    right: 10vw;
+    top: 2vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 30px;
+    border-style: solid;
+    border-color: var(--border);
+}
+
+button {
+    top: 95%;
+    position: relative;
+    width: 2vw;
+    height: 2vh;
+    left: 45%;
+    background-color: var(--interaction);
+    border-color: var(--border);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.5vw;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+#theme-list {
+    position: fixed;
+    width: 20vw;
+    left: 15vw;
+    height: 90vh;
+    top: 3vh;
+    background-color: var(--menu);
+
+    border-radius: 30px;
+    border-style: solid;
+    border-color: var(--border);
+}
+
+.theme {
+    width: 100%;
+    text-align: center;
+    color: var(--text);
+    position: relative;
+}
+
+.theme:last-child {
+    margin: 0;
+    padding: 0;
+    margin-top: auto;
+}
+
+#submit {
+    background-color: var(--interaction);
+    color: var(--text);
+    width: 5vw;
+    height: 2vw;
+
+    position: relative;
+    left: 0.5vw;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    border-style: double;
+    border-color: var(--border);
+    border-width: 5px;
+
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+#submit>p {
+    text-align: center;
+    font-weight: bold;
+    width: 4.5vw;
+    height: 2vh;
+    padding-top: 0.5vh;
+    padding-bottom: 0.5vh;
+    font-size: 1.5vh;
+    border-style: solid;
+    border-color: var(--border);
+    border-width: 1px;
+}
+
+#submit:hover {
+    background-color: var(--menu);
+}
+
+input {
+    position: relative;
+    margin: 0;
+    padding: 0;
+
+    margin-top: 5vh;
+    width: 100%;
+    height: 2vh;
+    text-align: center;
+    background-color: var(--interaction);
+    border-style: none;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-color: var(--border);
+    outline: unset;
+    color: var(--text);
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+
+    font-weight: bold;
+    font-size: 1vw;
+}
+
+form>p {
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    left: 52vw;
+    top: 5vh;
+
+    font-style: italic;
+    color: var(--text-hover);
+}
+
+.theme:hover {
+    color: var(--text-hover);
+}
+
+input::placeholder {
+    color: var(--text-hover);
+}
+
+
+input:last-of-type {
+    margin-bottom: 5vh;
+}
+
+#sidebar {
+    background-color: var(--menu);
+    width: 10vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: right;
+    align-items: top;
+
+    border-right-style: double;
+    border-color: #ffffff66;
+    border-width: 5px;
+
+    overflow: auto;
+}
+
+.sidebar-link {
+    position: relative;
+    margin: 0;
+    margin-bottom: 0.5vh;
+    padding-left: 2vw;
+    font-weight: bold;
+    background-color: var(--interaction);
+    width: calc(100% - 2vw);
+    height: 30px;
+    padding-top: 15px;
+    font-size: 0.75vw;
+    text-decoration: none;
+    color: var(--text);
+}
+
+.sidebar-link:hover {
+    color: var(--text-hover);
+    background-color: var(--menu);
+}
+
+
+#logo {
+    font-family: 'Tilt Prism', cursive;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#logo>p {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    left: 2.5vw;
+    bottom: 2.5vh;
+    font-size: 0.7vw;
+}
+
+#logo>img {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.separator {
+    width: 100%;
+    height: 1px;
+    background-image: linear-gradient(45deg, var(--menu), var(--interaction), var(--menu));
+}
+
+#active {
+    background-color: var(--active);
+    color: var(--text);
+}
