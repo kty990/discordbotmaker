@@ -59,14 +59,14 @@ function getThemeByName(name) {
     })
 }
 
-function alertWindow(data) {
+function alertWindow() {
     let window = new BrowserWindow({
-        maxWidth: 250,
-        maxHeight: 200,
-        minWidth: 250,   // Set the minimum width
-        minHeight: 200,  // Set the minimum height
-        width: 250,
-        height: 200,
+        maxWidth: 500,
+        maxHeight: 500,
+        minWidth: 500,   // Set the minimum width
+        minHeight: 500,  // Set the minimum height
+        width: 500,
+        height: 500,
         webPreferences: {
             nodeIntegration: true,
             spellcheck: false,
@@ -76,13 +76,11 @@ function alertWindow(data) {
 
     window.loadFile('./dist/html/dialog.html');
 
-    window.webContents.on('did-finish-load', () => {
-        window.webContents.send('message', `${data}`);
-    });
-
     // Set the window icon
     const iconPath = path.join(__dirname, './dist/images/icon.png');
     window.setIcon(iconPath);
+
+    return window;
 }
 
 const directoryPath = './dist/themes'; // Replace with your actual directory path
@@ -316,8 +314,9 @@ ipcMain.on("setToken", (event, data) => {
     graphicsWindow.window.webContents.send("setToken", auth.authToken);
 })
 
-ipcMain.on("alert", (event, data) => {
-    alertWindow(data);
+ipcMain.on("createGuildSelect-servernick", (event, data) => {
+    console.log("TEST");
+    graphicsWindow.window.webContents.send("createGuildSelect-servernick", discord.GetGuilds());
 })
 
 ipcMain.on("action", (event, data) => {
@@ -341,8 +340,14 @@ if (process.platform === 'win32') {
 }
 
 autoUpdater.setFeedURL({
-    provider: 'github',
-    repo: 'kty990/discordbotmaker',
-    owner: 'kty990',
-    private: false // set to true if your repository is private
+    url: 'https://github.com/kty990/discordbotmaker/releases'
 });
+
+var consoleOutput = [];
+ipcMain.on("console-action-home", (event, data) => {
+    if (data.set == true) {
+        consoleOutput.push(data.value);
+    } else {
+        graphicsWindow.window.webContents.send("console-action-home", consoleOutput);
+    }
+})

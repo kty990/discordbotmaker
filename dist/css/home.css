@@ -45,56 +45,6 @@ span {
     overflow: auto;
 }
 
-#token {
-    position: fixed;
-    left: 69.5vw;
-    top: 5vh;
-    width: 20vw;
-    height: 2.5vh;
-    border-radius: 20px;
-    text-align: left;
-    padding-left: 1vw;
-    background-color: var(--interaction);
-    border-color: var(--border);
-    color: var(--text);
-    outline: unset;
-    font-size: 1.5vh;
-}
-
-#showToken {
-    position: fixed;
-    left: 69.5vw;
-    top: 8.5vh;
-    width: 1vh;
-    height: 1vh;
-}
-
-#saveToken {
-    position: fixed;
-    left: 91vw;
-    top: 5.25vh;
-    width: 5vh;
-    height: 2.5vh;
-    background-color: var(--interaction);
-    border-radius: 10px;
-    border-color: var(--border);
-    border-style: double;
-    border-width: 2px;
-    color: var(--text);
-    font-weight: bold;
-}
-
-#saveToken:hover {
-    color: var(--text-hover);
-}
-
-#showTokenLabel {
-    position: fixed;
-    left: 70.5vw;
-    top: 7.25vh;
-    font-size: 1.2vh;
-}
-
 .sidebar-link {
     position: relative;
     margin: 0;
@@ -147,6 +97,56 @@ span {
 #active {
     background-color: var(--active);
     color: var(--text);
+}
+
+#token {
+    position: fixed;
+    left: 69.5vw;
+    top: 5vh;
+    width: 20vw;
+    height: 2.5vh;
+    border-radius: 20px;
+    text-align: left;
+    padding-left: 1vw;
+    background-color: var(--interaction);
+    border-color: var(--border);
+    color: var(--text);
+    outline: unset;
+    font-size: 1.5vh;
+}
+
+#showToken {
+    position: fixed;
+    left: 69.5vw;
+    top: 8.5vh;
+    width: 1vh;
+    height: 1vh;
+}
+
+#saveToken {
+    position: fixed;
+    left: 91vw;
+    top: 5.25vh;
+    width: 5vh;
+    height: 2.5vh;
+    background-color: var(--interaction);
+    border-radius: 10px;
+    border-color: var(--border);
+    border-style: double;
+    border-width: 2px;
+    color: var(--text);
+    font-weight: bold;
+}
+
+#saveToken:hover {
+    color: var(--text-hover);
+}
+
+#showTokenLabel {
+    position: fixed;
+    left: 70.5vw;
+    top: 7.25vh;
+    font-size: 1.2vh;
 }
 
 #commandLog {

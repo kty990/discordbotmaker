@@ -1,3 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tilt+Prism&display=swap');
+
+:root {
+    --body: #1e1f22;
+    --menu: #2b2d31;
+    --interaction: #313338;
+    --text: #f2f3f5;
+    --text-hover: #7d7d7d;
+    --border: #ffffff66;
+    --active: #7289d9;
+}
+
+body,
+html {
+    overflow: hidden;
+    user-select: none;
+    font-family: 'Rajdhani', sans-serif;
+    background-color: var(--body);
+    color: var(--text);
+    padding: 0;
+    margin: 0;
+}
+
 html,
 body,
 input:hover,
@@ -16,4 +40,76 @@ input:not(:focus):hover,
 button:not(:focus):hover,
 a:not(:focus):hover {
     cursor: url('../images/cursor_mk1.png'), auto;
+}
+
+#sidebar {
+    background-color: var(--menu);
+    width: 10vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: right;
+    align-items: top;
+
+    border-right-style: double;
+    border-color: #ffffff66;
+    border-width: 5px;
+
+    overflow: auto;
+}
+
+.sidebar-link {
+    position: relative;
+    margin: 0;
+    margin-bottom: 0.5vh;
+    padding-left: 2vw;
+    font-weight: bold;
+    background-color: var(--interaction);
+    width: calc(100% - 2vw);
+    height: 30px;
+    padding-top: 15px;
+    font-size: 0.75vw;
+    text-decoration: none;
+    color: var(--text);
+}
+
+.sidebar-link:hover {
+    color: var(--text-hover);
+    background-color: var(--menu);
+}
+
+
+#logo {
+    font-family: 'Tilt Prism', cursive;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#logo>p {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    left: 2.5vw;
+    bottom: 2.5vh;
+    font-size: 0.7vw;
+}
+
+#logo>img {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.separator {
+    width: 100%;
+    height: 1px;
+    background-image: linear-gradient(45deg, var(--menu), var(--interaction), var(--menu));
+}
+
+#active {
+    background-color: var(--active);
+    color: var(--text);
 }

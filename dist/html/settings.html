@@ -4,15 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Discord Bot Maker</title>
-    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/settings.css">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
 </head>
 
 <body>
     <script id="replacewithsidebar"></script>
 
+    <div id="controls">
+        <p class="listen">Listen</p>
+        <p class="listen">Transmit</p>
+    </div>
+
+    <div id="settingsPanel">
+        <p>Prefix</p>
+        <input id="prefix">
+        <p>Logging Channel</p>
+        <input id="logChannel">
+        <p>Username</p>
+        <input id="username">
+        <p>Server Nickname</p>
+        <div id="nickname">
+            <p>Nothing selected</p>
+            <input id="button" type="button" value="Select Server">
+        </div>
+        <div id="nickname-selector">
+        </div>
+
+        <input id="serverNick">
+    </div>
+
     <script src="../js/program.js"></script>
-    <script src="../js/home.js"></script>
+    <script src="../js/settings.js"></script>
 </body>
 
 </html>

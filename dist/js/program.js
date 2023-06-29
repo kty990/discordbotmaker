@@ -35,7 +35,7 @@ async function main() {
                 break;
             }
         }
-        if (!found) {
+        if (!found && sbElement) {
             let link = document.createElement("link");
             link.rel = "stylesheet";
             link.href = "../css/program.css";

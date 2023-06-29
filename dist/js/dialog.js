@@ -1,11 +1,6 @@
-let messageBox = document.getElementById("message");
-let okayButton = document.getElementById("okay");
+window.api.recieve("createGuildSelect-servernick", (guilds) => {
+    console.log(guilds);
+    alert(guilds);
+});
 
-window.api.receive("message", (...data) => {
-    messageBox.textContent = data.join("\n");
-})
-
-okayButton.addEventListener("click", () => {
-    window.opener.postMessage("dialogClosed", "*");
-    window.close();
-})
+alert(window.api != null && window.api != undefined);

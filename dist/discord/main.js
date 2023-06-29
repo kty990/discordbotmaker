@@ -29,6 +29,8 @@ var presence = {
     status: 'idle'
 }
 
+const guilds = [];
+
 var commands = null;
 var setCommands = (cmds) => {
     commands = cmds;
@@ -47,6 +49,10 @@ let prefix = "!";
 // ** Functions **
 
 function Start(token) {
+    if (client !== null) {
+        Action.fire("Already running...");
+        return;
+    }
     client = new Discord.Client({
         partials: selectedPartials,
         intents: selectedIntents,
@@ -55,11 +61,24 @@ function Start(token) {
         Action.fire(`${err}`);
     })
     client.login(token)
-        .then(() => {
+        .then(async () => {
             Action.fire("Successful login!");
+            client.guilds.fetch().then((guildPartials) => {
+                for (let partial of guildPartials) {
+                    partial[1].fetch().then(guild => {
+                        guilds.push(guild);
+                    }).catch(console.error)
+                }
+            }).catch(console.error);
         }).catch(e => {
             Action.fire(`${e}`);
         });
+
+    client.on("guildCreate", guild => {
+        if (!guilds.includes(guild)) {
+            guilds.push(guild);
+        }
+    });
 
     client.on("messageCreate", message => {
         console.log("Message recieved: ", message.content);
@@ -122,9 +141,12 @@ function Start(token) {
 }
 
 function Stop() {
-    if (client != null) {
+    if (client !== null) {
         client.destroy();
+        client = null;
         Action.fire("Stopping...");
+    } else {
+        Action.fire("Bot not running...");
     }
 
 }
@@ -133,4 +155,12 @@ function add_handler(func) {
     Action.add_handler(func);
 }
 
-module.exports = { Start, Stop, add_handler, presence, Action, setCommands }
+function GetClient() {
+    return client;
+}
+
+function GetGuilds() {
+    return guilds;
+}
+
+module.exports = { Start, Stop, add_handler, presence, Action, setCommands, GetClient, GetGuilds }

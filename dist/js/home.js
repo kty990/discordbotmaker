@@ -21,10 +21,15 @@ window.api.once("setToken", (token) => {
     tokenField.value = `${token}`;
 })
 
-window.api.receive("action", (data) => {
+function addAction(data) {
     let p = document.createElement("p");
     p.textContent = `${data}`;
     information.appendChild(p);
+}
+
+window.api.receive("action", (data) => {
+    addAction(data);
+    window.api.send("console-action-home", { set: true, value: `${data}` });
 })
 
 showToken.addEventListener("change", (event) => {
@@ -46,3 +51,13 @@ window.api.receive("saveToken", () => {
     tokenField.value = "";
     window.api.send("alert", "Saved!");
 })
+
+async function main() {
+    let output = await window.api.invoke("console-action-home", { set: false });
+    // output.reverse();
+    for (let value of output) {
+        addAction(value);
+    }
+}
+
+main();
