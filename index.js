@@ -4,6 +4,7 @@ const config = require("./dist/config.json");
 const fs = require('fs');
 const commands = require('./dist/js/commands.js');
 const auth = require("./dist/auth.json");
+const settings = require('./dist/js/settings.json');
 
 const discord = require('./dist/discord/main.js');
 
@@ -333,6 +334,20 @@ ipcMain.on("action", (event, data) => {
 ipcMain.on("commandList", (event, data) => {
     console.log("COMMANDS << ", commands.commands);
     graphicsWindow.window.webContents.send("commandList", commands.commands);
+})
+
+ipcMain.on("settingsMod", (event, data) => {
+    let d = data;
+    settings.prefix = data['prefix'];
+    settings.logChannel = data['logChannel'];
+    settings.username = data['username']; // Actually set username too
+    let client = discord.GetClient();
+    let guild = data["serverNickGuild"];
+    let servernick = data["serverNick"];
+    const botMember = guild.members.cache.get(client.user.id);
+    botMember.setNickname(servernick);
+    client.user.setUsername(settings.username);
+    fs.writeFileSync(`./dist/js/settings.json`, JSON.stringify(settings, null, 2));
 })
 
 if (process.platform === 'win32') {

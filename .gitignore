@@ -9037,3 +9037,4 @@ electron-builder.cmd
 electron-builder.ps1
 electron.cmd
 electron.ps1
+dist/auth.json

@@ -87,6 +87,21 @@
     color: var(--text-hover);
 }
 
+#settingsPanel>#submit {
+    background-color: var(--body);
+    border-color: var(--border);
+    color: var(--text);
+    width: 10vw;
+    height: 3vh;
+    position: fixed;
+    left: 55vw;
+    bottom: 8vh;
+}
+
+#settingsPanel>#submit:hover {
+    color: var(--text-hover);
+}
+
 #nickname-selector {
     width: 80%;
     height: 10vh;
@@ -97,6 +112,35 @@
     background-color: var(--interaction);
     overflow: hidden;
     overflow-y: auto;
+    text-align: center;
+    font-weight: bold;
+}
+
+@keyframes loading {
+    from {
+        transform: rotateZ(0deg);
+    }
+
+    to {
+        transform: rotateZ(360deg);
+    }
+}
+
+#loader {
+    border-radius: 50px;
+    width: 3vh;
+    height: 3vh;
+    background: conic-gradient(from 0deg at 50%, #fff, 0deg, var(--active), 90deg, var(--body), 200deg, var(--text));
+    border-style: solid;
+    border-width: 3px;
+    border-color: var(--body);
+    margin: 0;
+    padding: 0;
+    position: relative;
+    bottom: 5vh;
+    left: 42vw;
+    opacity: 0.5;
+    animation: loading 2s linear 0s infinite normal none;
 }
 
 .guild {
@@ -105,6 +149,7 @@
     background-color: var(--body);
     margin-bottom: 2vh;
     align-items: center;
+    font-weight: normal;
 }
 
 #id {
