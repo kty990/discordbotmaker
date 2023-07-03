@@ -50,6 +50,9 @@ window.api.receive("apply-theme", (data) => {
     if (data == null || data == undefined) return;
     Object.entries(data).forEach(([variable, color]) => {
         document.documentElement.style.setProperty(`--${variable.toLowerCase()}`, color);
+        if (variable.toLowerCase() == "menu") {
+            document.documentElement.style.setProperty(`--tut-${variable.toLowerCase()}`, `${color}cc`);
+        }
     });
 });
 

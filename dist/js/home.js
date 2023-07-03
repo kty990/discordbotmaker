@@ -14,6 +14,9 @@ let guildSelect = document.getElementById("permission-guild-select");
 let selectionArea = document.getElementById("selection-area");
 let permissionsDiv = document.getElementById("permissions");
 
+let tokenTutorial = document.getElementById("tokenTutorial");
+let tutorialBlur = document.getElementById("tutorialBlur");
+
 let currentGuild = null;
 
 const pl = [
@@ -335,6 +338,28 @@ window.api.receive("saveToken", () => {
     tokenField.value = "";
     window.api.send("alert", "Saved!");
 })
+
+
+
+
+
+
+tokenTutorial.addEventListener("click", () => {
+    if (tutorial.style.display !== "block") {
+        tutorial.style.display = "block";
+        tutorialBlur.style.display = "block";
+    } else {
+        tutorial.style.display = "none";
+        tutorialBlur.style.display = "none";
+    }
+})
+
+
+
+
+
+
+
 
 async function main() {
     let output = await window.api.invoke("console-action-home", { set: false });

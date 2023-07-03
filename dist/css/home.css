@@ -9,6 +9,7 @@
     --text-hover: #7d7d7d;
     --border: #ffffff66;
     --active: #7289d9;
+    --tut-menu: #2b2d31cc;
 }
 
 body,
@@ -147,6 +148,71 @@ span {
     left: 79.5vw;
     top: 5vh;
     font-size: 1.2vh;
+}
+
+#tokenTutorial {
+    position: fixed;
+    left: 88.5vw;
+    top: 5vh;
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text);
+    z-index: 11;
+}
+
+#tutorial {
+    position: fixed;
+    left: 35vw;
+    top: 8.5vh;
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text);
+    background-color: var(--menu);
+    height: 60vh;
+    z-index: 10;
+    border-style: double;
+    border-color: var(--border);
+    border-width: 3px;
+    border-radius: 2px;
+    overflow-y: auto;
+    overflow-x: visible;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+#tutorialBlur {
+    display: none;
+}
+
+#tutorial>img {
+    width: 40vw;
+    height: auto;
+    margin-bottom: 2vh;
+    opacity: 0.8;
+}
+
+#tutorial>p {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    padding-top: 2vh;
+    padding-bottom: 0.5vh;
+    border-top-style: solid;
+    border-width: 1px;
+    border-color: var(--border);
+}
+
+#tutorial>p>span {
+    background-color: var(--body);
+    border-radius: 20px;
+    padding-left: 0.25vw;
+    padding-right: 0.25vw;
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 1px;
+}
+
+#tokenTutorial:hover {
+    color: var(--text-hover);
 }
 
 #commandLog {
@@ -517,4 +583,21 @@ div::-webkit-scrollbar-track {
 
 div::-webkit-scrollbar-thumb {
     background: var(--body);
+}
+
+.blur {
+    opacity: 0.5;
+    z-index: 0;
+    backdrop-filter: blur(200px);
+    background-color: var(--tut-menu);
+}
+
+.fullscreen {
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
 }

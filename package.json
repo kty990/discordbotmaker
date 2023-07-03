@@ -1,6 +1,6 @@
 {
   "name": "discordbotmaker",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "main": "./index.js",
   "author": "Ty Kutcher",
   "scripts": {
