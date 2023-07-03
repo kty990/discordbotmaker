@@ -1,0 +1,13 @@
+{
+    "name": "Default",
+    "body": "#1e1f22",
+    "menu": "#2b2d31",
+    "interaction": "#313338",
+    "text": "#f2f3f5",
+    "text-hover": "#7d7d7d",
+    "active": "#7289d9",
+    "border": "#ffffff66",
+    "notes": [
+        "Dark theme"
+    ]
+}

@@ -101,9 +101,9 @@ span {
 
 #token {
     position: fixed;
-    left: 69.5vw;
-    top: 5vh;
-    width: 20vw;
+    left: 78.5vw;
+    top: 3vh;
+    width: 15vw;
     height: 2.5vh;
     border-radius: 20px;
     text-align: left;
@@ -117,16 +117,16 @@ span {
 
 #showToken {
     position: fixed;
-    left: 69.5vw;
-    top: 8.5vh;
+    left: 78.5vw;
+    top: 6.25vh;
     width: 1vh;
     height: 1vh;
 }
 
 #saveToken {
     position: fixed;
-    left: 91vw;
-    top: 5.25vh;
+    left: 95vw;
+    top: 3vh;
     width: 5vh;
     height: 2.5vh;
     background-color: var(--interaction);
@@ -144,8 +144,8 @@ span {
 
 #showTokenLabel {
     position: fixed;
-    left: 70.5vw;
-    top: 7.25vh;
+    left: 79.5vw;
+    top: 5vh;
     font-size: 1.2vh;
 }
 
@@ -155,12 +155,12 @@ span {
     top: 3vh;
     background-color: var(--menu);
     height: 90vh;
-    width: 20vw;
+    width: 15vw;
     padding-top: 2vh;
     padding-bottom: 2vh;
     border-radius: 20px;
     border-style: solid;
-    border-color: #ffffff66;
+    border-color: var(--border);
 }
 
 .command {
@@ -169,15 +169,34 @@ span {
     padding-top: 0.2vh;
     height: 2vh;
     font-size: 1.2vh;
-    background-color: var(--interaction);
+    background-color: var(--body);
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     /* Three equal-width columns */
     grid-gap: 10px;
     /* Gap between grid items */
     align-items: center;
     margin: 0;
+}
 
+.command:first-child {
+    width: 98%;
+    padding-left: 2%;
+    padding-top: 0.2vh;
+    height: 2vh;
+    font-size: 1.2vh;
+    background-color: var(--interaction);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* Three equal-width columns */
+    grid-gap: 10px;
+    /* Gap between grid items */
+    align-items: center;
+    margin: 0;
+}
+
+.command>p {
+    text-align: center;
 }
 
 .cmd-label {
@@ -192,36 +211,65 @@ span {
     padding: 0;
 }
 
+.cmd-timestamp {
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+}
+
 #modLog {
     position: fixed;
-    left: 40vw;
+    left: 28vw;
     top: 3vh;
     background-color: var(--menu);
     height: 90vh;
-    width: 20vw;
+    width: 29vw;
     padding-top: 2vh;
     padding-bottom: 2vh;
     border-radius: 20px;
     border-style: solid;
-    border-color: #ffffff66;
+    border-color: var(--border);
 }
 
-.action {
+.action:first-child {
     width: 98%;
     padding-left: 2%;
     padding-top: 0.2vh;
     height: 2vh;
     font-size: 1.2vh;
     background-color: var(--interaction);
-    /* display: flex;
-    flex-direction: row;
-    align-items: center; */
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     /* Three equal-width columns */
-    grid-gap: 10px;
+    grid-gap: 0px 10px;
     /* Gap between grid items */
     align-items: center;
+    margin: 0;
+    position: relative;
+}
+
+.action>p {
+    text-align: center;
+}
+
+.action {
+    width: 98%;
+    padding-left: 2%;
+    padding-top: 0.2vh;
+    height: max(2vh, auto);
+    font-size: 1.2vh;
+    background-color: var(--body);
+    display: grid;
+    grid-template-columns: repeat(5, 4fr);
+    /* Three equal-width columns */
+    grid-gap: 0px 10px;
+    /* Gap between grid items */
+    align-items: center;
+    margin: 0;
+}
+
+.action>p {
+    padding: 0;
     margin: 0;
 }
 
@@ -246,8 +294,8 @@ span {
 
 #start {
     position: fixed;
-    right: 20vw;
-    top: 10vh;
+    right: 16vw;
+    top: 13vh;
     font-size: 1vw;
     background-color: #007c00;
     padding-top: 0.5vw;
@@ -263,8 +311,8 @@ span {
 
 #stop {
     position: fixed;
-    right: 15vw;
-    top: 10vh;
+    right: 11vw;
+    top: 13vh;
     font-size: 1vw;
     background-color: #7c0000;
     padding-top: 0.5vw;
@@ -279,14 +327,194 @@ span {
 }
 
 #information {
-    width: 25vw;
+    width: 18vw;
     height: 70vh;
     position: fixed;
-    right: 7.5vw;
+    right: 5vw;
     top: 20vh;
     background-color: var(--menu);
     border-radius: 20px;
     border-style: solid;
-    border-color: #ffffff66;
+    border-color: var(--border);
     overflow-y: auto;
+}
+
+#permissions {
+    position: fixed;
+    width: 18vw;
+    height: 70vh;
+    background-color: var(--menu);
+    border-radius: 20px;
+    border-style: solid;
+    border-color: var(--border);
+    left: 58vw;
+    top: 10vh;
+    overflow-y: auto;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.permission {
+    background-color: var(--interaction);
+    font-size: 1.5vh;
+    font-weight: bold;
+    padding-left: 2vw;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0.5vh;
+    align-items: center;
+}
+
+.permission>p {
+    padding: 0;
+    margin: 0;
+    margin-right: auto;
+}
+
+.permission>img {
+    width: 2vh;
+    height: 2vh;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    right: 3vh;
+}
+
+#permissions-label {
+    position: fixed;
+    left: 59.5vw;
+    top: 2vh;
+    font-weight: bold;
+    font-size: 3vh;
+    border-bottom-style: solid;
+    border-color: var(--border);
+    border-width: 1px;
+    width: 15vw;
+    text-align: center;
+}
+
+#permission-guild-select {
+    z-index: 1;
+    position: fixed;
+    left: 58vw;
+    top: 82vh;
+    font-weight: bold;
+    font-size: 3vh;
+    width: 18vw;
+    height: 5vh;
+    background-color: var(--interaction);
+    border-radius: 20px;
+    border-style: solid;
+    border-color: var(--border);
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#selection-area {
+    z-index: 0;
+    position: fixed;
+    display: none;
+    left: 58vw;
+    top: 85.5vh;
+    height: 12vh;
+    width: 18vw;
+    margin: 0;
+    padding: 0;
+    background-color: var(--interaction);
+    border-color: var(--border);
+    border-bottom-style: solid;
+    border-width: 1px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding-top: 2vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#permission-guild-select>img {
+    height: 3.5vh;
+    width: 3.5vh;
+    margin-left: 1vh;
+}
+
+#permission-guild-select>#guild-name {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    left: 0.5vw;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#permission-guild-select>#guild-id {
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    left: 61vw;
+    top: 85.5vh;
+    font-size: 10pt;
+}
+
+#permission-guild-select:hover {
+    background-color: var(--body);
+}
+
+#permission-guild-select:hover #guild-id {
+    color: var(--text-hover);
+}
+
+#permission-guild-select:hover #guild-name {
+    color: var(--text-hover);
+}
+
+#permission-guild-select:hover img {
+    filter: brightness(0.4);
+}
+
+
+
+
+
+.guild {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--body);
+    margin-bottom: 1vh;
+    align-items: center;
+    font-weight: normal;
+}
+
+#id {
+    margin-left: auto;
+    padding-right: 1vh;
+}
+
+#iconID {
+    width: 2.5vh;
+    height: 2.5vh;
+    position: relative;
+    left: 2vh;
+    margin-right: 4vh;
+    border-radius: 20px;
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 2px;
+}
+
+
+
+
+div::-webkit-scrollbar {
+    width: 5px;
+}
+
+div::-webkit-scrollbar-track {
+    background: var(--border);
+}
+
+div::-webkit-scrollbar-thumb {
+    background: var(--body);
 }

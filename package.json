@@ -1,7 +1,7 @@
 {
   "name": "discordbotmaker",
-  "version": "0.1.1",
-  "main": "index.js",
+  "version": "0.1.2",
+  "main": "./index.js",
   "author": "Ty Kutcher",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,6 +15,12 @@
     "directories": {
       "output": "dist/installers"
     },
+    "extraFiles": [
+      {
+        "from": "./dist/themes",
+        "to": "./dist/themes"
+      }
+    ],
     "win": {
       "target": [
         "nsis"
@@ -39,13 +45,9 @@
   "license": "MIT",
   "description": "",
   "dependencies": {
-    "@discordjs/rest": "^0.5.0",
-    "@discordjs/voice": "^0.10.0",
-    "axios": "^0.27.2",
-    "discord-api-types": "^0.34.0",
     "discord.js": "^14.0.3"
   },
   "devDependencies": {
-    "electron": "12.0.0"
+    "electron": "25.2.0"
   }
 }

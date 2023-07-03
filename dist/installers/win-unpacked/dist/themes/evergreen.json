@@ -1,0 +1,13 @@
+{
+    "name": "Evergreen",
+    "body": "#132A13",
+    "menu": "#31572C",
+    "interaction": "#4f772D",
+    "text": "#90A955",
+    "text-hover": "#7d7d7d",
+    "active": "#ECF39E",
+    "border": "#ffffff66",
+    "notes": [
+        "Green theme"
+    ]
+}

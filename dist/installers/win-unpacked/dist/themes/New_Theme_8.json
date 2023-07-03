@@ -1,0 +1,13 @@
+{
+  "name": "New_Theme_8",
+  "body": "#ffffff",
+  "menu": "#000000",
+  "interaction": "#cccccc",
+  "text": "#7d7d7d",
+  "text-hover": "#7d7d7d",
+  "active": "#444444",
+  "border": "#ff00ff",
+  "notes": [
+    "Custom Theme"
+  ]
+}

@@ -46,6 +46,10 @@ var getCommandByName = (name) => {
 }
 let prefix = "!";
 
+const setPrefix = np => {
+    prefix = np;
+}
+
 // ** Functions **
 
 function Start(token) {
@@ -81,7 +85,7 @@ function Start(token) {
     });
 
     client.on("messageCreate", message => {
-        console.log("Message recieved: ", message.content);
+        // console.log("Message recieved: ", message.content);
         if (message.author.id !== client.user.id) {
             console.log("Not a bot message");
 
@@ -94,7 +98,8 @@ function Start(token) {
                     let args = message.content.split(" ");
                     args.splice(0, 1);
                     cmd.run(message, ...args);
-                    Action.fire("command", `${message.user}`, cmd.name, message.content);
+                    let d = new Date(message.createdTimestamp);
+                    Action.fire("command", message.author.username, cmd.name, message.content, d.toLocaleString());
                 }
 
             }
@@ -106,15 +111,16 @@ function Start(token) {
         const { guild, user } = member;
 
         // Check if the member was kicked by a moderator
-        guild.fetchAuditLogs({ type: 'MEMBER_KICK' })
+        guild.fetchAuditLogs()
             .then(auditLogs => {
                 const kickLog = auditLogs.entries.first();
                 if (kickLog && kickLog.target.id === user.id) {
-                    const { executor } = kickLog;
+                    const { executor, reason, createdTimestamp } = kickLog;
 
                     // Moderator kicked the user
                     console.log(`User ${user.tag} was kicked from ${guild.name} by ${executor.tag}`);
-                    Action.fire("kick", executor.name, user.name);
+                    let d = new Date(createdTimestamp);
+                    Action.fire("mod", "kick", executor.username, user.username, reason, d.toLocaleString().split(", ")[1]);
                     // Handle the kick action here
                 }
             })
@@ -127,11 +133,11 @@ function Start(token) {
             .then(auditLogs => {
                 const banLog = auditLogs.entries.first();
                 if (banLog && banLog.target.id === user.id) {
-                    const { executor } = banLog;
+                    const { executor, reason, createdTimestamp } = banLog;
 
                     // Moderator banned the user
                     console.log(`User ${user.tag} was banned in ${guild.name} by ${executor.tag}`);
-                    Action.fire("ban", executor.name, user.name);
+                    Action.fire("mod", "ban", executor.name, user.name, reason, createdTimestamp);
                     // Handle the ban action here
                 }
             })
@@ -163,4 +169,4 @@ function GetGuilds() {
     return guilds;
 }
 
-module.exports = { Start, Stop, add_handler, presence, Action, setCommands, GetClient, GetGuilds }
+module.exports = { Start, Stop, add_handler, presence, Action, setCommands, GetClient, GetGuilds, setPrefix }
