@@ -456,9 +456,9 @@ try {
         app.setAppUserModelId(config['project-name']);
     }
 
-    // autoUpdater.setFeedURL({
-    //     url: 'https://github.com/kty990/discordbotmaker/releases'
-    // });
+    autoUpdater.setFeedURL({
+        url: 'https://github.com/kty990/discordbotmaker/releases'
+    });
 
     var consoleOutput = [];
     ipcMain.on("console-action-home", (event, data) => {
