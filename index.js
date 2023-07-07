@@ -150,11 +150,6 @@ try {
                 },
             });
 
-            // this.window.webContents.once("devtools-opened", () => {
-            //     this.window.webContents.closeDevTools();
-            // });
-            this.window.webContents.openDevTools();
-
             // Set the window icon
             const iconPath = path.join(__dirname, './dist/images/icon.png');
             this.window.setIcon(iconPath);

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Discord Bot Maker</title>
+    <link rel="stylesheet" href="../css/plugins.css">
+    <link rel="stylesheet" href="../css/program.css">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
+</head>
+
+<body>
+    <script id="replacewithsidebar"></script>
+
+    <div id="pluginList">
+
+    </div>
+
+    <div id="pluginEdit">
+        <form>
+            <input id="pluginName" placeholder="Plugin Name">
+            <div id="iscommandToggle">
+                <p>✓</p>
+            </div>
+            <p id="cmdTogPrompt">Is this a command?</p>
+
+            <br>
+            <input id="description" placeholder="Plugin Description">
+            <div id="args">
+                <p id="argCountDisplay">0</p>
+                <input id="argCountDown" value="↓" type="button">
+                <input id="argCountUp" value="↑" type="button">
+            </div>
+        </form>
+    </div>
+
+    <script src="../js/program.js"></script>
+    <script src="../js/plugins.js"></script>
+</body>
+
+</html>

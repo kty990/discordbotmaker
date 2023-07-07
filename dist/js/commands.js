@@ -1,13 +1,14 @@
 class Command {
-    constructor(name, adminLevel) {
+    constructor(name, adminLevel, args) {
         this.name = name;
         this.adminLevel = adminLevel;
         this.run = async (message, ...args) => {
             console.log("DEFAULT COMMAND");
             await message.channel.send(`DEFAULT COMMAND:\n\t**Args:**\n${args.join("\n")}`);
         };
+        this.args = args || [];
         this.aliases = [];
-        this.data = [name, adminLevel];
+        this.data = [name, adminLevel, this.args];
     }
 }
 
@@ -27,7 +28,7 @@ info.run = async (message, ...args) => {
     await message.channel.send(`INFO COMMAND:\n\t**Args:**\n${args.join("\n")}`);
 };
 
-let kick = new Command("kick", moderators);
+let kick = new Command("kick", moderators, ['target', 'reason']);
 kick.run = async (message, ...args) => {
     let target = args.splice(0, 1);
     let reason = args.join(" ");
@@ -57,7 +58,7 @@ kick.run = async (message, ...args) => {
     }
 };
 
-let ban = new Command("ban", moderators);
+let ban = new Command("ban", moderators, ['target', 'reason']);
 ban.run = async (message, ...args) => {
     let target = args.splice(0, 1);
     let reason = args.join(" ");
@@ -87,7 +88,7 @@ ban.run = async (message, ...args) => {
     }
 };
 
-let play = new Command("play", everyone);
+let play = new Command("play", everyone, ['query/url']);
 play.run = async (message, ...args) => {
     console.log("PLAY COMMAND");
     await message.channel.send(`PLAY COMMAND:\n\t**Args:**\n${args.join("\n")}`);
@@ -111,7 +112,7 @@ stop.run = async (message, ...args) => {
     await message.channel.send(`STOP COMMAND:\n\t**Args:**\n${args.join("\n")}`);
 };
 
-let cmds = new Command("cmds", everyone);
+let cmds = new Command("cmds", everyone, ['page']);
 cmds.run = async (message, ...args) => {
     console.log("CMDS COMMAND");
     let commandList = "";

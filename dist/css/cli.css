@@ -18,3 +18,11 @@
     outline: unset;
     font-size: 5vh;
 }
+
+#hint {
+    position: fixed;
+    left: 11vw;
+    top: 10.25vh;
+    width: 89.5vw;
+    height: 50vh;
+}
