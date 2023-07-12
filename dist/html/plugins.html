@@ -13,6 +13,14 @@
     <script id="replacewithsidebar"></script>
 
     <div id="pluginList">
+        <div class="plugin">
+            <p id="name">PLUGIN NAME</p>
+            <p id="author">PLUGIN AUTHOR</p>
+            <div id="status">Running</div>
+        </div>
+    </div>
+
+    <div id="pluginError">
 
     </div>
 
@@ -23,13 +31,44 @@
                 <p>✓</p>
             </div>
             <p id="cmdTogPrompt">Is this a command?</p>
-
             <br>
             <input id="description" placeholder="Plugin Description">
+            <div id="argContainer">
+                <div>
+                    <p id="argCountDisplay">0</p>
+                    <input id="argCountDown" value="↓" type="button">
+                    <input id="argCountUp" value="↑" type="button">
+                </div>
+
+            </div>
             <div id="args">
-                <p id="argCountDisplay">0</p>
-                <input id="argCountDown" value="↓" type="button">
-                <input id="argCountUp" value="↑" type="button">
+
+                <!-- WRITE THE CSS TO MAKE THIS LOOK GOOD THEN ADD THE JS FUNCTIONALITY -->
+                <div class="arg">
+                    <input>
+                    <div class="dropdown">
+
+                    </div>
+                </div>
+
+                <div class="arg">
+                    <input>
+                    <div class="dropdown">
+
+                    </div>
+                </div>
+
+                <div class="arg">
+                    <input>
+                    <div class="dropdown">
+
+                    </div>
+                </div>
+
+            </div>
+            <div id="code">
+                <p>Add your code here:</p>
+                <input>
             </div>
         </form>
     </div>

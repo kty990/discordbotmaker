@@ -11,12 +11,12 @@
 }
 
 #pluginEdit>form {
-    width: 45vw;
+    width: 20vw;
 }
 
 #pluginName,
 #description {
-    width: 45vw;
+    width: 20vw;
     height: 2vh;
     background-color: var(--interaction);
     border-color: var(--border);
@@ -55,8 +55,6 @@
     border-width: 1px;
     border-radius: 10px;
     padding-left: 2vw;
-    position: relative;
-    left: 0.5vw;
     border-color: var(--border);
     border-width: 3px;
     border-style: solid;
@@ -64,16 +62,141 @@
 
 #argCountDown,
 #argCountUp {
-    width: 3vw;
+    width: 2vw;
     background-color: var(--interaction);
     border-color: var(--border);
     border-width: 1px;
     border-radius: 10px;
     text-align: center;
     color: var(--text);
+    position: relative;
+    left: 0.5vw;
 }
 
 #argCountDown:hover,
 #argCountUp:hover {
     color: var(--text-hover);
+}
+
+#args {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: 10vh;
+    width: 20vw;
+    height: 30vh;
+    right: 2vw;
+    margin: 0;
+    padding: 0;
+    padding-left: 2vw;
+    padding-right: 2vw;
+    background-color: var(--menu);
+}
+
+#argContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: fixed;
+    left: 11vw;
+    width: 23vw;
+    height: 11vh;
+    padding: 0;
+    margin: 0;
+}
+
+.arg {
+    width: 10vw;
+    margin-bottom: 2vh;
+}
+
+.arg>input {
+    width: 100%;
+    height: 2vh;
+    background-color: var(--interaction);
+    outline: unset;
+    border-color: var(--border);
+    border-width: 1px;
+    border-radius: 10px;
+    color: var(--text);
+}
+
+
+
+#pluginError {
+    position: fixed;
+    background-color: var(--menu);
+    left: 50vw;
+    width: 20vw;
+    height: 90vh;
+    top: 5vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+}
+
+#pluginList {
+    position: fixed;
+    border-radius: 10px;
+    background-color: var(--menu);
+    left: 75vw;
+    width: 20vw;
+    height: 90vh;
+    top: 5vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.plugin {
+    color: var(--text);
+    width: 100%;
+    height: 3vh;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--interaction);
+    align-items: center;
+    border-radius: 10px;
+    margin-bottom: 1vh;
+}
+
+.plugin>#name {
+    margin: 0;
+    position: relative;
+    left: 1vw;
+}
+
+.plugin>#author {
+    margin: 0;
+    margin-left: auto;
+    position: relative;
+    right: 1.25vw;
+}
+
+.plugin>#status {
+    position: relative;
+    right: 0.5vw;
+}
+
+#code>p {
+    position: relative;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    margin-top: 5vh;
+}
+
+#code>input {
+    position: relative;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    word-wrap: break-word;
+    margin-top: 3vh;
+    height: 35vh;
+    background-color: var(--interaction);
+    color: var(--text);
 }

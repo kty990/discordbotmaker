@@ -19,6 +19,10 @@
       {
         "from": "./dist/themes",
         "to": "./dist/themes"
+      },
+      {
+        "from": "./dist/plugins",
+        "to": "./dist/plugins"
       }
     ],
     "win": {

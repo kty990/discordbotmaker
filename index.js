@@ -227,6 +227,13 @@ try {
 
     const graphicsWindow = new GraphicsWindow();
 
+    console.log = (function (old) {
+        return function (text) {
+            old(text);
+            graphicsWindow.window.webContents.send("action", "output", text);
+        }
+    });
+
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') {
             app.quit();
@@ -480,6 +487,11 @@ try {
         } else {
             graphicsWindow.window.webContents.send("mod-action-home", modActions);
         }
+    })
+
+    ipcMain.on("pluginChange", (event, data) => {
+        // Update in plugin file
+        graphicsWindow.window.webContents.send("pluginChange", data);
     })
 
     discord.setPrefix(settings.prefix);
