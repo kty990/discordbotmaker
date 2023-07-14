@@ -59,8 +59,8 @@ const clearForm = () => {
 }
 
 neW.addEventListener("click", async () => {
-    await clearForm(); // make this function
-    window.api.send("newTheme", null);
+    await clearForm();
+    window.api.send("newTheme", null); // this could be invoked rather than send and once
     window.api.once("newTheme", (data) => {
         window.api.send("redirect", null);
     })
