@@ -47,7 +47,8 @@ kick.run = async (message, ...args) => {
             // Example: await user.kick(reason);
 
             console.log(`KICK COMMAND - Target: ${user.user.tag}, Reason: ${reason}`);
-            await message.channel.send(`KICK COMMAND - Target: ${user.user.tag}, Reason: ${reason}`);
+            await user.kick(reason);
+            await message.channel.send(`${user.user.tag} was kicked from this server for:\n\n\t> ${reason}`);
         } else {
             console.log(`KICK COMMAND - User not found`);
             await message.channel.send(`KICK COMMAND - User not found`);

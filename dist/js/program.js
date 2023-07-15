@@ -1,3 +1,11 @@
+console.log = (function (old) {
+    return (text) => {
+        old(text);
+        window.api.send("output", null);
+    }
+})(console.log.bind(console))
+
+
 let sbElement = document.getElementById("replacewithsidebar");
 
 window.api.send("redirect", null);

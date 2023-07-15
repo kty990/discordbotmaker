@@ -114,7 +114,7 @@ span {
     background-color: var(--interaction);
     color: var(--text);
     width: 5vw;
-    height: 2vw;
+    height: 5vh;
     position: fixed;
     left: calc(48vw - 3vw);
     top: calc(25vh + 50vh - 1.5vh);
@@ -123,25 +123,15 @@ span {
     justify-content: center;
     align-items: center;
 
+    font-size: 1.5vh;
+    font-weight: bold;
+
     border-style: double;
     border-color: var(--border);
     border-width: 5px;
 
     padding-top: 1px;
     padding-bottom: 1px;
-}
-
-#submit>p {
-    text-align: center;
-    font-weight: bold;
-    width: 4.5vw;
-    height: 2vh;
-    padding-top: 0.5vh;
-    padding-bottom: 0.5vh;
-    font-size: 1.5vh;
-    border-style: solid;
-    border-color: var(--border);
-    border-width: 1px;
 }
 
 #submit:hover {
@@ -208,9 +198,6 @@ span {
     padding-top: 0.5vh;
     padding-bottom: 0.5vh;
     font-size: 1.5vh;
-    border-style: solid;
-    border-color: var(--border);
-    border-width: 1px;
 }
 
 #reset:hover {
