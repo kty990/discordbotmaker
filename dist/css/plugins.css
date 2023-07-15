@@ -147,6 +147,8 @@
     top: 5vh;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .plugin {
@@ -199,4 +201,42 @@
     height: 35vh;
     background-color: var(--interaction);
     color: var(--text);
+}
+
+#newPlugin {
+    position: fixed;
+    left: 36vw;
+    top: 5vh;
+    background-color: var(--interaction);
+    padding: 1vh;
+    margin: 0;
+    border-radius: 20px;
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 1px;
+}
+
+#newPlugin>p {
+    margin: 0;
+    padding: 0;
+    font-size: 1vh;
+}
+
+#savePlugin {
+    position: fixed;
+    left: 36vw;
+    top: 9vh;
+    background-color: var(--interaction);
+    padding: 1vh;
+    margin: 0;
+    border-radius: 20px;
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 1px;
+}
+
+#savePlugin>p {
+    margin: 0;
+    padding: 0;
+    font-size: 1vh;
 }

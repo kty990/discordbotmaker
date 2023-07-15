@@ -22,6 +22,8 @@ let warning = document.getElementById("pw-warning-inactive");
 let submit = document.getElementById("submit");
 let reset = document.getElementById("reset");
 
+let form = document.getElementsByTagName("form")[0];
+
 async function wait(ms) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -34,8 +36,9 @@ function redirect(value) {
     console.log("Redirect...");
 }
 
-submit.addEventListener("click", () => {
+form.addEventListener("submit", event => {
     window.api.send("loginAttempt", { "username": username.value, "pw": password.value });
+    event.preventDefault();
 })
 
 reset.addEventListener("click", () => {

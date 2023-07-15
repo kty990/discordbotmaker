@@ -3,7 +3,7 @@ console.log = (function (old) {
         old(text);
         window.api.send("output", null);
     }
-})(console.log.bind(console))
+}(console.log.bind(console)));
 
 
 let sbElement = document.getElementById("replacewithsidebar");
@@ -54,7 +54,7 @@ async function main() {
 
 
 
-window.api.receive("apply-theme", (data) => {
+window.api.on("apply-theme", (data) => {
     if (data == null || data == undefined) return;
     Object.entries(data).forEach(([variable, color]) => {
         document.documentElement.style.setProperty(`--${variable.toLowerCase()}`, color);
