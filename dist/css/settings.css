@@ -1,10 +1,15 @@
 #controls {
-    /* background-color: #000000; */
+    background-color: var(--menu);
     position: fixed;
-    left: 20vw;
+    left: 90vw;
     top: 5vh;
     width: 10vw;
     height: 90vh;
+    /* border-radius: 10px; */
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 2px;
+    border-left-style: none;
 }
 
 .listen {
@@ -20,17 +25,34 @@
     background-color: var(--border);
 }
 
-
-#settingsPanel {
+#ui-settings {
     background-color: var(--menu);
     position: fixed;
-    left: 35vw;
+    left: 20vw;
     top: 2.5vh;
-    width: 50vw;
+    width: 30vw;
     height: 90vh;
     display: flex;
     flex-direction: column;
     padding-top: 5vh;
+    border-radius: 10px;
+    border-color: var(--border);
+    border-style: double;
+}
+
+#settingsPanel {
+    background-color: var(--menu);
+    position: fixed;
+    right: 10vw;
+    top: 2.5vh;
+    width: 30vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 5vh;
+    border-radius: 10px;
+    border-color: var(--border);
+    border-style: double;
 }
 
 #settingsPanel>input {
@@ -94,7 +116,7 @@
     width: 10vw;
     height: 3vh;
     position: fixed;
-    left: 55vw;
+    left: 70vw;
     bottom: 8vh;
 }
 

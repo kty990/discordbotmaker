@@ -128,3 +128,7 @@ input {
     background-color: var(--active);
     color: var(--text);
 }
+
+.red {
+    color: red;
+}

@@ -35,10 +35,19 @@ var commands = null;
 var setCommands = (cmds) => {
     commands = cmds;
 }
+
+let pluginCommands = [];
+
 var getCommandByName = (name) => {
     for (let x = 0; x < commands.length; x++) {
         if (commands[x].name.toLowerCase().substring(0, name.length) == name.toLowerCase()) {
             return commands[x];
+        }
+    }
+
+    for (let x = 0; x < pluginCommands.length; x++) {
+        if (pluginCommands[x].name.toLowerCase().substring(0, name.length) == name.toLowerCase()) {
+            return pluginCommands[x];
         }
     }
     console.log(`Couldn't find command with name "${name}"`);
@@ -62,7 +71,7 @@ function Start(token) {
         intents: selectedIntents,
     });
     client.on("error", (err) => {
-        Action.fire(`${err}`);
+        Action.fire("err", `${err}`);
     })
     client.login(token)
         .then(async () => {
@@ -93,13 +102,20 @@ function Start(token) {
                 console.log("Starts with prefix");
                 let test = message.content.split(" ")[0].replace(prefix, "")
                 let cmd = getCommandByName(test);
-                if (cmd != null) {
+                const getAuthLevel = (authorID, adminLevel) => {
+                    return true; // temporary
+                }
+                if (cmd != null && getAuthLevel(message.author.id, cmd.adminLevel)) {
                     console.log("Command found!");
                     let args = message.content.split(" ");
                     args.splice(0, 1);
-                    cmd.run(message, ...args);
+                    cmd.run(message, ...args).catch((e) => {
+                        Action.fire("err", `${e}`);
+                    });
                     let d = new Date(message.createdTimestamp);
                     Action.fire("command", message.author.username, cmd.name, message.content, d.toLocaleString());
+                } else if (cmd != null) {
+                    Action.fire("err", `${message.author.username} attempted to use ${cmd.name} without the proper permissions.`);
                 }
 
             }
@@ -169,4 +185,25 @@ function GetGuilds() {
     return guilds;
 }
 
-module.exports = { Start, Stop, add_handler, presence, Action, setCommands, GetClient, GetGuilds, setPrefix }
+async function LoadPlugins() {
+    const GetFiles = () => {
+        return new Promise((resolve, reject) => {
+            fs.readdir("../plugins/", (err, files) => {
+                resolve(files);
+            });
+        })
+    }
+    let files = await GetFiles();
+    let globalPlugins = [];
+    for (let file of files) {
+        let data = require(file);
+        if (data.isCommand) {
+            pluginCommands.push(data);
+        } else {
+            globalPlugins.push(data);
+        }
+    }
+    return globalPlugins;
+}
+
+module.exports = { Start, Stop, add_handler, presence, Action, setCommands, GetClient, GetGuilds, setPrefix, LoadPlugins }

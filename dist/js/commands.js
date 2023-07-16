@@ -158,6 +158,12 @@ join.run = async (message, ...args) => {
     }
 };
 
+let error = new Command("error", owner);
+error.run = async (message, ...args) => {
+    console.log("ERROR WAS USED");
+    throw new Error("This is a test error using the \"error\" command.");
+};
+
 var commands = [
     help.data,
     info.data,
@@ -170,8 +176,9 @@ var commands = [
     join.data,
     leave.data,
     cmds.data,
-    about.data
+    about.data,
+    error.data
 ];
 
 
-module.exports = { help, info, kick, ban, play, pause, resume, stop, join, leave, cmds, about, Command, everyone, moderators, owner, commands };
+module.exports = { help, info, kick, ban, play, pause, resume, stop, join, leave, cmds, about, error, Command, everyone, moderators, owner, commands };

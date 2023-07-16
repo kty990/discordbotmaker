@@ -238,6 +238,13 @@ function addAction(data) {
     information.appendChild(p);
 }
 
+function addError(data) {
+    let p = document.createElement("p");
+    p.textContent = `${data}`;
+    p.classList.add("red");
+    information.appendChild(p);
+}
+
 function addCommand(data) {
     console.log(`DATA: ${data}`, data.length);
     let div = document.createElement("div");
@@ -297,28 +304,6 @@ function addModeration(data) {
     modLog.appendChild(div);
 }
 
-window.api.receive("action", (d) => {
-    let data = d[0];
-
-    //              TYPE          ARGS..............................
-    //Action.fire("command", `${message.user}`, cmd.name, message.content);
-
-    if (data[0] == "command") {
-        console.log("HELP: ", data);
-        addCommand(data);
-        window.api.send("command-action-home", { set: true, value: `${data}` });
-    } else if (data[0] == "mod") {
-        console.log("MODERATION");
-        addModeration(data);
-        window.api.send("mod-action-home", { set: true, value: `${data}` });
-    } else {
-        addAction(data);
-        window.api.send("console-action-home", { set: true, value: `${data}` });
-    }
-
-
-})
-
 showToken.addEventListener("change", (event) => {
     let checked = event.target.checked;
     if (checked) {
@@ -355,7 +340,22 @@ tokenTutorial.addEventListener("click", () => {
 })
 
 
+window.api.receive("action", (d) => {
+    let data = d[0];
 
+    //              TYPE          ARGS..............................
+    //Action.fire("command", `${message.user}`, cmd.name, message.content);
+
+    if (data[0] == "command") {
+        addCommand(data);
+    } else if (data[0] == "mod") {
+        addModeration(data);
+    } else if (data[0] == "err") {
+        addError(data);
+    } else {
+        addAction(data);
+    }
+})
 
 
 
@@ -378,6 +378,12 @@ async function main() {
     for (let action of modActions) {
         let data = action.split(",");
         addModeration(data);
+    }
+
+    let errActions = await window.api.invoke("err-action-home", { set: false });
+    for (let action of errActions) {
+        let data = action.split(",");
+        addError(data);
     }
 
     // Get bot permissions

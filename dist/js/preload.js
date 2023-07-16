@@ -6,12 +6,22 @@ contextBridge.exposeInMainWorld("api", {
     },
     receive: (channel, func) => {
         ipcRenderer.on(channel, (event, ...args) => {
-            func(...args);
+            try {
+                func(...args);
+            } catch (e) {
+                console.error(e);
+                console.log(`^^ ${channel}`);
+            }
         });
     },
     on: (channel, func) => {
         ipcRenderer.on(channel, (event, ...args) => {
-            func(...args);
+            try {
+                func(...args);
+            } catch (e) {
+                console.error(e);
+                console.log(`^^ ${channel}`);
+            }
         });
     },
     once: (channel, func) => {

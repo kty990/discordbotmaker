@@ -11628,3 +11628,27 @@ dist/installers/Discord Bot Maker Setup 0.1.5.exe
 dist/installers/Discord Bot Maker Setup 0.1.5.exe.blockmap
 dist/installers/win-unpacked/dist/themes/New_Theme_6.json
 dist/installers/win-unpacked/dist/plugins/testPlugin.js
+dist/plugins/testPlugin.js
+node_modules/exif-parser/.npmignore
+node_modules/exif-parser/browser-global.js
+node_modules/exif-parser/CHANGELOG.md
+node_modules/exif-parser/LICENSE.md
+node_modules/exif-parser/Makefile
+node_modules/exif-parser/README.md
+node_modules/exif-parser/cmd/extract-thumbnail.js
+node_modules/exif-parser/cmd/list.js
+node_modules/exif-parser/lib/bufferstream.js
+node_modules/exif-parser/lib/date.js
+node_modules/exif-parser/lib/dom-bufferstream.js
+node_modules/exif-parser/lib/exif-tags.js
+node_modules/exif-parser/lib/exif.js
+node_modules/exif-parser/lib/jpeg.js
+node_modules/exif-parser/lib/parser.js
+node_modules/exif-parser/lib/simplify.js
+node_modules/exif-parser/test/expected-exif-tags.json
+node_modules/exif-parser/test/starfish.jpg
+node_modules/exif-parser/test/test-date.js
+node_modules/exif-parser/test/test-exif.js
+node_modules/exif-parser/test/test-jpeg.js
+node_modules/exif-parser/test/test-simplify.js
+node_modules/exif-parser/test/test.jpg

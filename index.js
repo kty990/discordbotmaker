@@ -19,17 +19,6 @@ const getNumOfPlugins = () => {
     })
 }
 
-const DEFAULT_PLUGIN = `var name = Custom Plugin #${getNumOfPlugins()};
-        var author = "${auth['username']}";
-        var description = ""
-        var isCommand = true;
-        var code = "";
-        function executeFunction(...args) {
-            
-        }
-        
-        module.exports = { name, author, description, isCommand, code, executeFunction };`
-
 let active_theme = null;
 
 let DEFAULT_FILE_DATA = {
@@ -45,7 +34,8 @@ let DEFAULT_FILE_DATA = {
         commands.join,
         commands.leave,
         commands.cmds,
-        commands.about
+        commands.about,
+        commands.error
     ],
     "guilds": [],
     "author": "default_author"
@@ -63,7 +53,8 @@ let commandList = [
     commands.join,
     commands.leave,
     commands.cmds,
-    commands.about
+    commands.about,
+    commands.error
 ];
 
 let themeList = [];
@@ -246,13 +237,6 @@ class GraphicsWindow {
 
 const graphicsWindow = new GraphicsWindow();
 
-console.log = (function (old) {
-    return function (text) {
-        old(text);
-        graphicsWindow.window.webContents.send("action", "output", text);
-    }
-});
-
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
@@ -262,15 +246,47 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         graphicsWindow.createWindow();
+        console.log("Test");
     }
 });
+
 
 ipcMain.on("redirect", async (event, data) => {
     themeList = [];
     themesMenu = [];
+    console.log("REDIRECT");
     await populateThemes(graphicsWindow.window);
     graphicsWindow.window.webContents.send("list-of-themes", themeList);
     graphicsWindow.window.webContents.send("apply-theme", active_theme || null);
+    let plugins = [];
+    /**
+     * { name: "", author: "", status: "Running" }
+     */
+    function getFiles() {
+        return new Promise((resolve, reject) => {
+            fs.readdir("./dist/plugins/", (err, files) => {
+                resolve(files);
+            });
+        })
+    }
+
+    let files = await getFiles();
+    files.forEach((file) => {
+        let pluginData = require(`./dist/plugins/${file}`);
+        let name = pluginData.name;
+        let author = pluginData.author;
+        let description = pluginData.description;
+        let isCommand = pluginData.isCommand;
+        let code = pluginData.code;
+        plugins.push({
+            name: name,
+            author: author,
+            description: description,
+            isCommand: isCommand,
+            code: code
+        })
+    })
+    graphicsWindow.window.webContents.send("set-plugins", plugins);
 })
 
 
@@ -355,14 +371,11 @@ ipcMain.on("setToken", (event, data) => {
 })
 
 ipcMain.on("createGuildSelect-servernick", (event, data) => {
-    console.log("TEST");
     graphicsWindow.window.webContents.send("createGuildSelect-servernick", discord.GetGuilds());
 })
 
 ipcMain.on("GetGuildFromID", (event, data) => {
-    console.log("data", data, data.length);
     let guilds = discord.GetGuilds();
-    console.log(guilds);
     for (let x = 0; x < guilds.length; x++) {
         const guild = guilds[x];
         console.log(guild);
@@ -427,10 +440,12 @@ ipcMain.on("GetRolePermissionsForBot", (event, data) => {
 
 ipcMain.on("action", (event, data) => {
     if (data == "start") {
-        console.log("STARTING...");
+        console.log("Starting...");
+        discord.Action.fire("Starting...");
         discord.setCommands(commandList);
         discord.Start(auth.authToken);
     } else if (data == "stop") {
+        discord.Action.fire("Stopping...");
         discord.Stop();
         discord.Action.fire("Successfully terminated bot execution.");
     }
@@ -471,6 +486,7 @@ ipcMain.on("settingsMod", (event, data) => {
     const botMember = guild.members.cache.get(client.user.id);
     botMember.setNickname(servernick);
     fs.writeFileSync(`./dist/js/settings.json`, JSON.stringify(settings, null, 2));
+    discord.Action.fire("Settings have been changed!");
 })
 
 if (process.platform === 'win32') {
@@ -508,11 +524,23 @@ ipcMain.on("mod-action-home", (event, data) => {
     }
 })
 
-ipcMain.on("pluginChange", (event, data) => {
+var errActions = [];
+ipcMain.on("err-action-home", (event, data) => {
+    if (data.set == true) {
+        errActions.push(data.value);
+    } else {
+        graphicsWindow.window.webContents.send("err-action-home", errActions);
+    }
+})
+
+ipcMain.on("pluginChange", (event, d) => {
     // Update in plugin file
+    let data = d;
+    alert(d);
     let plugin = `var name = "${data.name}";
+        var default_name = "${data.default_name}";
         var author = "${data.author}";
-        var description = ${data.description};
+        var description = "${data.description}";
         var isCommand = ${data.isCommand};
         var code = "${data.code}";
         function executeFunction(...args) {
@@ -521,15 +549,30 @@ ipcMain.on("pluginChange", (event, data) => {
         
         module.exports = { name, author, description, isCommand, code, executeFunction };`
 
-    fs.writeFileSync(`./dist/plugins/${data.name}.js`, plugin);
+    fs.writeFileSync(`./dist/plugins/${data.default_name}.js`, plugin);
     graphicsWindow.window.webContents.send("pluginChange", data);
+
+    discord.Action.fire(`${data.name} (Plugin) was modified`);
 })
 
 ipcMain.on("newPlugin", async (event, data) => {
-    // Add plugin creation here
+    const DEFAULT_PLUGIN = `var name = "Custom Plugin #${await getNumOfPlugins()}";
+        var default_name = "Custom Plugin #${await getNumOfPlugins()}";
+        var author = "${auth['username']}";
+        var description = ""
+        var isCommand = true;
+        var code = "";
+        function executeFunction(...args) {
+            
+        }
+        
+        module.exports = { name, author, description, isCommand, code, executeFunction };`
 
-    let name = `Custom Plugin #${await getNumOfPlugins()}`;
+    let numOPlugins = await getNumOfPlugins();
+    let name = `Custom Plugin #${numOPlugins}`;
+    console.log(name);
     fs.writeFileSync(`./dist/plugins/${name}.js`, DEFAULT_PLUGIN);
+    discord.Action.fire(`${name} (Plugin) was created!`);
     graphicsWindow.window.webContents.send("newPlugin", { name: name, author: "", status: "Running" });
 })
 
