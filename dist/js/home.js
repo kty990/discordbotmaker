@@ -386,6 +386,8 @@ async function main() {
         addError(data);
     }
 
+    console.log("ALL THINGS THAT SHOULDBE DISPLAYED::::    ", output, commands, modActions, errActions);
+
     // Get bot permissions
 }
 

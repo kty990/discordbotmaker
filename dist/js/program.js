@@ -66,24 +66,19 @@ window.api.on("apply-theme", (data) => {
 
 main();
 
-window.api.receive("action", (d) => {
+window.api.on("action", (d) => {
     let data = d[0];
-
+    console.log("Recording action from program.js (...)");
     //              TYPE          ARGS..............................
     //Action.fire("command", `${message.user}`, cmd.name, message.content);
 
     if (data[0] == "command") {
-        console.log("HELP: ", data);
         window.api.send("command-action-home", { set: true, value: `${data}` });
     } else if (data[0] == "mod") {
-        console.log("MODERATION");
         window.api.send("mod-action-home", { set: true, value: `${data}` });
     } else if (data[0] == "err") {
-        console.log("ERROR");
         window.api.send("err-action-home", { set: true, value: `${data}` });
     } else {
         window.api.send("console-action-home", { set: true, value: `${data}` });
     }
-
-
 })

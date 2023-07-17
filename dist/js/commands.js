@@ -1,14 +1,15 @@
 class Command {
-    constructor(name, adminLevel, args) {
+    constructor(name, adminLevel, args = [], description = "No description.") {
         this.name = name;
         this.adminLevel = adminLevel;
-        this.run = async (message, ...args) => {
+        this.description = description;
+        this.executeFunction = async (message, ...args) => {
             console.log("DEFAULT COMMAND");
             await message.channel.send(`DEFAULT COMMAND:\n\t**Args:**\n${args.join("\n")}`);
         };
-        this.args = args || [];
+        this.args = args;
         this.aliases = [];
-        this.data = [name, adminLevel, this.args];
+        this.data = [name, adminLevel, this.description, this.args];
     }
 }
 
@@ -16,20 +17,18 @@ let everyone = 0;
 let moderators = 1;
 let owner = 2;
 
-let help = new Command("help", everyone);
-help.run = async (message, ...args) => {
-    console.log("HELP COMMAND");
-    await message.channel.send(`HELP COMMAND:\n\t**Args:**\n${args.join("\n")}`);
+let help = new Command("help", everyone, [], "Get help regarding a specific mechanic of the bot, or general tips and tricks.");
+help.executeFunction = async (message, ...args) => {
+    await message.channel.send(`This command is not ready quite yet!`);
 };
 
-let info = new Command("info", everyone);
-info.run = async (message, ...args) => {
-    console.log("INFO COMMAND");
-    await message.channel.send(`INFO COMMAND:\n\t**Args:**\n${args.join("\n")}`);
+let info = new Command("info", everyone, [], "Provides information regarding the bot, a specific server, or a user.");
+info.executeFunction = async (message, ...args) => {
+    await message.channel.send(`This command is not ready quite yet!`);
 };
 
-let kick = new Command("kick", moderators, ['target', 'reason']);
-kick.run = async (message, ...args) => {
+let kick = new Command("kick", moderators, ['target', 'reason'], "Attempts to kick given user(s). Provides a reason.");
+kick.executeFunction = async (message, ...args) => {
     let target = args.splice(0, 1);
     let reason = args.join(" ");
     if (target !== null && target !== undefined && reason !== null && reason !== undefined) {
@@ -59,8 +58,8 @@ kick.run = async (message, ...args) => {
     }
 };
 
-let ban = new Command("ban", moderators, ['target', 'reason']);
-ban.run = async (message, ...args) => {
+let ban = new Command("ban", moderators, ['target', 'reason'], "Attempts to ban given user(s). Provides a reason.");
+ban.executeFunction = async (message, ...args) => {
     let target = args.splice(0, 1);
     let reason = args.join(" ");
     if (target !== null && target !== undefined && reason !== null && reason !== undefined) {
@@ -89,32 +88,28 @@ ban.run = async (message, ...args) => {
     }
 };
 
-let play = new Command("play", everyone, ['query/url']);
-play.run = async (message, ...args) => {
-    console.log("PLAY COMMAND");
-    await message.channel.send(`PLAY COMMAND:\n\t**Args:**\n${args.join("\n")}`);
+let play = new Command("play", everyone, ['query/url'], "Queues an audio track to be played.");
+play.executeFunction = async (message, ...args) => {
+    await message.channel.send(`This command is not ready quite yet!`);
 };
 
-let pause = new Command("pause", everyone);
-pause.run = async (message, ...args) => {
-    console.log("PAUSE COMMAND");
-    await message.channel.send(`PAUSE COMMAND:\n\t**Args:**\n${args.join("\n")}`);
+let pause = new Command("pause", everyone, [], "Pauses an audio track.");
+pause.executeFunction = async (message, ...args) => {
+    await message.channel.send(`This command is not ready quite yet!`);
 };
 
-let resume = new Command("resume", everyone);
-resume.run = async (message, ...args) => {
-    console.log("RESUME COMMAND");
-    await message.channel.send(`RESUME COMMAND:\n\t**Args:**\n${args.join("\n")}`);
+let resume = new Command("resume", everyone, [], "Resumes a paused audio track.");
+resume.executeFunction = async (message, ...args) => {
+    await message.channel.send(`This command is not ready quite yet!`);
 };
 
-let stop = new Command("stop", everyone);
-stop.run = async (message, ...args) => {
-    console.log("STOP COMMAND");
-    await message.channel.send(`STOP COMMAND:\n\t**Args:**\n${args.join("\n")}`);
+let stop = new Command("stop", everyone, [], "Stops playing audio tracks.");
+stop.executeFunction = async (message, ...args) => {
+    await message.channel.send(`This command is not ready quite yet!`);
 };
 
-let cmds = new Command("cmds", everyone, ['page']);
-cmds.run = async (message, ...args) => {
+let cmds = new Command("cmds", everyone, ['page'], "Displays a list of commands.");
+cmds.executeFunction = async (message, ...args) => {
     console.log("CMDS COMMAND");
     let commandList = "";
     for (let commandName in commands) {
@@ -125,8 +120,8 @@ cmds.run = async (message, ...args) => {
     await message.channel.send(`List of available commands:\n${commandList}`);
 };
 
-let about = new Command("about", everyone);
-about.run = async (message, ...args) => {
+let about = new Command("about", everyone, [], "Displays information about the bot.");
+about.executeFunction = async (message, ...args) => {
     console.log("ABOUT COMMAND");
     let botName = "Your Bot Name"; // Replace with your bot's name
     let botDescription = "Your Bot Description"; // Replace with your bot's description
@@ -136,8 +131,8 @@ about.run = async (message, ...args) => {
     await message.channel.send(aboutMessage);
 };
 
-let leave = new Command("leave", everyone);
-leave.run = async (message, ...args) => {
+let leave = new Command("leave", everyone, [], "Leaves a voice channel if the bot and the user share a common voice channel.");
+leave.executeFunction = async (message, ...args) => {
     console.log("LEAVE COMMAND");
     if (message.guild.me.voice.channel) {
         await message.guild.me.voice.channel.leave();
@@ -147,8 +142,8 @@ leave.run = async (message, ...args) => {
     }
 };
 
-let join = new Command("join", everyone);
-join.run = async (message, ...args) => {
+let join = new Command("join", everyone, [], "Joins a voice channel with the user.");
+join.executeFunction = async (message, ...args) => {
     console.log("JOIN COMMAND");
     if (message.member && message.member.voice.channel) {
         await message.member.voice.channel.join();
@@ -158,8 +153,8 @@ join.run = async (message, ...args) => {
     }
 };
 
-let error = new Command("error", owner);
-error.run = async (message, ...args) => {
+let error = new Command("error", owner, [], "Throws an error to be displayed in the console.");
+error.executeFunction = async (message, ...args) => {
     console.log("ERROR WAS USED");
     throw new Error("This is a test error using the \"error\" command.");
 };

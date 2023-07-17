@@ -393,16 +393,17 @@ span {
 }
 
 #information {
-    width: 18vw;
+    width: 17vw;
     height: 70vh;
     position: fixed;
-    right: 5vw;
+    right: 4vw;
     top: 20vh;
     background-color: var(--menu);
     border-radius: 20px;
     border-style: solid;
     border-color: var(--border);
     overflow-y: auto;
+    padding-left: 1vw;
 }
 
 #permissions {

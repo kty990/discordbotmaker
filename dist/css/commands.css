@@ -144,3 +144,29 @@ span {
     margin-bottom: 0.5vh;
     margin-right: 0.5vw;
 }
+
+.command>p:first-child {
+    color: var(--text);
+    text-align: center;
+    width: 100%;
+}
+
+.command>p:last-child {
+    color: var(--text-hover);
+    text-align: center;
+    width: calc(100% - 6px);
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+#adminLevel {
+    border-top-style: solid;
+    border-bottom-style: solid;
+    width: 50%;
+    border-width: 1px;
+    position: relative;
+    left: 25%;
+    font-style: italic;
+    margin: 0;
+    padding: 0;
+}

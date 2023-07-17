@@ -2,6 +2,7 @@
 const Discord = require('discord.js');
 const { Guild } = require('discord.js');
 const { Action } = require('./event.js');
+const fs = require('fs');
 
 // ** Misc. Variables **
 
@@ -109,7 +110,7 @@ function Start(token) {
                     console.log("Command found!");
                     let args = message.content.split(" ");
                     args.splice(0, 1);
-                    cmd.run(message, ...args).catch((e) => {
+                    cmd.executeFunction(message, ...args).catch((e) => {
                         Action.fire("err", `${e}`);
                     });
                     let d = new Date(message.createdTimestamp);
@@ -185,25 +186,36 @@ function GetGuilds() {
     return guilds;
 }
 
+function AddPlugin(pData) {
+    pluginCommands.push(pData);
+}
+
 async function LoadPlugins() {
     const GetFiles = () => {
         return new Promise((resolve, reject) => {
-            fs.readdir("../plugins/", (err, files) => {
-                resolve(files);
+            fs.readdir("./dist/plugins/", (err, files) => {
+                if (!err) {
+                    resolve(files);
+                } else {
+                    reject(err);
+                }
             });
         })
     }
+    Action.fire("Reloading plugins... please wait a moment for this to finish!");
     let files = await GetFiles();
     let globalPlugins = [];
+    pluginCommands = [];
+    console.log(files, typeof files);
     for (let file of files) {
-        let data = require(file);
+        let data = require(`../plugins/${file}`);
         if (data.isCommand) {
             pluginCommands.push(data);
         } else {
             globalPlugins.push(data);
         }
     }
-    return globalPlugins;
+    return [globalPlugins, pluginCommands];
 }
 
-module.exports = { Start, Stop, add_handler, presence, Action, setCommands, GetClient, GetGuilds, setPrefix, LoadPlugins }
+module.exports = { Start, Stop, add_handler, presence, Action, setCommands, GetClient, GetGuilds, setPrefix, LoadPlugins, AddPlugin }

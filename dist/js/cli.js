@@ -12,7 +12,7 @@ async function main() {
             if (command.substring(0, cli.value.length) == cli.value.toLowerCase().split(" ")[0]) {
                 let p = document.createElement("p");
                 p.textContent = command;
-                let args = commands[x][2].join("\t")
+                let args = commands[x][3].join("\t")
                 p.textContent = `${command} ${args}`;
                 show.push(p);
             }
@@ -21,7 +21,7 @@ async function main() {
             if (command.substring(0, cli.value.length - 1) == cli.value.toLowerCase().split(" ")[0]) {
                 let p = document.createElement("p");
                 p.textContent = command;
-                let args = commands[x][2].join("\t")
+                let args = commands[x][3].join("\t")
                 p.textContent = `${command} ${args}`;
                 show.push(p);
             }
@@ -49,7 +49,7 @@ cli.addEventListener("beforeinput", async () => {
             if (command.substring(0, cli.value.length) == cli.value.toLowerCase().split(" ")[0]) {
                 let p = document.createElement("p");
                 p.textContent = command;
-                let args = commands[x][2].join("\t")
+                let args = commands[x][3].join("\t")
                 p.textContent = `${command} ${args}`;
                 show.push(p);
             }
@@ -58,7 +58,7 @@ cli.addEventListener("beforeinput", async () => {
             if (command.substring(0, cli.value.length - 1) == cli.value.toLowerCase().split(" ")[0]) {
                 let p = document.createElement("p");
                 p.textContent = command;
-                let args = commands[x][2].join("\t")
+                let args = commands[x][3].join("\t")
                 p.textContent = `${command} ${args}`;
                 show.push(p);
             }

@@ -13,7 +13,6 @@ class MyEvent {
     }
 
     fire(...args) {
-        console.log("FIRED", this.handlers.length);
         for (const handler of this.handlers) {
             console.log("Running handler");
             handler(args);
