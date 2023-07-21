@@ -123,10 +123,10 @@ cmds.executeFunction = async (message, ...args) => {
 let about = new Command("about", everyone, [], "Displays information about the bot.");
 about.executeFunction = async (message, ...args) => {
     console.log("ABOUT COMMAND");
-    let botName = "Your Bot Name"; // Replace with your bot's name
-    let botDescription = "Your Bot Description"; // Replace with your bot's description
-    let botVersion = "1.0.0"; // Replace with your bot's version
-    let author = "Your Name"; // Replace with your name or bot author's name
+    let botName = message.client.user.username; // Replace with your bot's name
+    let botDescription = "[ No description found ]"; // Replace with your bot's description
+    let botVersion = "[ No version data found ]"; // Replace with your bot's version
+    let author = "[ No author data found ]"; // Replace with your name or bot author's name
     let aboutMessage = `**${botName}**\n\n${botDescription}\n\nVersion: ${botVersion}\nAuthor: ${author}`;
     await message.channel.send(aboutMessage);
 };
