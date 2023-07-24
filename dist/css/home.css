@@ -406,7 +406,7 @@ span {
     padding-left: 1vw;
 }
 
-#permissions {
+#perms {
     position: fixed;
     width: 18vw;
     height: 70vh;
@@ -569,21 +569,6 @@ span {
     border-color: var(--border);
     border-style: solid;
     border-width: 2px;
-}
-
-
-
-
-div::-webkit-scrollbar {
-    width: 5px;
-}
-
-div::-webkit-scrollbar-track {
-    background: var(--border);
-}
-
-div::-webkit-scrollbar-thumb {
-    background: var(--body);
 }
 
 .blur {

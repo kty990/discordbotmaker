@@ -49,7 +49,9 @@ async function main() {
             link.href = "../css/program.css";
             document.head.appendChild(link);
         }
-    } catch (e) { }
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 

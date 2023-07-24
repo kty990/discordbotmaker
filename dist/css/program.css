@@ -23,6 +23,8 @@ html {
     padding: 0;
     margin: 0;
     font-size: 1vh;
+    outline: unset;
+    cursor: url('../images/cursor_mk1.png');
 }
 
 html,
@@ -131,4 +133,16 @@ input {
 
 .red {
     color: red;
+}
+
+div::-webkit-scrollbar {
+    width: 5px;
+}
+
+div::-webkit-scrollbar-track {
+    background: var(--border);
+}
+
+div::-webkit-scrollbar-thumb {
+    background: var(--body);
 }

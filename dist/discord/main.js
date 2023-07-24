@@ -4,6 +4,8 @@ const { Guild } = require('discord.js');
 const { Action } = require('./event.js');
 const fs = require('fs');
 
+const { createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior } = require('@discordjs/voice');
+
 // ** Misc. Variables **
 
 const Intents = Discord.GatewayIntentBits;
@@ -19,10 +21,19 @@ var selectedIntents = [
     Intents.GuildPresences,
     Intents.Guilds,
     Intents.MessageContent,
-    Intents.GuildVoiceStates
+    Intents.GuildVoiceStates,
 ]
 
 var client = null;
+var settings = null;
+
+function setSettings(s) {
+    settings = s;
+}
+
+function ShowError(msg) {
+    let e = {};
+}
 
 var presence = {
     type: Discord.ActivityType.Playing,
@@ -62,6 +73,58 @@ const setPrefix = np => {
 
 // ** Functions **
 
+function startListening(channel) {
+
+}
+
+async function startSpeaking(channel) {
+    const connection = joinVoiceChannel({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        adapterCreator: channel.guild.voiceAdapterCreator,
+    });
+
+    try {
+        // Create a new Opus recorder
+        const recorder = new Recorder({
+            channels: 1,
+            rate: 48000,
+            frameSize: 960,
+            encoderApplication: 2049,
+        });
+
+        // Create a readable stream from the recorder
+        const audioStream = new Readable({
+            read() { },
+        });
+
+        audioStream.pipe(recorder.stream);
+
+        // Listen to the "data" event from the recorder and play the audio
+        recorder.stream.on('data', (chunk) => {
+            const resource = createAudioResource(chunk, { inputType: 'opus' });
+            audioPlayer.play(resource);
+        });
+
+        const audioPlayer = createAudioPlayer({
+            behaviors: {
+                noSubscriber: NoSubscriberBehavior.Pause,
+            },
+        });
+
+        connection.subscribe(audioPlayer);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+function executeCommand(name, ...args) {
+    let cmd = getCommandByName(name);
+    cmd.executeFunction(null, ...args).catch((e) => {
+        Action.fire("err", `${e}`);
+    });
+}
+
 function Start(token) {
     if (client !== null) {
         Action.fire("Already running...");
@@ -94,7 +157,7 @@ function Start(token) {
         }
     });
 
-    client.on("messageCreate", message => {
+    client.on("messageCreate", async message => {
         // console.log("Message recieved: ", message.content);
         if (message.author.id !== client.user.id) {
             console.log("Not a bot message");
@@ -103,16 +166,85 @@ function Start(token) {
                 console.log("Starts with prefix");
                 let test = message.content.split(" ")[0].replace(prefix, "")
                 let cmd = getCommandByName(test);
-                const getAuthLevel = (authorID, adminLevel) => {
-                    return true; // temporary
-                }
-                if (cmd != null && getAuthLevel(message.author.id, cmd.adminLevel)) {
+                if (cmd != null) {
                     console.log("Command found!");
                     let args = message.content.split(" ");
                     args.splice(0, 1);
-                    cmd.executeFunction(message, ...args).catch((e) => {
-                        Action.fire("err", `${e}`);
-                    });
+                    const GetAdminLevel = () => {
+                        const member = message.member;
+                        const roles = member.roles.cache;
+                        let adminLevel = 0;
+                        for (const [snowflake, role] of roles) {
+                            // Do comparison between role.id and all ids in settings.json
+                            for (let data of settings.moderatorRoles) {
+                                if (role.id == data.id) {
+                                    adminLevel = 1;
+                                    break;
+                                }
+                            }
+
+                            for (let data of settings.ownerRoles) {
+                                if (role.id == data.id) {
+                                    adminLevel = 2;
+                                    break;
+                                }
+                            }
+                        }
+                        console.log(adminLevel);
+                        return adminLevel;
+                    }
+
+                    /** */
+                    console.log(`Is Admin level: ${GetAdminLevel()}, ${cmd.adminLevel}`);
+                    if (GetAdminLevel() >= cmd.adminLevel) {
+                        cmd.executeFunction(message, ...args).catch((e) => {
+                            Action.fire("err", `${e}`);
+                        });
+                    } else {
+                        let permissionName = "Everyone";
+                        if (cmd.adminLevel == 1) {
+                            permissionName = "Moderator"
+                        } else if (cmd.adminLevel == 2) {
+                            permissionName = "Owner";
+                        }
+
+                        let YpermissionName = "Everyone";
+                        if (GetAdminLevel() == 1) {
+                            YpermissionName = "Moderator"
+                        } else if (GetAdminLevel() == 2) {
+                            YpermissionName = "Owner";
+                        }
+                        let d = new Date();
+                        let embed = {
+                            description: `<@${message.author.id}> does not have the valid permissions to use ${cmd.name}`,
+                            fields: [{
+                                name: "Required permission level".toUpperCase(),
+                                value: `${permissionName} (${cmd.adminLevel})`,
+                                inline: false
+                            },
+                            {
+                                name: "Your permission level".toUpperCase(),
+                                value: `${YpermissionName} (${cmd.adminLevel})`,
+                                inline: false
+                            }],
+                            author: {
+                                name: client.user.username,
+                                icon_url: client.user.avatarURL({ size: 256 })
+                            },
+                            color: 0xfc0000,
+                            timestamp: d.toISOString(),
+                            footer: {
+                                text: '\u2800',
+                                icon_url: '',
+                            },
+                        }
+                        await message.channel.send({
+                            embeds: [embed],
+                        });
+                    }
+
+                    /** */
+
                     let d = new Date(message.createdTimestamp);
                     Action.fire("command", message.author.username, cmd.name, message.content, d.toLocaleString());
                 } else if (cmd != null) {
@@ -186,10 +318,6 @@ function GetGuilds() {
     return guilds;
 }
 
-function AddPlugin(pData) {
-    pluginCommands.push(pData);
-}
-
 async function LoadPlugins() {
     const GetFiles = () => {
         return new Promise((resolve, reject) => {
@@ -218,4 +346,19 @@ async function LoadPlugins() {
     return [globalPlugins, pluginCommands];
 }
 
-module.exports = { Start, Stop, add_handler, presence, Action, setCommands, GetClient, GetGuilds, setPrefix, LoadPlugins, AddPlugin }
+module.exports = {
+    Start,
+    Stop,
+    add_handler,
+    presence,
+    Action,
+    setCommands,
+    GetClient,
+    GetGuilds,
+    setPrefix,
+    LoadPlugins,
+    executeCommand,
+    setSettings,
+    startListening,
+    startSpeaking
+}

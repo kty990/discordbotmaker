@@ -6,6 +6,7 @@ const exif = require('exif-parser');
 const commands = require('./dist/js/commands.js');
 const auth = require("./dist/auth.json");
 const settings = require('./dist/js/settings.json');
+const history = require('./dist/hist.json');
 
 const discord = require('./dist/discord/main.js');
 
@@ -285,7 +286,6 @@ app.on('window-all-closed', () => {
 ipcMain.on("redirect", async (event, data) => {
     themeList = [];
     themesMenu = [];
-    console.log("REDIRECT");
     await populateThemes(graphicsWindow.window);
     graphicsWindow.window.webContents.send("list-of-themes", themeList);
     graphicsWindow.window.webContents.send("apply-theme", active_theme || null);
@@ -513,6 +513,7 @@ ipcMain.on("settingsMod", (event, data) => {
     botMember.setNickname(servernick);
     fs.writeFileSync(`./dist/js/settings.json`, JSON.stringify(settings, null, 2));
     discord.Action.fire("Settings have been changed!");
+    discord.setSettings(settings);
 })
 
 if (process.platform === 'win32') {
@@ -528,6 +529,8 @@ ipcMain.on("console-action-home", (event, data) => {
     console.log("console-action-home", data);
     if (data.set == true) {
         consoleOutput.push(data.value);
+        history.output.push(data.value);
+        fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
     } else {
         graphicsWindow.window.webContents.send("console-action-home", consoleOutput);
     }
@@ -538,6 +541,8 @@ ipcMain.on("command-action-home", (event, data) => {
     console.log("command-action-home", data);
     if (data.set == true) {
         usedCommands.push(data.value);
+        history.commands.push(data.value);
+        fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
     } else {
         graphicsWindow.window.webContents.send("command-action-home", usedCommands);
     }
@@ -548,6 +553,8 @@ ipcMain.on("mod-action-home", (event, data) => {
     console.log("mod-action-home", data);
     if (data.set == true) {
         modActions.push(data.value);
+        history.moderator.push(data.value);
+        fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
     } else {
         graphicsWindow.window.webContents.send("mod-action-home", modActions);
     }
@@ -558,15 +565,27 @@ ipcMain.on("err-action-home", (event, data) => {
     console.log("err-action-home", data);
     if (data.set == true) {
         errActions.push(data.value);
+        // Modify the history
+        history.errors.push(data.value);
+        fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
     } else {
         graphicsWindow.window.webContents.send("err-action-home", errActions);
     }
 })
 
-ipcMain.on("pluginChange", (event, d) => {
+ipcMain.on("GetRolesViaGuildId", (event, data) => {
+    let id = data;
+    let guild = discord.GetClient().guilds.cache.filter(g => g.id == id).at(0);
+    let roles = guild.roles.cache;
+    let newRoles = [];
+    for (const [snowflake, role] of roles) {
+        newRoles.push(role);
+    }
+    graphicsWindow.window.webContents.send("GetRolesViaGuildId", newRoles);
+})
+
+ipcMain.on("pluginChange", (event, data) => {
     // Update in plugin file
-    let data = d;
-    alert(d);
     let plugin = `var name = "${data.name}";
         var default_name = "${data.default_name}";
         var author = "${data.author}";
@@ -588,16 +607,16 @@ ipcMain.on("pluginChange", (event, d) => {
 
 ipcMain.on("newPlugin", async (event, data) => {
     const DEFAULT_PLUGIN = `var name = "Custom Plugin #${await getNumOfPlugins()}";
-        var default_name = "Custom Plugin #${await getNumOfPlugins()}";
-        var author = "${auth['username']}";
-        var description = ""
-        var isCommand = true;
-        var code = "";
-        function executeFunction(...args) {
-            
-        }
+    var default_name = "Custom Plugin #${await getNumOfPlugins()}";
+    var author = "${auth['username']}";
+    var description = ""
+    var isCommand = true;
+    var code = "";
+    function executeFunction(message, ...args) {
         
-        module.exports = { name, author, description, isCommand, code, executeFunction };`
+    }
+        
+    module.exports = { name, author, description, isCommand, code, executeFunction };`
 
     let numOPlugins = await getNumOfPlugins();
     let name = `Custom Plugin #${numOPlugins}`;
@@ -608,8 +627,63 @@ ipcMain.on("newPlugin", async (event, data) => {
     main();
 })
 
-// while (graphicsWindow.window == null || graphicsWindow.window == undefined) { }
+ipcMain.on("runCommand", (event, data) => {
+    let name = data.name;
+    discord.executeCommand(name);
+})
+
+ipcMain.on("AddModRole", (event, data) => {
+    let roleId = data.id;
+    let valid = !settings.moderatorRoles.includes(roleId);
+    if (valid) {
+        settings.moderatorRoles.push({ id: roleId, name: data.name, color: `#${data.color.toString(16).toUpperCase()}` });
+    }
+    fs.writeFileSync(`./dist/js/settings.json`, JSON.stringify(settings, null, 2));
+    discord.setSettings(settings);
+    graphicsWindow.window.webContents.send("AddModRole", valid);
+})
+
+ipcMain.on("AddOwnerRole", (event, data) => {
+    let roleId = data.id;
+    let valid = !settings.ownerRoles.includes(roleId);
+    if (valid) {
+        settings.ownerRoles.push({ id: roleId, name: data.name, color: `#${data.color.toString(16).toUpperCase()}` });
+    }
+    fs.writeFileSync(`./dist/js/settings.json`, JSON.stringify(settings, null, 2));
+    discord.setSettings(settings);
+    graphicsWindow.window.webContents.send("AddOwnerRole", valid);
+})
+
+ipcMain.on("GetPermissions", (event, data) => {
+    graphicsWindow.window.webContents.send("GetPermissions", {
+        owner: settings.ownerRoles,
+        moderator: settings.moderatorRoles
+    });
+})
+
+ipcMain.on("RemoveModRole", (event, data) => {
+    let roleId = data;
+    for (let x = 0; x < settings.moderatorRoles.length; x++) {
+        if (settings.moderatorRoles[x].id == roleId) {
+            settings.moderatorRoles.splice(x, 1);
+            break;
+        }
+    }
+    fs.writeFileSync(`./dist/js/settings.json`, JSON.stringify(settings, null, 2));
+})
+
+ipcMain.on("RemoveOwnerRole", (event, data) => {
+    let roleId = data;
+    for (let x = 0; x < settings.ownerRoles.length; x++) {
+        if (settings.ownerRoles[x].id == roleId) {
+            settings.ownerRoles.splice(x, 1);
+            break;
+        }
+    }
+    fs.writeFileSync(`./dist/js/settings.json`, JSON.stringify(settings, null, 2));
+})
 
 discord.setPrefix(settings.prefix);
+discord.setSettings(settings);
 
 main(true);

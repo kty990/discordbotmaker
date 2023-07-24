@@ -12,7 +12,7 @@ let stp = document.getElementById("stop");
 
 let guildSelect = document.getElementById("permission-guild-select");
 let selectionArea = document.getElementById("selection-area");
-let permissionsDiv = document.getElementById("permissions");
+let permissionsDiv = document.getElementById("perms");
 
 let tokenTutorial = document.getElementById("tokenTutorial");
 let tutorialBlur = document.getElementById("tutorialBlur");

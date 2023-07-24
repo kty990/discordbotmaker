@@ -1,0 +1,292 @@
+:root {
+    --body: #1e1f22;
+    --menu: #2b2d31;
+    --interaction: #313338;
+    --text: #f2f3f5;
+    --text-hover: #7d7d7d;
+    --border: #ffffff66;
+    --active: #7289d9;
+    --tut-menu: #2b2d31cc;
+}
+
+#guild-select {
+    position: fixed;
+    left: 12vw;
+    top: 2vh;
+    z-index: 1;
+    font-weight: bold;
+    font-size: 3vh;
+    width: 18vw;
+    height: 5vh;
+    background-color: var(--interaction);
+    border-radius: 20px;
+    border-style: solid;
+    border-color: var(--border);
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#guild-select>img {
+    width: 3vh;
+    height: 3vh;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    left: 0.5vw;
+    border-radius: 50%;
+    border-style: solid;
+    border-color: var(--border);
+    border-width: 1px;
+}
+
+#guild-select>#guild-name {
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    font-size: 2.5vh;
+    left: 15.5vw;
+    top: 3vh;
+    width: 14vw;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#guild-select>#guild-id {
+    position: fixed;
+    left: 15.5vw;
+    top: 5.5vh;
+    margin: 0;
+    padding: 0;
+    font-size: 1vh;
+}
+
+#guild-select:hover {
+    background-color: var(--body);
+}
+
+#guild-select:hover #guild-id {
+    color: var(--text-hover);
+}
+
+#guild-select:hover #guild-name {
+    color: var(--text-hover);
+}
+
+#guild-select:hover img {
+    filter: brightness(0.4);
+}
+
+#selection-area {
+    z-index: 0;
+    position: fixed;
+    display: none;
+    left: 12vw;
+    top: 5vh;
+    height: 12vh;
+    width: 18vw;
+    margin: 0;
+    padding: 0;
+    background-color: var(--interaction);
+    border-color: var(--border);
+    border-bottom-style: solid;
+    border-width: 1px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding-top: 4vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#roles {
+    position: fixed;
+    right: 5vw;
+    top: 5vh;
+    width: 20vw;
+    height: 90vh;
+    background-color: var(--menu);
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    overflow-y: auto;
+}
+
+.role {
+    padding-left: 1vw;
+    background-color: var(--interaction);
+    margin-bottom: 0.5vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 2vh;
+}
+
+.role>p:first-child {
+    /* Name */
+    width: 8vw;
+    text-overflow: ellipsis;
+}
+
+.role>p:last-child {
+    /* ID */
+    width: 8vw;
+    text-overflow: ellipsis;
+    font-size: 1vh;
+    margin-left: auto;
+    text-align: right;
+    margin-right: 1vw;
+}
+
+.guild {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--body);
+    margin-bottom: 1vh;
+    align-items: center;
+    font-weight: normal;
+}
+
+#id {
+    margin-left: auto;
+    padding-right: 1vh;
+}
+
+#iconID {
+    width: 2.5vh;
+    height: 2.5vh;
+    position: relative;
+    left: 2vh;
+    margin-right: 4vh;
+    border-radius: 20px;
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 2px;
+}
+
+#roleSelection {
+    width: 35vw;
+    height: 90vh;
+    left: 35vw;
+    position: fixed;
+    background-color: var(--menu);
+    top: 5vh;
+    border-color: var(--border);
+    border-style: double;
+    border-width: 3px;
+    border-radius: 20px;
+    box-shadow: 6px 6px 4px 0px var(--interaction);
+}
+
+#roleSelection>p {
+    font-size: 3vh;
+    text-align: center;
+    font-weight: bold;
+}
+
+.roleType {
+    background-color: var(--interaction);
+    margin-bottom: 10vh;
+    height: 30vh;
+    border-color: var(--border);
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-width: 1px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 1vw;
+}
+
+.roleType>p {
+    width: 100%;
+    font-size: 2vh;
+    text-align: center;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+}
+
+.roleType>#roleCollection {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    height: calc(100% - 2vh);
+    position: relative;
+    top: 2vh;
+    padding-top: 1vh;
+    padding-bottom: 4vh;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    justify-items: center;
+    align-items: center;
+    overflow-y: auto;
+}
+
+.addToWhitelistBtn {
+    width: calc(100% + 1vw);
+    height: 5vh;
+    margin: 0;
+    background-color: var(--add-bg);
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: auto;
+    z-index: 2;
+    position: relative;
+    right: 1vw;
+}
+
+
+.addToWhitelistBtn>img {
+    width: 2vh;
+    height: 2vh;
+    margin-left: auto;
+    margin-right: 1vw;
+}
+
+.addToWhitelistBtn>img:last-child {
+    margin-left: 0.25vw;
+}
+
+.addToWhitelistBtn>img:hover {
+    filter: brightness(0.5);
+}
+
+.roleTag {
+    background-color: var(--interaction);
+    border-radius: 20px;
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 2px;
+    padding: 1vh;
+    margin: 0;
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    font-size: 1vh;
+    height: 1.2vh;
+    margin-bottom: auto;
+}
+
+.roleTag>p {
+    color: var(--text);
+    text-align: right;
+    width: fit-content;
+    margin: 0;
+    padding: 0;
+    margin-left: 1vh;
+}
+
+.roleTag>a {
+    color: var(--text);
+    border-right-style: solid;
+    border-width: 1px;
+    padding-right: 0.25vw;
+}
+
+.roleTag>a:hover {
+    color: var(--text-hover);
+}

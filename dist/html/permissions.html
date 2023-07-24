@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Discord Bot Maker</title>
+    <link rel="stylesheet" href="../css/permissions.css">
+    <link rel="stylesheet" href="../css/program.css">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
+</head>
+
+<body>
+    <script id="replacewithsidebar"></script>
+
+    <div id="guild-select">
+        <img src="../images/icon.png">
+        <p id="guild-name">Nothing Selected</p>
+        <p id="guild-id">-1</p>
+    </div>
+    <div id="selection-area">
+
+    </div>
+
+    <form id="roleSelection">
+        <p>Role Permissions</p>
+        <!-- Permissions should be whitelist, so roles added to visual list -->
+        <div id="owner" class="roleType">
+            <p>Owner</p>
+            <div id="roleCollection">
+            </div>
+
+            <div class="addToWhitelistBtn">
+                <img src="../images/plus.png" id="plus">
+            </div>
+        </div>
+        <div id="mod" class="roleType">
+            <p>Moderator</p>
+            <div id="roleCollection">
+            </div>
+            <div class="addToWhitelistBtn">
+                <img src="../images/plus.png" id="plus">
+            </div>
+        </div>
+    </form>
+
+    <div id="roles">
+
+    </div>
+
+    <script src="../js/program.js"></script>
+    <script src="../js/permissions.js"></script>
+</body>
+
+</html>

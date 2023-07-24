@@ -1,5 +1,34 @@
 {
   "prefix": "-",
   "username": "GameBot",
-  "logChannel": "749723501048365158"
+  "logChannel": "749723501048365158",
+  "moderatorRoles": [
+    {
+      "id": "842971623598718996",
+      "name": "Authorized Tester",
+      "color": "#2ECC71"
+    },
+    {
+      "id": "745481936558096524",
+      "name": "Homie",
+      "color": "#B7A8FF"
+    }
+  ],
+  "ownerRoles": [
+    {
+      "id": "1105305511697600553",
+      "name": "Owner",
+      "color": "#1DAEDF"
+    },
+    {
+      "id": "1105304747084370015",
+      "name": "Admin",
+      "color": "#546E7A"
+    },
+    {
+      "id": "702033650396692490",
+      "name": "TASK",
+      "color": "#3498DB"
+    }
+  ]
 }

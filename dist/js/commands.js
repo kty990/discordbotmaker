@@ -114,7 +114,7 @@ cmds.executeFunction = async (message, ...args) => {
     let commandList = "";
     for (let commandName in commands) {
         if (commands.hasOwnProperty(commandName)) {
-            commandList += `${commandName}\n`;
+            commandList += `${commands[commandName]}\n`;
         }
     }
     await message.channel.send(`List of available commands:\n${commandList}`);
