@@ -21,6 +21,21 @@ async function main() {
                 sbElement.remove();
             })
             .catch((e) => console.error(e));
+    } else {
+        let txt = `<div id="drag"></div>
+        <div class="title-bar">
+            <div class="title-bar-content">
+                <img src="../images/icon.png">
+                <p>Discord Bot Maker</p>
+            </div>
+            <div class="title-bar-buttons">
+                <div class="title-bar-button" id="minimize">_</div>
+                <div class="title-bar-button" id="close">X</div>
+            </div>
+        </div>`;
+        let div = document.createElement("div");
+        div.innerHTML = txt;
+        document.body.appendChild(div);
     }
 
 
@@ -66,7 +81,7 @@ window.api.on("apply-theme", (data) => {
     });
 });
 
-main();
+
 
 window.api.on("action", (d) => {
     let data = d[0];
@@ -84,3 +99,29 @@ window.api.on("action", (d) => {
         window.api.send("console-action-home", { set: true, value: `${data}` });
     }
 })
+
+main().then(() => {
+    let x = document.getElementById("close");
+    let mm = document.getElementById("minimize");
+
+    console.log(`x:${x}\n_: ${mm}`);
+
+    x.addEventListener("click", () => {
+        window.api.send("close");
+    })
+
+    mm.addEventListener("click", () => {
+        window.api.send("minimize");
+    })
+}).catch((e) => {
+    console.error(e);
+    alert(e);
+});
+
+document.addEventListener("keydown", (ev) => {
+    if (ev.ctrlKey && ev.key.toLowerCase() === "r") {
+        window.api.send("dev-refresh");
+    } else if (ev.ctrlKey && ev.key.toLowerCase() == "t") {
+        window.api.send("toggle-dev-tools");
+    }
+});

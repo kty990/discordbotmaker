@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, autoUpdater } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, autoUpdater, Notification } = require('electron');
 const path = require('path');
 const config = require("./dist/config.json");
 const fs = require('fs');
@@ -9,8 +9,11 @@ const settings = require('./dist/js/settings.json');
 const history = require('./dist/hist.json');
 
 const discord = require('./dist/discord/main.js');
+// const twitch = require('./dist/twitch/twi.js');
 
 const EXTENSION = "dbm"
+
+let devToolsOpened = false;
 
 const getNumOfPlugins = () => {
     return new Promise((resolve, reject) => {
@@ -164,8 +167,6 @@ class GraphicsWindow {
                 this.createWindow();
             });
         } catch (e) {
-            const { Notification } = require('electron')
-
             const NOTIFICATION_TITLE = 'Error'
             const NOTIFICATION_BODY = `${e}`
 
@@ -182,6 +183,7 @@ class GraphicsWindow {
             height: 600,
             minWidth: 800,   // Set the minimum width
             minHeight: 600,  // Set the minimum height
+            frame: false,
             webPreferences: {
                 nodeIntegration: true,
                 spellcheck: false,
@@ -197,64 +199,9 @@ class GraphicsWindow {
         const iconPath = path.join(__dirname, './dist/images/icon.png');
         this.window.setIcon(iconPath);
 
-        const placeholder = (prompt) => {
-            let func = () => {
-                console.log(prompt);
-            }
-            return func;
-        }
-
-        const toggleDevTools = () => {
-            this.window.webContents.toggleDevTools();
-        }
-
-        const newFile = async () => {
-            console.log("new")
-        }
-
-        const open = async () => {
-            console.log("open")
-        }
-
-        const save = () => {
-            if (true) {
-                console.log("Save")
-            }
-        }
-
-        const saveas = () => {
-            if (true) {
-                console.log("save as")
-            }
-        }
-
         await populateThemes(this.window).catch(console.error);
 
-        const menuTemplate = [
-            {
-                label: 'File',
-                submenu: [
-                    { label: 'New', click: newFile },
-                    { label: 'Open', click: open },
-                    { label: 'Refresh', role: 'reload' },
-                    { type: 'separator' },
-                    { label: 'Save', click: save },
-                    { label: 'Save As', click: saveas },
-                    { type: 'separator' },
-                    { label: 'Exit', click: app.quit }
-                ]
-            },
-            {
-                label: 'View',
-                submenu: [
-                    { label: 'Themes', submenu: themesMenu },
-                    { label: 'Toggle Developer Tools', accelerator: 'CmdOrCtrl+Shift+I', click: toggleDevTools }
-                ]
-            }
-            // Add more menu items as needed
-        ];
-
-        const menu = Menu.buildFromTemplate(menuTemplate);
+        const menu = Menu.buildFromTemplate([]);
         Menu.setApplicationMenu(menu);
 
         this.window.setMenu(menu);
@@ -687,3 +634,25 @@ discord.setPrefix(settings.prefix);
 discord.setSettings(settings);
 
 main(true);
+
+ipcMain.on("dev-refresh", () => {
+    graphicsWindow.window.reload();
+})
+
+ipcMain.on("close", () => {
+    graphicsWindow.window.close();
+})
+
+ipcMain.on("minimize", () => {
+    graphicsWindow.window.minimize();
+})
+
+ipcMain.on("toggle-dev-tools", () => {
+
+    // Toggle the DevTools visibility based on its current state
+    if (devToolsOpened) {
+        graphicsWindow.window.webContents.closeDevTools();
+    } else {
+        graphicsWindow.window.webContents.openDevTools();
+    }
+})
