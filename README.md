@@ -1,5 +1,15 @@
 # Discord Bot Maker
 
+## Tasks
+- [ ] Plugins
+- [ ] Themes
+- [ ] Settings UI
+- [ ] CLI
+- [x] Logs
+- [x] Role permissions
+- [ ] Settings - Partially complete
+- [x] Command List
+
 ## Currently working on:
 - Adding plugin functionality
 - Fixing themes so they can be updated
