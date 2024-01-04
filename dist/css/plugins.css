@@ -309,5 +309,8 @@
     text-align: center;
     margin-top: 0.54vh;
     font-weight: 500;
+}
 
+.pluginMod:hover {
+    background-color: var(--text-hover);
 }

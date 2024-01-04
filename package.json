@@ -54,6 +54,7 @@
     "discordbotmaker": "file:"
   },
   "devDependencies": {
-    "electron": "^25.9.5"
+    "electron": "^25.9.5",
+    "electron-builder": "^24.9.1"
   }
 }
