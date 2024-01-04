@@ -26,7 +26,6 @@ async function main() {
                 show.push(p);
             }
         }
-        console.log(command.substring(0, cli.value.length), cli.value.toLowerCase());
     }
     hintElem.innerHTML = "";
     for (let elem of show) {
@@ -63,7 +62,6 @@ cli.addEventListener("beforeinput", async () => {
                 show.push(p);
             }
         }
-        console.log(command.substring(0, cli.value.length), cli.value.toLowerCase());
     }
     hintElem.innerHTML = "";
     for (let elem of show) {

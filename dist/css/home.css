@@ -1,16 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Tilt+Prism&display=swap');
 
-:root {
-    --body: #1e1f22;
-    --menu: #2b2d31;
-    --interaction: #313338;
-    --text: #f2f3f5;
-    --text-hover: #7d7d7d;
-    --border: #ffffff66;
-    --active: #7289d9;
-    --tut-menu: #2b2d31cc;
-}
 
 body,
 html {

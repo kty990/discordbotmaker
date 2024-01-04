@@ -78,7 +78,6 @@ async function main() {
         aL.id = "adminLevel"
         aL.textContent = getLevelName(adminLevel).toUpperCase();
         aL.style.color = adjustBrightness(getComputedStyle(container).getPropertyValue('--text'), 0.8);
-        console.log(adjustBrightness(getComputedStyle(container).getPropertyValue('--text'), 0.8));
         div.appendChild(aL);
         div.appendChild(desc);
         container.appendChild(div);

@@ -32,7 +32,6 @@ selectionArea.style.display = "none";
 
 
 function adjustBrightness(color, brightness) {
-    console.log(`Color: ${color}, brightness: ${brightness}`);
     // Check if the color is in RGB format (e.g., "rgb(255, 0, 0)")
     if (color.startsWith("rgb")) {
         // Parse the color string into its RGB components

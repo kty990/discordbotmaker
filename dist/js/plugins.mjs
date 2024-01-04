@@ -1,3 +1,29 @@
+class Notification {
+    static types = {
+        info: null,
+        error: "#7d0000",
+        warning: "#e0982b",
+        fatal: "#ff0000"
+    }
+
+    constructor(type = info) {
+        this.type = type;
+    }
+
+    create(t = "Notification", description = "Something went wrong! Error Code: 500") {
+        const notif = `<div class="notification">
+    <div id="topbar"${(this.type !== Notification.types.info) ? `style="background-color:${this.type};"` : ''}>
+        <p id="title">${t}</p>
+        <p id="close-notif">X</p>
+    </div>
+    <p id="description-notif">${description}</p>
+</div>`;
+        return notif;
+    }
+
+
+}
+
 try {
     let iscommand = document.getElementById("iscommandToggle");
     let iscommandP = iscommand.querySelector("p");
@@ -14,6 +40,15 @@ try {
 
     var plugins = [];
     var currentPlugin = null;
+
+    const showObject = (typeOfChange, obj) => {
+        let s = `\n\n--- ${typeOfChange} Change ---\n\n`;
+        for (const [key, value] of Object.entries(obj)) {
+            s += `${key}\t${value}\n\n`
+        }
+        s += `--- ${typeOfChange} Change End ---\n\n`;
+        return s;
+    }
 
     function adjustBrightness(color, brightness) {
         // Check if the color is in RGB format (e.g., "rgb(255, 0, 0)")
@@ -59,9 +94,9 @@ try {
     }
 
     class MyPlugin {
-        constructor(name, author, description, div, isCommand = true, code = "<TEST CODE>", executeFunction = () => { }, status = "Warning") {
+        constructor(name, default_name, author, description, div, isCommand = true, code = "<TEST CODE>", executeFunction = () => { }, status = "Warning") {
             this.name = name;
-            this.default_name = name;
+            this.default_name = default_name;
             this.author = author;
             this.description = description;
             this.div = div;
@@ -74,6 +109,7 @@ try {
         send() {
             return {
                 name: this.name,
+                default_name: this.default_name || this.name,
                 author: this.author,
                 description: this.description,
                 isCommand: this.isCommand,
@@ -120,8 +156,9 @@ try {
     savePlugin.addEventListener("click", () => {
         currentPlugin.name = pluginNameInput.value;
         currentPlugin.description = pluginDescInput.value;
-        currentPlugin.isCommand = !(iscommandP.textContent == "X");
-        currentPlugin.code = codeArea.textContent;
+        currentPlugin.isCommand = (iscommandP.textContent != "X");
+        currentPlugin.code = codeArea.value;
+        OnPluginChange(currentPlugin);
         window.api.send("pluginChange", currentPlugin.send());
     })
 
@@ -131,24 +168,26 @@ try {
     })
 
     function addPlugin(data) {
+        if (data == undefined || data == null) {
+            console.warn("Undefined plugin");
+            return;
+        }
         let name = data.name;
+        let default_name = data.default_name;
         let author = data.author;
-        let description = "";
-        let isCommand = true;
-        let code = "";
+        let description = data.description || "";
+        let isCommand = data.isCommand || true;
+        let code = data.code || "";
         let executeFunction = () => {
 
         }
         let status = data.status;
-        let plugin = new MyPlugin(name, author, description, null, isCommand, code, executeFunction);
+
         let div = document.createElement("div");
         div.classList.add("plugin");
-        plugin.div = div;
-        /**
-         * <p id="name">PLUGIN NAME</p>
-                <p id="author">PLUGIN AUTHOR</p>
-                <div id="status">Running</div>
-         */
+        let plugin = new MyPlugin(name, default_name || name, author, description, div, isCommand, code, executeFunction, status);
+
+
         let p0 = document.createElement("p");
         let p1 = document.createElement("p");
         let p2 = document.createElement("p");
@@ -193,50 +232,41 @@ try {
     }
 
     function OnPluginChange(data) {
-        console.log(`OnPluginChange\n\n${Object.entries(data)}\t${Object.values(data).length}`);
         let name = data.name;
+        let defaultName = data.default_name;
         let author = data.author;
-        // let div = plugin.div;
-        let div;
-        if (Object.values(data).length == 8) {
-
-            for (let plugin of plugins) {
-                console.log(`${plugin.default_name}, ${data.default_name}`);
-                if (plugin.default_name == data.default_name) {
-                    div = plugin.div;
-                    console.log("FOUND!");
-                    break;
-                } else {
-                    console.log("next");
-                }
-            }
-
-        } else {
-            for (let plugin of plugins) {
-                if (plugin.default_name == data.default_name) {
-                    div = plugin.div;
-                    console.log("FOUND!");
-                    break;
-                }
+        let div, plugin;
+        for (let p of plugins) {
+            if (p.default_name == defaultName) {
+                div = p.div;
+                plugin = p;
+                break;
             }
         }
 
-        console.log("DIV: ", div);
+        try {
+            div.querySelector("#status").textContent = data.status || "Warning";
+            div.querySelector("#status").style.color = GetColorForStatus(div.querySelector("#status").textContent);
 
-        div.querySelector("#status").textContent = data.status || "Warning";
-        div.querySelector("#status").style.color = GetColorForStatus(div.querySelector("#status").textContent);
+            div.querySelector("#name").textContent = name;
+            div.querySelector("#author").textContent = author;
+        } catch (e) {
+            console.error(e);
+        }
 
-        div.querySelector("#name").textContent = name;
-        div.querySelector("#author").textContent = author;
     }
 
-    function OnPluginError(plugin, error) {
+    function OnPluginError(data) {
+        let notif = new Notification(Notification.types.error);
+        let element = notif.create("Error", `An error occured in plugin "${data.name}":\n\t${data.error}`);
+        document.getElementById("notifications").appendChild(element);
 
+        console.error(data);
     }
 
     function OnPluginSelect(plugin) {
+        console.log(showObject("Jump Plugin", plugin));
         let name = plugin.name;
-        let author = plugin.author;
         let div = plugin.div;
         let description = plugin.description;
         let code = plugin.code;
@@ -252,6 +282,7 @@ try {
         let color = getComputedStyle(div).getPropertyValue('--interaction');
         currentPlugin.div.style.backgroundColor = adjustBrightness(color, 1.5);
 
+
         if (isCommand) {
             iscommand.style.backgroundColor = "var(--interaction)";
             iscommandP.textContent = "✓";
@@ -266,18 +297,18 @@ try {
         }
     }
 
-    window.api.on("pluginChange", (data) => {
-        OnPluginChange(data);
-    })
-
     window.api.on("pluginError", (data) => {
         OnPluginError(data);
     })
 
-    window.api.on("set-plugins", (plugins) => {
-        console.log("set--plugins--called");
-        for (let plugin of plugins) {
-            addPlugin(plugin);
+    window.api.on("set-plugins", plugins => {
+        try {
+            for (let plugin of plugins) {
+                // console.log(`Attempt to set plugin ${Object.entries(plugin)}`);
+                addPlugin(plugin.plugin);
+            }
+        } catch (e) {
+            console.error(e);
         }
     })
 } catch (e) {

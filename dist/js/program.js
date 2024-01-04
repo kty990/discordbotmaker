@@ -5,10 +5,24 @@ console.log = (function (old) {
     }
 }(console.log.bind(console)));
 
-
 let sbElement = document.getElementById("replacewithsidebar");
 
 window.api.send("redirect", null);
+
+window.api.on("add-to-body", (data) => {
+    let element = new DOMParser().parseFromString(data, 'text/html').body.firstChild;
+    document.body.appendChild(element);
+})
+
+window.api.on("add-to-notifs", (data) => {
+    let d = new DOMParser().parseFromString(data, 'text/html');
+    let element = d.body.firstChild;
+    d.getElementById("close-notif").addEventListener("click", () => {
+        element.remove();
+    })
+    document.getElementById("notifications").appendChild(element);
+
+})
 
 async function main() {
     if (sbElement) {

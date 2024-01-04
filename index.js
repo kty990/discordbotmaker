@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, autoUpdater, Notification } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, autoUpdater } = require('electron');
 const path = require('path');
 const config = require("./dist/config.json");
 const fs = require('fs');
@@ -7,9 +7,14 @@ const commands = require('./dist/js/commands.js');
 const auth = require("./dist/auth.json");
 const settings = require('./dist/js/settings.json');
 const history = require('./dist/hist.json');
+let Notification;
+import('./dist/js/global.mjs').then(module => {
+    Notification = module;
+})
 
 const discord = require('./dist/discord/main.js');
 // const twitch = require('./dist/twitch/twi.js');
+const { Server2Server } = require('./dist/discord/event.js');
 
 const EXTENSION = "dbm"
 
@@ -23,71 +28,176 @@ const getNumOfPlugins = () => {
     })
 }
 
+async function updatePlugin(data) {
+    const DEFAULT_PLUGIN = {
+        name: data.name,
+        default_name: data.default_name || data.name,
+        author: data.author || auth['username'],
+        description: data.description || "",
+        isCommand: data.isCommand || true,
+        code: data.code || ""
+    }
+    fs.writeFileSync(`./dist/plugins/${DEFAULT_PLUGIN.name}.json`, JSON.stringify(DEFAULT_PLUGIN, null, 2));
+}
+
+async function loadPlugins() {
+
+}
+
 let active_theme = null;
 
-var ALL_PLUGINS = [];
-const main = async (onload = false) => {
-    let data = await discord.LoadPlugins();
-    let globalPlugins = data[0];
-    let cmdPlugins = data[1];
-    for (let plugin of globalPlugins) {
-        let pData = { plugin: plugin, isCommand: false, status: "Running", errors: [] };
+class Coroutine {
+    constructor(callback) {
+        this.callback = callback;
+        this.onError = (error) => console.error(error);
+        this.isRunning = false;
+        this.generator = null;
+    }
+
+    start() {
+        if (!this.isRunning) {
+            this.isRunning = true;
+            this.generator = this.callback(); // Recreate the generator
+            this.resume();
+            console.log(`Coroutine started!`);
+        }
+    }
+
+    stop() {
+        this.isRunning = false;
+        console.log(`Coroutine stopped!`);
+    }
+
+    resume() {
+        if (!this.isRunning) return;
 
         try {
-            plugin.executeFunction();
-        } catch (e) {
-            pData.status = "Error";
-            pData.errors.push(e);
+            const { value, done } = this.generator.next();
+
+            if (!done) {
+                // Schedule the next iteration of the generator
+                setTimeout(() => this.resume(), 0);
+            }
+        } catch (error) {
+            // Handle errors using the onError function
+            this.onError(error);
+            this.stop(); // Stop the coroutine on error
         }
-        ALL_PLUGINS.push(pData);
-    }
-
-    for (let plugin of cmdPlugins) {
-        let pData = { plugin: plugin, isCommand: true, status: "Running", errors: [] };
-        ALL_PLUGINS.push(pData);
-    }
-    if (onload) {
-        discord.Action.fire(`${(globalPlugins.length + cmdPlugins.length)} plugins have been loaded!`);
-    } else {
-        discord.Action.fire(`Plugins have been reloaded!`);
     }
 }
 
-let DEFAULT_FILE_DATA = {
-    "commands": [
-        commands.help,
-        commands.info,
-        commands.kick,
-        commands.ban,
-        commands.play,
-        commands.pause,
-        commands.resume,
-        commands.stop,
-        commands.join,
-        commands.leave,
-        commands.cmds,
-        commands.about,
-        commands.error
-    ],
-    "guilds": [],
-    "author": "default_author"
-}
+const ALL_PLUGINS = [];
+const GLOBAL_PLUGINS = [];
 
-let commandList = [
-    commands.help,
-    commands.info,
-    commands.kick,
-    commands.ban,
-    commands.play,
-    commands.pause,
-    commands.resume,
-    commands.stop,
-    commands.join,
-    commands.leave,
-    commands.cmds,
-    commands.about,
-    commands.error
-];
+class GraphicsWindow {
+    constructor() {
+        try {
+            this.window = null;
+            this.current_z_index = 0;
+            this.layers = []; // List to store layers
+            this.active_layer = null; // Currently active layer
+
+            this.currentProject = null;
+
+            app.on('ready', () => {
+                this.createWindow();
+            });
+        } catch (e) {
+            let notif = new global.Notification(global.Notification.types.error);
+            let element = notif.create("Error", `An error occured trying to initialize:\n\t${e}`);
+            let parent = document.getElementById("notifications");
+            if (!parent) {
+                parent = document.createElement("div");
+                document.body.appendChild(parent)
+                parent.id = "notifications";
+            }
+            parent.appendChild(element);
+        }
+    }
+
+    async createWindow() {
+        this.window = new BrowserWindow({
+            width: 800,
+            height: 600,
+            minWidth: 800,   // Set the minimum width
+            minHeight: 600,  // Set the minimum height
+            frame: false,
+            webPreferences: {
+                nodeIntegration: true,
+                spellcheck: false,
+                preload: path.join(__dirname, './dist/js/preload.js')
+            },
+        });
+
+        discord.Action.add_handler((...args) => {
+            this.window.webContents.send("action", args);
+        })
+
+        // Set the window icon
+        const iconPath = path.join(__dirname, './dist/images/icon.png');
+        this.window.setIcon(iconPath);
+
+        await populateThemes(this.window).catch(console.error);
+
+        const menu = Menu.buildFromTemplate([]);
+        Menu.setApplicationMenu(menu);
+
+        this.window.setMenu(menu);
+
+        this.window.loadFile('./dist/html/index.html');
+
+        this.window.on('closed', () => {
+            this.window = null;
+        });
+
+    }
+}
+const graphicsWindow = new GraphicsWindow();
+
+const main = async (onload = false) => {
+    return new Promise(async (resolve, reject) => {
+        while (ALL_PLUGINS.length > 0) {
+            ALL_PLUGINS.splice(0, 1);
+        }
+        while (GLOBAL_PLUGINS.length > 0) {
+            let plugin = GLOBAL_PLUGINS.splice(0, 1)[0];
+            plugin.stop();
+        }
+
+        let data = await discord.LoadPlugins();
+        let [globalPlugins, cmdPlugins] = data;
+        for (let plugin of globalPlugins) {
+            let pData = { plugin: plugin, isCommand: false, status: "Running", errors: [] };
+            try {
+                function* Run() {
+                    new Function(plugin.code)({ discord });
+                }
+                let c = new Coroutine(Run);
+                c.start();
+                c.onError = function (error) {
+                    graphicsWindow.window.webContents.send("pluginError", { name: plugin.name, error })
+                }
+                GLOBAL_PLUGINS.push(c);
+            } catch (e) {
+                graphicsWindow.window.webContents.send("pluginError", { name: plugin.name, error: e })
+            }
+            ALL_PLUGINS.push(pData);
+        }
+
+        for (let plugin of cmdPlugins) {
+            let pData = { plugin: plugin, isCommand: true, status: "Running", errors: [] };
+            ALL_PLUGINS.push(pData);
+        }
+        if (onload === true) {
+            discord.Action.fire(`${(globalPlugins.length + cmdPlugins.length)} plugins have been loaded!`);
+        } else if (onload != null) {
+            discord.Action.fire(`Plugins have been reloaded!`);
+        }
+        resolve();
+    })
+}
+let commandList = commands.commands;
+
 
 let themeList = [];
 let themesMenu = [];
@@ -138,7 +248,6 @@ const populateThemes = (window) => {
             const filePath = path.join(directoryPath, file.name);
             const data = require(".\\" + filePath);
             let applyTheme = (d) => {
-                console.log(d);
                 window.webContents.send("apply-theme", d);
                 active_theme = d;
             }
@@ -153,69 +262,9 @@ const populateThemes = (window) => {
     })
 }
 
-class GraphicsWindow {
-    constructor() {
-        try {
-            this.window = null;
-            this.current_z_index = 0;
-            this.layers = []; // List to store layers
-            this.active_layer = null; // Currently active layer
 
-            this.currentProject = null;
 
-            app.on('ready', () => {
-                this.createWindow();
-            });
-        } catch (e) {
-            const NOTIFICATION_TITLE = 'Error'
-            const NOTIFICATION_BODY = `${e}`
 
-            new Notification({
-                title: NOTIFICATION_TITLE,
-                body: NOTIFICATION_BODY
-            }).show()
-        }
-    }
-
-    async createWindow() {
-        this.window = new BrowserWindow({
-            width: 800,
-            height: 600,
-            minWidth: 800,   // Set the minimum width
-            minHeight: 600,  // Set the minimum height
-            frame: false,
-            webPreferences: {
-                nodeIntegration: true,
-                spellcheck: false,
-                preload: path.join(__dirname, './dist/js/preload.js')
-            },
-        });
-
-        discord.Action.add_handler((...args) => {
-            this.window.webContents.send("action", args);
-        })
-
-        // Set the window icon
-        const iconPath = path.join(__dirname, './dist/images/icon.png');
-        this.window.setIcon(iconPath);
-
-        await populateThemes(this.window).catch(console.error);
-
-        const menu = Menu.buildFromTemplate([]);
-        Menu.setApplicationMenu(menu);
-
-        this.window.setMenu(menu);
-
-        this.window.loadFile('./dist/html/index.html');
-
-        this.window.on('closed', () => {
-            this.window = null;
-        });
-
-    }
-}
-
-const graphicsWindow = new GraphicsWindow();
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -223,54 +272,19 @@ app.on('window-all-closed', () => {
     }
 });
 
-// app.on('activate', () => {
-//     if (BrowserWindow.getAllWindows().length === 0) {
-//         graphicsWindow.createWindow();
-//     }
-// });
-
 
 ipcMain.on("redirect", async (event, data) => {
-    themeList = [];
+    /*themeList = [];
     themesMenu = [];
     await populateThemes(graphicsWindow.window);
     graphicsWindow.window.webContents.send("list-of-themes", themeList);
-    graphicsWindow.window.webContents.send("apply-theme", active_theme || null);
-    let plugins = [];
-    /**
-     * { name: "", author: "", status: "Running" }
-     */
-    function getFiles() {
-        return new Promise((resolve, reject) => {
-            fs.readdir("./dist/plugins/", (err, files) => {
-                resolve(files);
-            });
-        })
-    }
-
-    let files = await getFiles();
-    files.forEach((file) => {
-        let pluginData = require(`./dist/plugins/${file}`);
-        let name = pluginData.name;
-        let author = pluginData.author;
-        let description = pluginData.description;
-        let isCommand = pluginData.isCommand;
-        let code = pluginData.code;
-        plugins.push({
-            name: name,
-            author: author,
-            description: description,
-            isCommand: isCommand,
-            code: code
-        })
-    })
-    graphicsWindow.window.webContents.send("set-plugins", plugins);
+    graphicsWindow.window.webContents.send("apply-theme", active_theme || null);*/
+    await main(null);
+    graphicsWindow.window.webContents.send("set-plugins", ALL_PLUGINS);
 })
 
 
 ipcMain.on("loginAttempt", (event, data) => {
-    console.log(data);
-    console.log(auth);
     let canLogin = (auth['username'] == data['username'] && auth['password'] == data['pw']);
     if (!canLogin) {
         if (auth['username'] == null && auth['password'] == null) {
@@ -351,7 +365,6 @@ ipcMain.on("GetGuildFromID", (event, data) => {
     let guilds = discord.GetGuilds();
     for (let x = 0; x < guilds.length; x++) {
         const guild = guilds[x];
-        console.log(guild);
         if (guild.id == data) {
             graphicsWindow.window.webContents.send("GetGuildFromID", guild);
             return;
@@ -413,7 +426,6 @@ ipcMain.on("GetRolePermissionsForBot", (event, data) => {
 
 ipcMain.on("action", (event, data) => {
     if (data == "start") {
-        console.log("Starting...");
         discord.Action.fire("Starting...");
         discord.setCommands(commandList);
         discord.Start(auth.authToken);
@@ -445,15 +457,12 @@ ipcMain.on("settingsMod", (event, data) => {
             for (let guild of guilds) {
                 if (guild.id == id) {
                     return guild;
-                } else {
-                    console.log(id, guild.id);
                 }
             }
         }
     }
     let guilds = discord.GetGuilds();
     let guild = data['serverNickGuild'];
-    console.log("Members: ", hasID(guild.id)(guilds));
     guild = hasID(guild.id)(guilds);
     let servernick = data["serverNick"];
     const botMember = guild.members.cache.get(client.user.id);
@@ -473,7 +482,6 @@ autoUpdater.setFeedURL({
 
 var consoleOutput = [];
 ipcMain.on("console-action-home", (event, data) => {
-    console.log("console-action-home", data);
     if (data.set == true) {
         consoleOutput.push(data.value);
         history.output.push(data.value);
@@ -485,7 +493,6 @@ ipcMain.on("console-action-home", (event, data) => {
 
 var usedCommands = [];
 ipcMain.on("command-action-home", (event, data) => {
-    console.log("command-action-home", data);
     if (data.set == true) {
         usedCommands.push(data.value);
         history.commands.push(data.value);
@@ -497,7 +504,6 @@ ipcMain.on("command-action-home", (event, data) => {
 
 var modActions = [];
 ipcMain.on("mod-action-home", (event, data) => {
-    console.log("mod-action-home", data);
     if (data.set == true) {
         modActions.push(data.value);
         history.moderator.push(data.value);
@@ -509,7 +515,6 @@ ipcMain.on("mod-action-home", (event, data) => {
 
 var errActions = [];
 ipcMain.on("err-action-home", (event, data) => {
-    console.log("err-action-home", data);
     if (data.set == true) {
         errActions.push(data.value);
         // Modify the history
@@ -533,19 +538,25 @@ ipcMain.on("GetRolesViaGuildId", (event, data) => {
 
 ipcMain.on("pluginChange", (event, data) => {
     // Update in plugin file
-    let plugin = `var name = "${data.name}";
-        var default_name = "${data.default_name}";
-        var author = "${data.author}";
-        var description = "${data.description}";
-        var isCommand = ${data.isCommand};
-        var code = "${data.code}";
-        function executeFunction(...args) {
-            ${data.code}
+    const showObject = (obj) => {
+        let s = "\n\n--- Server Plugin Object ---\n\n";
+        for (const [key, value] of Object.entries(obj)) {
+            s = s + `{ ${key}\t${value} }\n`
         }
-        
-        module.exports = { name, author, description, isCommand, code, executeFunction };`
+        return s + "\n\n --- End of Server Plugin Object ---\n";
+    }
 
-    fs.writeFileSync(`./dist/plugins/${data.default_name}.js`, plugin);
+    const DEFAULT_PLUGIN = {
+        name: data.name,
+        default_name: data.default_name,
+        author: data.author,
+        description: data.description,
+        isCommand: data.isCommand,
+        code: data.code,
+        status: data.status
+    }
+
+    fs.writeFileSync(`./dist/plugins/${data.default_name}.json`, JSON.stringify(DEFAULT_PLUGIN, null, 2));
     graphicsWindow.window.webContents.send("pluginChange", data);
 
     discord.Action.fire(`${data.name} (Plugin) was modified`);
@@ -553,24 +564,10 @@ ipcMain.on("pluginChange", (event, data) => {
 })
 
 ipcMain.on("newPlugin", async (event, data) => {
-    const DEFAULT_PLUGIN = `var name = "Custom Plugin #${await getNumOfPlugins()}";
-    var default_name = "Custom Plugin #${await getNumOfPlugins()}";
-    var author = "${auth['username']}";
-    var description = ""
-    var isCommand = true;
-    var code = "";
-    function executeFunction(message, ...args) {
-        
-    }
-        
-    module.exports = { name, author, description, isCommand, code, executeFunction };`
-
-    let numOPlugins = await getNumOfPlugins();
-    let name = `Custom Plugin #${numOPlugins}`;
-    console.log(name);
-    fs.writeFileSync(`./dist/plugins/${name}.js`, DEFAULT_PLUGIN);
-    discord.Action.fire(`${name} (Plugin) was created!`);
-    graphicsWindow.window.webContents.send("newPlugin", { name: name, author: "", status: "Running" });
+    data.status = "Running";
+    let updated = updatePlugin(data);
+    discord.Action.fire(`${updated.name} (Plugin) was created!`);
+    graphicsWindow.window.webContents.send("newPlugin", { name: updated.name, author: "", status: "Running" });
     main();
 })
 
@@ -654,5 +651,12 @@ ipcMain.on("toggle-dev-tools", () => {
         graphicsWindow.window.webContents.closeDevTools();
     } else {
         graphicsWindow.window.webContents.openDevTools();
+    }
+})
+
+Server2Server.on((d) => {
+    const [meta, data] = d;
+    if (meta.client == true) {
+        graphicsWindow.window.webContents.send(meta.action, data);
     }
 })

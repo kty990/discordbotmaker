@@ -192,7 +192,6 @@ guildSelect.addEventListener("click", async () => {
                 }
             }
             permissions = permissions.sort();
-            console.log(permissions);
             for (let x = 0; x < permissionsList.length; x++) {
                 let per = permissionsList[x].toLowerCase().replace("_", " ").replace("_", " ").replace("_", " ");
                 let div = document.createElement("div");
@@ -246,7 +245,6 @@ function addError(data) {
 }
 
 function addCommand(data) {
-    console.log(`DATA: ${data}`, data.length);
     let div = document.createElement("div");
     let p = document.createElement("p");
     let p2 = document.createElement("p");
@@ -269,7 +267,6 @@ function addCommand(data) {
 }
 
 function addModeration(data) {
-    console.log(data);
     let div = document.createElement("div");
     let p = document.createElement("p");
     let p2 = document.createElement("p");
@@ -358,9 +355,6 @@ window.api.receive("action", (d) => {
 })
 
 
-
-
-
 async function main() {
     let output = await window.api.invoke("console-action-home", { set: false });
     // output.reverse();
@@ -385,10 +379,6 @@ async function main() {
         let data = action.split(",");
         addError(data);
     }
-
-    console.log("ALL THINGS THAT SHOULDBE DISPLAYED::::    ", output, commands, modActions, errActions);
-
-    // Get bot permissions
 }
 
 main();

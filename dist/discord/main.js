@@ -1,3 +1,34 @@
+/*
+let embed = {
+                            description: `<@${message.author.id}> does not have the valid permissions to use ${cmd.name}`,
+                            fields: [{
+                                name: "Required permission level".toUpperCase(),
+                                value: `${permissionName} (${cmd.adminLevel})`,
+                                inline: false
+                            },
+                            {
+                                name: "Your permission level".toUpperCase(),
+                                value: `${YpermissionName} (${cmd.adminLevel})`,
+                                inline: false
+                            }],
+                            author: {
+                                name: client.user.username,
+                                icon_url: client.user.avatarURL({ size: 256 })
+                            },
+                            color: 0xfc0000,
+                            timestamp: d.toISOString(),
+                            footer: {
+                                text: '\u2800',
+                                icon_url: '',
+                            },
+                        }
+*/
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+
 // ** Bot Dependancies **
 const Discord = require('discord.js');
 const { Guild } = require('discord.js');
@@ -35,11 +66,15 @@ function ShowError(msg) {
     let e = {};
 }
 
-var presence = {
-    type: Discord.ActivityType.Playing,
-    name: "the default game!",
-    status: 'idle'
+class Presence {
+    constructor(type, name, status) {
+        this.type = type;
+        this.name = name;
+        this.status = status;
+    }
 }
+
+var presence = new Presence(Discord.ActivityType.Playing, "the default game!", "idle");
 
 const guilds = [];
 
@@ -48,26 +83,37 @@ var setCommands = (cmds) => {
     commands = cmds;
 }
 
+
 let pluginCommands = [];
 
-var getCommandByName = (name) => {
-    for (let x = 0; x < commands.length; x++) {
-        if (commands[x].name.toLowerCase().substring(0, name.length) == name.toLowerCase()) {
-            return commands[x];
+var getCommandByName = (queryName) => {
+    try {
+        //
+        for (let x = 0; x < commands.length; x++) {
+            const command = commands[x];
+            const [name, adminLevel, description, args, code] = command.deconstruct();
+            if (name.toLowerCase().substring(0, queryName.length) == queryName.toLowerCase()) {
+                return command;
+            }
         }
-    }
 
-    for (let x = 0; x < pluginCommands.length; x++) {
-        if (pluginCommands[x].name.toLowerCase().substring(0, name.length) == name.toLowerCase()) {
-            return pluginCommands[x];
+        for (let x = 0; x < pluginCommands.length; x++) {
+            const command = pluginCommands[x];
+            const { name, default_name, author, description, isCommand, code } = command;
+            if (name.toLowerCase().substring(0, queryName.length) == queryName.toLowerCase()) {
+                return command;
+            }
         }
+        console.log(`Couldn't find command with name "${queryName}"`);
+        return null;
+    } catch (e) {
+        console.error(`An error occured trying to run ${queryName} (command):\n\t- ${e}`);
     }
-    console.log(`Couldn't find command with name "${name}"`);
-    return null;
 }
 let prefix = "!";
 
 const setPrefix = np => {
+    console.log("NEW PREFIX: ", np);
     prefix = np;
 }
 
@@ -120,9 +166,13 @@ async function startSpeaking(channel) {
 
 function executeCommand(name, ...args) {
     let cmd = getCommandByName(name);
-    cmd.executeFunction(null, ...args).catch((e) => {
-        Action.fire("err", `${e}`);
-    });
+    if (cmd) {
+        if (cmd.name) {
+
+        } else {
+            const [name, adminLevel, description, args] = cmd;
+        }
+    }
 }
 
 function Start(token) {
@@ -137,6 +187,7 @@ function Start(token) {
     client.on("error", (err) => {
         Action.fire("err", `${err}`);
     })
+
     client.login(token)
         .then(async () => {
             Action.fire("Successful login!");
@@ -151,6 +202,11 @@ function Start(token) {
             Action.fire(`${e}`);
         });
 
+    client.on('ready', () => {
+        client.user.setActivity(presence.name, { type: presence.type, status: presence.status });
+    })
+
+
     client.on("guildCreate", guild => {
         if (!guilds.includes(guild)) {
             guilds.push(guild);
@@ -160,87 +216,144 @@ function Start(token) {
     client.on("messageCreate", async message => {
         // console.log("Message recieved: ", message.content);
         if (message.author.id !== client.user.id) {
-            console.log("Not a bot message");
 
             if (message.content.startsWith(prefix)) {
-                console.log("Starts with prefix");
                 let test = message.content.split(" ")[0].replace(prefix, "")
                 let cmd = getCommandByName(test);
-                if (cmd != null) {
-                    console.log("Command found!");
+                const GetAdminLevel = () => {
+                    const member = message.member;
+                    const roles = member.roles.cache;
+                    let adminLevel = 0;
+                    for (const [snowflake, role] of roles) {
+                        // Do comparison between role.id and all ids in settings.json
+                        for (let data of settings.moderatorRoles) {
+                            if (role.id == data.id) {
+                                adminLevel = 1;
+                                break;
+                            }
+                        }
+
+                        for (let data of settings.ownerRoles) {
+                            if (role.id == data.id) {
+                                adminLevel = 2;
+                                break;
+                            }
+                        }
+                    }
+                    return adminLevel;
+                }
+                if (cmd != null && cmd != undefined) {
                     let args = message.content.split(" ");
                     args.splice(0, 1);
-                    const GetAdminLevel = () => {
-                        const member = message.member;
-                        const roles = member.roles.cache;
-                        let adminLevel = 0;
-                        for (const [snowflake, role] of roles) {
-                            // Do comparison between role.id and all ids in settings.json
-                            for (let data of settings.moderatorRoles) {
-                                if (role.id == data.id) {
-                                    adminLevel = 1;
-                                    break;
-                                }
+
+                    if (cmd.name) {
+                        // Not plugin
+
+                        if (GetAdminLevel() >= cmd.adminLevel) {
+                            cmd.executeFunction(message, ...args).catch((e) => {
+                                Action.fire("err", `${e}`);
+                            });
+                        } else {
+                            let permissionName = "Everyone";
+                            if (cmd.adminLevel == 1) {
+                                permissionName = "Moderator"
+                            } else if (cmd.adminLevel == 2) {
+                                permissionName = "Owner";
                             }
 
-                            for (let data of settings.ownerRoles) {
-                                if (role.id == data.id) {
-                                    adminLevel = 2;
-                                    break;
-                                }
+                            let YpermissionName = "Everyone";
+                            if (GetAdminLevel() == 1) {
+                                YpermissionName = "Moderator"
+                            } else if (GetAdminLevel() == 2) {
+                                YpermissionName = "Owner";
                             }
+                            let d = new Date();
+                            let embed = {
+                                description: `<@${message.author.id}> does not have the valid permissions to use ${cmd.name}`,
+                                fields: [{
+                                    name: "Required permission level".toUpperCase(),
+                                    value: `${permissionName} (${cmd.adminLevel})`,
+                                    inline: false
+                                },
+                                {
+                                    name: "Your permission level".toUpperCase(),
+                                    value: `${YpermissionName} (${cmd.adminLevel})`,
+                                    inline: false
+                                }],
+                                author: {
+                                    name: client.user.username,
+                                    icon_url: client.user.avatarURL({ size: 256 })
+                                },
+                                color: 0xfc0000,
+                                timestamp: d.toISOString(),
+                                footer: {
+                                    text: '\u2800',
+                                    icon_url: '',
+                                },
+                            }
+                            await message.channel.send({
+                                embeds: [embed],
+                            });
                         }
-                        console.log(adminLevel);
-                        return adminLevel;
-                    }
-
-                    /** */
-                    console.log(`Is Admin level: ${GetAdminLevel()}, ${cmd.adminLevel}`);
-                    if (GetAdminLevel() >= cmd.adminLevel) {
-                        cmd.executeFunction(message, ...args).catch((e) => {
-                            Action.fire("err", `${e}`);
-                        });
                     } else {
-                        let permissionName = "Everyone";
-                        if (cmd.adminLevel == 1) {
-                            permissionName = "Moderator"
-                        } else if (cmd.adminLevel == 2) {
-                            permissionName = "Owner";
+                        // Plugin
+                        const [name, adminLevel, description, args] = cmd;
+                        if (GetAdminLevel() >= adminLevel) {
+
+
+
+                            /* Should be run on the server! */
+
+                            cmd.executeFunction(message, ...args).catch((e) => {
+                                Action.fire("err", `${e}`);
+                            });
+
+
+
+                        } else {
+                            let permissionName = "Everyone";
+                            if (adminLevel == 1) {
+                                permissionName = "Moderator"
+                            } else if (adminLevel == 2) {
+                                permissionName = "Owner";
+                            }
+
+                            let YpermissionName = "Everyone";
+                            if (GetAdminLevel() == 1) {
+                                YpermissionName = "Moderator"
+                            } else if (GetAdminLevel() == 2) {
+                                YpermissionName = "Owner";
+                            }
+                            let d = new Date();
+                            let embed = {
+                                description: `<@${message.author.id}> does not have the valid permissions to use ${name}`,
+                                fields: [{
+                                    name: "Required permission level".toUpperCase(),
+                                    value: `${permissionName} (${adminLevel})`,
+                                    inline: false
+                                },
+                                {
+                                    name: "Your permission level".toUpperCase(),
+                                    value: `${YpermissionName} (${adminLevel})`,
+                                    inline: false
+                                }],
+                                author: {
+                                    name: client.user.username,
+                                    icon_url: client.user.avatarURL({ size: 256 })
+                                },
+                                color: 0xfc0000,
+                                timestamp: d.toISOString(),
+                                footer: {
+                                    text: '\u2800',
+                                    icon_url: '',
+                                },
+                            }
+                            await message.channel.send({
+                                embeds: [embed],
+                            });
                         }
 
-                        let YpermissionName = "Everyone";
-                        if (GetAdminLevel() == 1) {
-                            YpermissionName = "Moderator"
-                        } else if (GetAdminLevel() == 2) {
-                            YpermissionName = "Owner";
-                        }
-                        let d = new Date();
-                        let embed = {
-                            description: `<@${message.author.id}> does not have the valid permissions to use ${cmd.name}`,
-                            fields: [{
-                                name: "Required permission level".toUpperCase(),
-                                value: `${permissionName} (${cmd.adminLevel})`,
-                                inline: false
-                            },
-                            {
-                                name: "Your permission level".toUpperCase(),
-                                value: `${YpermissionName} (${cmd.adminLevel})`,
-                                inline: false
-                            }],
-                            author: {
-                                name: client.user.username,
-                                icon_url: client.user.avatarURL({ size: 256 })
-                            },
-                            color: 0xfc0000,
-                            timestamp: d.toISOString(),
-                            footer: {
-                                text: '\u2800',
-                                icon_url: '',
-                            },
-                        }
-                        await message.channel.send({
-                            embeds: [embed],
-                        });
+
                     }
 
                     /** */
@@ -318,6 +431,24 @@ function GetGuilds() {
     return guilds;
 }
 
+/**
+ * 
+ * @param {string} path 
+ */
+function LoadJSONFile(path) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(path, 'utf-8', (err, data) => {
+            if (err) reject(err);
+            try {
+                let d = JSON.parse(data);
+                resolve(d);
+            } catch (e) {
+                console.error(e);
+            }
+        })
+    })
+}
+
 async function LoadPlugins() {
     const GetFiles = () => {
         return new Promise((resolve, reject) => {
@@ -330,13 +461,14 @@ async function LoadPlugins() {
             });
         })
     }
-    Action.fire("Reloading plugins... please wait a moment for this to finish!");
     let files = await GetFiles();
     let globalPlugins = [];
     pluginCommands = [];
-    console.log(files, typeof files);
     for (let file of files) {
-        let data = require(`../plugins/${file}`);
+        /**
+         * This has to be modified since the plugins are now stored as JSON not JS
+         */
+        let data = await LoadJSONFile(`./dist/plugins/${file}`)
         if (data.isCommand) {
             pluginCommands.push(data);
         } else {
@@ -346,11 +478,29 @@ async function LoadPlugins() {
     return [globalPlugins, pluginCommands];
 }
 
+/**
+ * 
+ * @param {Presence} newPresence 
+ */
+function setPresence(newPresence) {
+    if (newPresence instanceof Presence) {
+        presence = newPresence;
+        if (client) {
+            try {
+                client.user.setActivity(presence.name, { type: presence.type, status: presence.status });
+            } catch (e) {
+
+            }
+        }
+    }
+}
+
 module.exports = {
     Start,
     Stop,
     add_handler,
-    presence,
+    Presence,
+    setPresence,
     Action,
     setCommands,
     GetClient,

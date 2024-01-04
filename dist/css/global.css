@@ -1,0 +1,57 @@
+:root {
+    --body: #1e1f22;
+    --menu: #2b2d31;
+    --interaction: #313338;
+    --text: #f2f3f5;
+    --text-hover: #7d7d7d;
+    --border: #ffffff66;
+    --active: #7289d9;
+    --tut-menu: #2b2d31cc;
+    --notification: #000000;
+    --notification-hover: #000000;
+}
+
+#notifications {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 15vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.notification {
+    width: 100%;
+    height: fit-content;
+    margin: 0;
+    padding: 0;
+    background-color: var(--notification);
+    margin-bottom: 10px;
+
+}
+
+#topbar {
+    width: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
+    display: flex;
+}
+
+.notification>#topbar>#close-notif {
+    margin-left: auto;
+    position: relative;
+    right: 5px;
+}
+
+.notification>#topbar>#title {
+    position: relative;
+    left: 5px;
+}
+
+.notification>#description {
+    position: relative;
+    left: 5px;
+}

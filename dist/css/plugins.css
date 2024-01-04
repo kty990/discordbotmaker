@@ -180,6 +180,7 @@
     margin-left: auto;
     position: relative;
     right: 1.25vw;
+    color: var(--text-hover);
 }
 
 .plugin>#status {

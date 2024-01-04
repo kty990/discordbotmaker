@@ -32,10 +32,6 @@ async function wait(ms) {
     })
 }
 
-function redirect(value) {
-    console.log("Redirect...");
-}
-
 form.addEventListener("submit", event => {
     window.api.send("loginAttempt", { "username": username.value, "pw": password.value });
     event.preventDefault();
@@ -48,11 +44,8 @@ reset.addEventListener("click", () => {
 
 window.api.receive("loginAttempt", (...args) => {
     if (args[0] === true) {
-        redirect("home");
         warning.id = "pw-warning-inactive";
     } else {
         warning.id = "pw-warning";
     }
-
-    console.log(args);
 })
