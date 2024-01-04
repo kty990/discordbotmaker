@@ -218,6 +218,7 @@ function Start(token) {
         if (message.author.id !== client.user.id) {
 
             if (message.content.startsWith(prefix)) {
+                console.log("Trying to find command.");
                 let test = message.content.split(" ")[0].replace(prefix, "")
                 let cmd = getCommandByName(test);
                 const GetAdminLevel = () => {
@@ -242,15 +243,16 @@ function Start(token) {
                     }
                     return adminLevel;
                 }
+                console.log(cmd, GetAdminLevel());
                 if (cmd != null && cmd != undefined) {
                     let args = message.content.split(" ");
                     args.splice(0, 1);
 
-                    if (cmd.name) {
+                    if (cmd.executeFunction != null && cmd.executeFunction != undefined) {
                         // Not plugin
 
                         if (GetAdminLevel() >= cmd.adminLevel) {
-                            cmd.executeFunction(message, ...args).catch((e) => {
+                            cmd.executeFunction(message, Discord, ...args).catch((e) => {
                                 Action.fire("err", `${e}`);
                             });
                         } else {
@@ -297,18 +299,13 @@ function Start(token) {
                         }
                     } else {
                         // Plugin
-                        const [name, adminLevel, description, args] = cmd;
-                        if (GetAdminLevel() >= adminLevel) {
+                        const { name, code, status, adminLevel } = cmd;
 
-
-
-                            /* Should be run on the server! */
+                        if (GetAdminLevel() >= adminLevel && status.toLowerCase() == "running" || status.toLowerCase() == "warning" || status.toLowerCase() == "info") {
 
                             cmd.executeFunction(message, ...args).catch((e) => {
                                 Action.fire("err", `${e}`);
                             });
-
-
 
                         } else {
                             let permissionName = "Everyone";
@@ -468,8 +465,14 @@ async function LoadPlugins() {
         /**
          * This has to be modified since the plugins are now stored as JSON not JS
          */
-        let data = await LoadJSONFile(`./dist/plugins/${file}`)
+        let data = await LoadJSONFile(`./dist/plugins/${file}`);
+
+        if (data.status == "Restart") {
+            data.status = "Running";
+        }
+
         if (data.isCommand) {
+
             pluginCommands.push(data);
         } else {
             globalPlugins.push(data);

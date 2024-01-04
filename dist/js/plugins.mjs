@@ -33,6 +33,8 @@ try {
     let newPlugin = document.getElementById("newPlugin");
     let savePlugin = document.getElementById("savePlugin");
     let pluginList = document.getElementById("pluginList");
+    let disableBtn = document.getElementsByClassName("disableplugin")[0];
+    let enableBtn = document.getElementsByClassName("enableplugin")[0];
 
     let codeArea = document.getElementById("codeBox");
     let pluginNameInput = document.getElementById("pluginName");
@@ -94,7 +96,7 @@ try {
     }
 
     class MyPlugin {
-        constructor(name, default_name, author, description, div, isCommand = true, code = "<TEST CODE>", executeFunction = () => { }, status = "Warning") {
+        constructor(name, default_name, author, description, div, isCommand = true, code = "<TEST CODE>", executeFunction = () => { }, status = "Unknown") {
             this.name = name;
             this.default_name = default_name;
             this.author = author;
@@ -167,16 +169,34 @@ try {
         addPlugin(n);
     })
 
+    disableBtn.addEventListener('click', () => {
+        if (currentPlugin.status != "Error") {
+            currentPlugin.status = "Disabled";
+            OnPluginChange(currentPlugin);
+            window.api.send("pluginChange", currentPlugin.send());
+        }
+    })
+
+    enableBtn.addEventListener("click", () => {
+        if (currentPlugin.status != "Running" && currentPlugin.status != "Warning") {
+            currentPlugin.status = "Restart";
+            OnPluginChange(currentPlugin);
+            window.api.send("pluginChange", currentPlugin.send());
+        }
+    })
+
     function addPlugin(data) {
         if (data == undefined || data == null) {
             console.warn("Undefined plugin");
             return;
         }
+        console.log("Data..");
+        console.log(data);
         let name = data.name;
         let default_name = data.default_name;
         let author = data.author;
         let description = data.description || "";
-        let isCommand = data.isCommand || true;
+        let isCommand = data.isCommand;
         let code = data.code || "";
         let executeFunction = () => {
 
@@ -220,6 +240,8 @@ try {
                 return "#10ad12"
             case "warning":
                 return "#d9ae21"
+            case "restart":
+                return "#ffa500 "
             case "error":
                 return "#910000"
             case "disabled":

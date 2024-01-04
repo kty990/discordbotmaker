@@ -15,10 +15,10 @@
 
     <div id="pluginList">
         <div id="pluginMods">
-            <div class="pluginMod">
+            <div class="pluginMod enableplugin">
                 Enable
             </div>
-            <div class="pluginMod">
+            <div class="pluginMod disableplugin">
                 Disable
             </div>
             <div class="pluginMod">
@@ -116,31 +116,33 @@
 
             </div>
             <div id="args">
-
-                <!-- WRITE THE CSS TO MAKE THIS LOOK GOOD THEN ADD THE JS FUNCTIONALITY -->
                 <div class="arg">
-                    <input>
-                    <div class="dropdown">
-
-                    </div>
+                    <p id="argName">1</p>
+                    <input type="text" class="argInput">
                 </div>
 
                 <div class="arg">
-                    <input>
-                    <div class="dropdown">
-
-                    </div>
+                    <p id="argName">2</p>
+                    <input type="text" class="argInput">
                 </div>
 
                 <div class="arg">
-                    <input>
-                    <div class="dropdown">
-
-                    </div>
+                    <p id="argName">3</p>
+                    <input type="text" class="argInput">
                 </div>
 
+                <div class="arg">
+                    <p id="argName">4</p>
+                    <input type="text" class="argInput">
+                </div>
+
+                <div class="arg">
+                    <p id="argName">5</p>
+                    <input type="text" class="argInput">
+                </div>
             </div>
             <div id="code">
+                <p id="args-code">Available Parameters ............ discord, args</p>
                 <p>Add your code here:</p>
                 <textarea id="codeBox"></textarea>
             </div>

@@ -243,7 +243,7 @@ fs = error.executeFunction.toString();
 code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 error.code = code || '';
 
-let notify = new Command("notify", owner, ["Type", "Description"], "Shows a notification for testing in the DBM IDE.");
+let notify = new Command("notify", owner, ["Type", "Description"], "Shows a notification for testing in the DBM UI.");
 notify.executeFunction = async (message, ...args) => {
     let type = args[0];
     let notif = new Notification(Notification.types.info);

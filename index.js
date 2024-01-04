@@ -34,7 +34,7 @@ async function updatePlugin(data) {
         default_name: data.default_name || data.name,
         author: data.author || auth['username'],
         description: data.description || "",
-        isCommand: data.isCommand || true,
+        isCommand: data.isCommand,
         code: data.code || ""
     }
     fs.writeFileSync(`./dist/plugins/${DEFAULT_PLUGIN.name}.json`, JSON.stringify(DEFAULT_PLUGIN, null, 2));
@@ -59,13 +59,13 @@ class Coroutine {
             this.isRunning = true;
             this.generator = this.callback(); // Recreate the generator
             this.resume();
-            console.log(`Coroutine started!`);
+            // console.log(`Coroutine started!`);
         }
     }
 
     stop() {
         this.isRunning = false;
-        console.log(`Coroutine stopped!`);
+        // console.log(`Coroutine stopped!`);
     }
 
     resume() {
@@ -80,7 +80,7 @@ class Coroutine {
             }
         } catch (error) {
             // Handle errors using the onError function
-            this.onError(error);
+            this.onError(`Error: ${error}`);
             this.stop(); // Stop the coroutine on error
         }
     }
@@ -437,7 +437,7 @@ ipcMain.on("action", (event, data) => {
 })
 
 ipcMain.on("commandList", (event, data) => {
-    graphicsWindow.window.webContents.send("commandList", commands.commands);
+    graphicsWindow.window.webContents.send("commandList", commands.commands.map(c => c.data));
 })
 
 ipcMain.on("settingsMod", (event, data) => {
@@ -486,9 +486,8 @@ ipcMain.on("console-action-home", (event, data) => {
         consoleOutput.push(data.value);
         history.output.push(data.value);
         fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
-    } else {
-        graphicsWindow.window.webContents.send("console-action-home", consoleOutput);
     }
+    graphicsWindow.window.webContents.send("console-action-home", consoleOutput);
 })
 
 var usedCommands = [];
@@ -497,9 +496,8 @@ ipcMain.on("command-action-home", (event, data) => {
         usedCommands.push(data.value);
         history.commands.push(data.value);
         fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
-    } else {
-        graphicsWindow.window.webContents.send("command-action-home", usedCommands);
     }
+    graphicsWindow.window.webContents.send("command-action-home", usedCommands);
 })
 
 var modActions = [];
@@ -508,9 +506,7 @@ ipcMain.on("mod-action-home", (event, data) => {
         modActions.push(data.value);
         history.moderator.push(data.value);
         fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
-    } else {
-        graphicsWindow.window.webContents.send("mod-action-home", modActions);
-    }
+    } graphicsWindow.window.webContents.send("mod-action-home", modActions);
 })
 
 var errActions = [];
@@ -520,9 +516,7 @@ ipcMain.on("err-action-home", (event, data) => {
         // Modify the history
         history.errors.push(data.value);
         fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
-    } else {
-        graphicsWindow.window.webContents.send("err-action-home", errActions);
-    }
+    } graphicsWindow.window.webContents.send("err-action-home", errActions);
 })
 
 ipcMain.on("GetRolesViaGuildId", (event, data) => {
@@ -553,7 +547,7 @@ ipcMain.on("pluginChange", (event, data) => {
         description: data.description,
         isCommand: data.isCommand,
         code: data.code,
-        status: data.status
+        status: data.status || "Running"
     }
 
     fs.writeFileSync(`./dist/plugins/${data.default_name}.json`, JSON.stringify(DEFAULT_PLUGIN, null, 2));
@@ -563,11 +557,17 @@ ipcMain.on("pluginChange", (event, data) => {
     main();
 })
 
-ipcMain.on("newPlugin", async (event, data) => {
-    data.status = "Running";
-    let updated = updatePlugin(data);
+ipcMain.on("newPlugin", async () => {
+    let updated = updatePlugin({
+        name: `Custom Plugin #${await getNumOfPlugins()}`,
+        default_name: `Custom Plugin #${await getNumOfPlugins()}`,
+        author: auth['username'],
+        description: "",
+        isCommand: true,
+        code: ""
+    });
     discord.Action.fire(`${updated.name} (Plugin) was created!`);
-    graphicsWindow.window.webContents.send("newPlugin", { name: updated.name, author: "", status: "Running" });
+    graphicsWindow.window.webContents.send("newPlugin", { name: updated.name, author: auth['username'], status: "Running" });
     main();
 })
 

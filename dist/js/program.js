@@ -24,6 +24,17 @@ window.api.on("add-to-notifs", (data) => {
 
 })
 
+function createNotification(t = "Notification", description = "Something went wrong! Error Code: 500", type) {
+    const notif = `<div class="notification">
+    <div id="topbar"${(type !== null) ? `style="background-color:${type};"` : ''}>
+        <p id="title">${t}</p>
+        <p id="close-notif">X</p>
+    </div>
+    <p id="description-notif">${description}</p>
+</div>`;
+    return notif;
+}
+
 async function main() {
     if (sbElement) {
         await fetch("../html/sidebar.html")
@@ -109,6 +120,25 @@ window.api.on("action", (d) => {
         window.api.send("mod-action-home", { set: true, value: `${data}` });
     } else if (data[0] == "err") {
         window.api.send("err-action-home", { set: true, value: `${data}` });
+
+        try {
+            let notification = createNotification("Error", data[1], "#cc0000");
+            let d = new DOMParser().parseFromString(notification, 'text/html');
+            let element = d.body.firstChild;
+            d.getElementById("close-notif").addEventListener("click", () => {
+                element.remove();
+            })
+            if (!document.getElementById("notifications")) {
+                let div = document.createElement("div");
+                div.id = "notifications";
+                document.body.appendChild(div);
+            }
+            document.getElementById("notifications").appendChild(element);
+
+        } catch (e) {
+            console.error(e);
+        }
+
     } else {
         window.api.send("console-action-home", { set: true, value: `${data}` });
     }

@@ -64,13 +64,26 @@ function adjustBrightness(color, brightness) {
 
 async function main() {
     let commands = await window.api.invoke("commandList", null);
+    console.log(`Commands:`);
+    console.log(commands);
     commands.forEach((command) => {
         let n = command[0];
         let adminLevel = command[1];
         let div = document.createElement("div");
         div.classList.add("command");
         let name = document.createElement("p");
-        name.textContent = n;
+
+        let args = command[3];
+
+        name.textContent = `${n}`;
+        if (args) {
+            if (args.length > 0) {
+                args = args.map(c => `<${c}>`).join(" ")
+                name.textContent = `${n} ${args.toLowerCase()}`;
+            }
+        }
+
+
         div.appendChild(name);
         let desc = document.createElement("p");
         desc.textContent = command[2];

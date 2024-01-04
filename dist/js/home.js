@@ -120,7 +120,6 @@ const permissionsList = [
     'view_soundboard',
 ];
 
-
 selectionArea.style.display = "none";
 
 guildSelect.addEventListener("click", async () => {
@@ -321,11 +320,6 @@ window.api.receive("saveToken", () => {
     window.api.send("alert", "Saved!");
 })
 
-
-
-
-
-
 tokenTutorial.addEventListener("click", () => {
     if (tutorial.style.display !== "block") {
         tutorial.style.display = "block";
@@ -333,24 +327,6 @@ tokenTutorial.addEventListener("click", () => {
     } else {
         tutorial.style.display = "none";
         tutorialBlur.style.display = "none";
-    }
-})
-
-
-window.api.receive("action", (d) => {
-    let data = d[0];
-
-    //              TYPE          ARGS..............................
-    //Action.fire("command", `${message.user}`, cmd.name, message.content);
-
-    if (data[0] == "command") {
-        addCommand(data);
-    } else if (data[0] == "mod") {
-        addModeration(data);
-    } else if (data[0] == "err") {
-        addError(data);
-    } else {
-        addAction(data);
     }
 })
 

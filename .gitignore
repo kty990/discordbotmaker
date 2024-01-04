@@ -3,3 +3,4 @@ node_modules
 npm*
 npx*
 dist/plugins
+dist/auth.json
