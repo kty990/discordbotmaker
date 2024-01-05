@@ -4,3 +4,5 @@ npm*
 npx*
 dist/plugins
 dist/auth.json
+electron*
+install*

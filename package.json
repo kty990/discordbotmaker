@@ -47,14 +47,13 @@
   },
   "keywords": [],
   "license": "MIT",
-  "description": "",
+  "description": "WIP",
   "dependencies": {
     "@discordjs/voice": "^0.16.1",
-    "discord.js": "^14.0.3",
-    "discordbotmaker": "file:"
+    "discord.js": "^14.0.3"
   },
   "devDependencies": {
-    "electron": "^25.9.5",
+    "electron": "^28.1.1",
     "electron-builder": "^24.9.1"
   }
 }

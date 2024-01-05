@@ -225,6 +225,17 @@ stp.addEventListener("click", () => {
     window.api.send("action", "stop");
 })
 
+function createNotification(t = "Notification", description = "Something went wrong! Error Code: 500", type) {
+    const notif = `<div class="notification">
+    <div id="topbar"${(type !== null) ? `style="background-color:${type};"` : ''}>
+        <p id="title">${t}</p>
+        <p id="close-notif">X</p>
+    </div>
+    <p id="description-notif">${description}</p>
+</div>`;
+    return notif;
+}
+
 window.api.send("setToken", null);
 window.api.once("setToken", (token) => {
     tokenField.value = `${token}`;
@@ -299,6 +310,23 @@ function addModeration(data) {
     div.appendChild(p5);
     modLog.appendChild(div);
 }
+
+window.api.on("action", (d) => {
+    let data = d[0];
+    console.log(`Data from home.js: ${data}`);
+    //              TYPE          ARGS..............................
+    //Action.fire("command", `${message.user}`, cmd.name, message.content);
+
+    if (data[0] == "command") {
+        addCommand(data);
+    } else if (data[0] == "mod") {
+        addModeration(data);
+    } else if (data[0] == "err") {
+        addError(data);
+    } else {
+        addAction(data);
+    }
+})
 
 showToken.addEventListener("change", (event) => {
     let checked = event.target.checked;

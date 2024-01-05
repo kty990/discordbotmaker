@@ -32,7 +32,7 @@ process.on('unhandledRejection', (reason, promise) => {
 // ** Bot Dependancies **
 const Discord = require('discord.js');
 const { Guild } = require('discord.js');
-const { Action } = require('./event.js');
+const { Action, Server2Server } = require('./event.js');
 const fs = require('fs');
 
 const { createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior } = require('@discordjs/voice');
@@ -243,7 +243,7 @@ function Start(token) {
                     }
                     return adminLevel;
                 }
-                console.log(cmd, GetAdminLevel());
+                const userAdminLevel = GetAdminLevel();
                 if (cmd != null && cmd != undefined) {
                     let args = message.content.split(" ");
                     args.splice(0, 1);
@@ -301,12 +301,53 @@ function Start(token) {
                         // Plugin
                         const { name, code, status, adminLevel } = cmd;
 
-                        if (GetAdminLevel() >= adminLevel && status.toLowerCase() == "running" || status.toLowerCase() == "warning" || status.toLowerCase() == "info") {
+                        if (userAdminLevel >= adminLevel && status.toLowerCase() == "running" || status.toLowerCase() == "warning" || status.toLowerCase() == "info") {
 
-                            cmd.executeFunction(message, ...args).catch((e) => {
-                                Action.fire("err", `${e}`);
+                            const foo = new Function('discord', 'args', cmd.code || "");
+                            try {
+                                foo(Discord, args);
+                            } catch (e) {
+                                cmd.status = "Error";
+                                Server2Server.fire({ meta: { action: "pluginError", client: true }, data: { error: e, name: cmd.name } });
+                            }
+
+                        } else if (userAdminLevel >= adminLevel) {
+                            const mapping = [
+                                'Everyone',
+                                'Moderator',
+                                'Owner'
+                            ]
+                            let embed = {
+                                description: `<@${message.author.id}> tried to use ${name}`,
+                                fields: [{
+                                    name: `Your Permission Level`.toUpperCase(),
+                                    value: `${mapping[userAdminLevel]} (${userAdminLevel})`,
+                                    inline: true
+                                },
+                                {
+                                    name: `Required Permission Level`,
+                                    value: `${mapping[adminLevel]} (${adminLevel})`,
+                                    inline: true
+                                },
+                                {
+                                    name: `Error`,
+                                    value: `The plugin command "${name}" is either disabled or an error was thrown preventing it from running.`,
+                                    inline: false
+                                }],
+                                author: {
+                                    name: client.user.username,
+                                    icon_url: client.user.avatarURL({ size: 256 })
+                                },
+                                color: 0xfc0000,
+                                timestamp: d.toISOString(),
+                                footer: {
+                                    text: '\u2800',
+                                    icon_url: '',
+                                },
+                            }
+                            await message.channel.send({
+                                embeds: [embed],
                             });
-
                         } else {
                             let permissionName = "Everyone";
                             if (adminLevel == 1) {
@@ -322,6 +363,7 @@ function Start(token) {
                                 YpermissionName = "Owner";
                             }
                             let d = new Date();
+                            console.log("YES");
                             let embed = {
                                 description: `<@${message.author.id}> does not have the valid permissions to use ${name}`,
                                 fields: [{

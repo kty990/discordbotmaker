@@ -41,7 +41,11 @@
     "command,sheldooper,test,-test,2024-01-03, 9:56:54 p.m.",
     "command,sheldooper,test,-test,2024-01-03, 9:57:49 p.m.",
     "command,sheldooper,test,-test,2024-01-03, 10:59:02 p.m.",
-    "command,sheldooper,test,-test,2024-01-03, 10:59:45 p.m."
+    "command,sheldooper,test,-test,2024-01-03, 10:59:45 p.m.",
+    "command,sheldooper,test,-test,2024-01-04, 3:21:17 p.m.",
+    "command,sheldooper,test,-test,2024-01-04, 3:24:38 p.m.",
+    "command,sheldooper,test,-test,2024-01-04, 3:30:43 p.m.",
+    "command,sheldooper,test,-test,2024-01-04, 4:17:02 p.m."
   ],
   "output": [
     "Starting...",
@@ -194,7 +198,34 @@
     "test (Plugin) was modified",
     "Plugins have been reloaded!",
     "test (Plugin) was modified",
-    "Plugins have been reloaded!"
+    "Plugins have been reloaded!",
+    "Starting...",
+    "Successful login!",
+    "Starting...",
+    "Successful login!",
+    "Starting...",
+    "Successful login!",
+    "Starting...",
+    "Starting...",
+    "Successful login!",
+    "Successful login!",
+    "Starting...",
+    "Successful login!",
+    "Starting...",
+    "Successful login!",
+    "Starting...",
+    "Already running...",
+    "Starting...",
+    "Successful login!",
+    "Stopping...",
+    "Stopping...",
+    "Successfully terminated bot execution.",
+    "Starting...",
+    "Successful login!",
+    "Starting...",
+    "Successful login!",
+    "Starting...",
+    "Successful login!"
   ],
   "errors": [
     "err,TypeError: Cannot read properties of undefined (reading 'toLowerCase')",
@@ -209,6 +240,9 @@
     "err,TypeError: Cannot read properties of undefined (reading 'types')",
     "err,ReferenceError: info is not defined",
     "err,TypeError: cmd.executeFunction is not a function",
-    "err,TypeError: cmd is not iterable"
+    "err,TypeError: cmd is not iterable",
+    "err,TypeError: cmd.executeFunction is not a function",
+    "err,TypeError: cmd.executeFunction is not a function",
+    "err,TypeError: cmd.executeFunction is not a function"
   ]
 }

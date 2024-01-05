@@ -116,33 +116,42 @@
 
             </div>
             <div id="args">
-                <div class="arg">
-                    <p id="argName">1</p>
-                    <input type="text" class="argInput">
-                </div>
-
-                <div class="arg">
-                    <p id="argName">2</p>
-                    <input type="text" class="argInput">
-                </div>
-
-                <div class="arg">
-                    <p id="argName">3</p>
-                    <input type="text" class="argInput">
-                </div>
-
-                <div class="arg">
-                    <p id="argName">4</p>
-                    <input type="text" class="argInput">
-                </div>
-
-                <div class="arg">
-                    <p id="argName">5</p>
-                    <input type="text" class="argInput">
-                </div>
             </div>
             <div id="code">
-                <p id="args-code">Available Parameters ............ discord, args</p>
+                <p id="args-code">Available Parameters</p>
+                <div id="overflow-hidden-parameters">
+                    <div id="argDropdown">
+                        <div class="parameter">
+                            <p id="pname">DiscordJs (discord)</p>
+                            <p id="pdesc">&nbsp;&nbsp;&nbsp;&nbsp;Discord.js is a JavaScript library for interacting
+                                with the Discord API,
+                                commonly
+                                used to
+                                create Discord bots. It's
+                                asynchronous, event-driven, and supports features like command handling, rich embeds,
+                                and
+                                extensibility. Developers use
+                                it to build bots that perform various tasks on the Discord platform.
+                            </p>
+                        </div>
+
+                        <div class="parameter">
+                            <p id="pname">args (...args: any[])</p>
+                            <p id="pdesc">&nbsp;&nbsp;&nbsp;&nbsp;<strong>args</strong> is an <span
+                                    class="green">Array</span> of type <i>any</i>. In this case, it will be filled with
+                                the input provided by the user after the command, in the order it was provided.</p>
+                        </div>
+
+                        <p style="width: 100%;text-align: center;">An overview
+                            of the parameters:</p><br><br><br>
+                        <div id="overview-parameters">
+                            <span class="blue">function</span> <span class="yellow">pluginFunction</span>(discord,
+                            ...args) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">// ... YOUR CODE HERE</span><br>
+                            }
+                        </div>
+                    </div>
+                </div>
                 <p>Add your code here:</p>
                 <textarea id="codeBox"></textarea>
             </div>

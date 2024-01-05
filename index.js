@@ -49,7 +49,7 @@ let active_theme = null;
 class Coroutine {
     constructor(callback) {
         this.callback = callback;
-        this.onError = (error) => console.error(error);
+        this.onError = (error) => console.error(`Coroutine Error: ${error}`);
         this.isRunning = false;
         this.generator = null;
     }
@@ -173,7 +173,9 @@ const main = async (onload = false) => {
                     new Function(plugin.code)({ discord });
                 }
                 let c = new Coroutine(Run);
-                c.start();
+                if (plugin.status != "Disabled") {
+                    c.start();
+                }
                 c.onError = function (error) {
                     graphicsWindow.window.webContents.send("pluginError", { name: plugin.name, error })
                 }
