@@ -1,8 +1,3 @@
-let showToken = document.getElementById("showToken");
-let showTokenLabel = document.getElementById("showTokenLabel");
-let tokenField = document.getElementById("token");
-let saveToken = document.getElementById("saveToken");
-
 let information = document.getElementById("information");
 let modLog = document.getElementById("modLog");
 let commandLog = document.getElementById("commandLog");
@@ -236,11 +231,6 @@ function createNotification(t = "Notification", description = "Something went wr
     return notif;
 }
 
-window.api.send("setToken", null);
-window.api.once("setToken", (token) => {
-    tokenField.value = `${token}`;
-})
-
 function addAction(data) {
     let p = document.createElement("p");
     p.textContent = `${data}`;
@@ -326,26 +316,6 @@ window.api.on("action", (d) => {
     } else {
         addAction(data);
     }
-})
-
-showToken.addEventListener("change", (event) => {
-    let checked = event.target.checked;
-    if (checked) {
-        tokenField.setAttribute("type", "text");
-    } else {
-        tokenField.setAttribute("type", "password");
-    }
-})
-
-saveToken.addEventListener("click", () => {
-    if (tokenField.value.length > 0) {
-        window.api.send("saveToken", tokenField.value);
-    }
-})
-
-window.api.receive("saveToken", () => {
-    tokenField.value = "";
-    window.api.send("alert", "Saved!");
 })
 
 tokenTutorial.addEventListener("click", () => {

@@ -7,10 +7,6 @@ const commands = require('./dist/js/commands.js');
 const auth = require("./dist/auth.json");
 const settings = require('./dist/js/settings.json');
 const history = require('./dist/hist.json');
-let Notification;
-import('./dist/js/global.mjs').then(module => {
-    Notification = module;
-})
 
 const discord = require('./dist/discord/main.js');
 // const twitch = require('./dist/twitch/twi.js');
@@ -19,6 +15,7 @@ const { Server2Server } = require('./dist/discord/event.js');
 const EXTENSION = "dbm"
 
 let devToolsOpened = false;
+let LoadedAuthToken = null;
 
 const getNumOfPlugins = () => {
     return new Promise((resolve, reject) => {
@@ -38,10 +35,6 @@ async function updatePlugin(data) {
         code: data.code || ""
     }
     fs.writeFileSync(`./dist/plugins/${DEFAULT_PLUGIN.name}.json`, JSON.stringify(DEFAULT_PLUGIN, null, 2));
-}
-
-async function loadPlugins() {
-
 }
 
 let active_theme = null;
@@ -102,17 +95,7 @@ class GraphicsWindow {
             app.on('ready', () => {
                 this.createWindow();
             });
-        } catch (e) {
-            let notif = new global.Notification(global.Notification.types.error);
-            let element = notif.create("Error", `An error occured trying to initialize:\n\t${e}`);
-            let parent = document.getElementById("notifications");
-            if (!parent) {
-                parent = document.createElement("div");
-                document.body.appendChild(parent)
-                parent.id = "notifications";
-            }
-            parent.appendChild(element);
-        }
+        } catch (e) { }
     }
 
     async createWindow() {
@@ -152,6 +135,7 @@ class GraphicsWindow {
 
     }
 }
+
 const graphicsWindow = new GraphicsWindow();
 
 const main = async (onload = false) => {
@@ -430,7 +414,7 @@ ipcMain.on("action", (event, data) => {
     if (data == "start") {
         discord.Action.fire("Starting...");
         discord.setCommands(commandList);
-        discord.Start(auth.authToken);
+        discord.Start(LoadedAuthToken);
     } else if (data == "stop") {
         discord.Action.fire("Stopping...");
         discord.Stop();

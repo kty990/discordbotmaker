@@ -12,10 +12,15 @@
 <body>
     <script id="replacewithsidebar"></script>
 
-    <input id="token" type="password" placeholder="ENTER YOUR TOKEN HERE">
-    <input id="showToken" type="checkbox">
-    <p id="showTokenLabel">Show Token</p>
-    <button id="saveToken">Save</button>
+    <div id="identify">
+        <button id="select">Select</button>
+        <div id="active-identify">
+            <p id="iname">...</p>
+            <p id="ibot-status">n/a</p>
+        </div>
+        <button id="create">Create</button>
+    </div>
+
     <p id="tokenTutorial">How do I get a token?</p>
     <div class="blur fullscreen" id="tutorialBlur"></div>
     <div id="tutorial">

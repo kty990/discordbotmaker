@@ -90,60 +90,10 @@ span {
     color: var(--text);
 }
 
-#token {
-    position: fixed;
-    left: 78.5vw;
-    top: 3vh;
-    width: 15vw;
-    height: 2.5vh;
-    border-radius: 20px;
-    text-align: left;
-    padding-left: 1vw;
-    background-color: var(--interaction);
-    border-color: var(--border);
-    color: var(--text);
-    outline: unset;
-    font-size: 1.5vh;
-}
-
-#showToken {
-    position: fixed;
-    left: 78.5vw;
-    top: 6.25vh;
-    width: 1vh;
-    height: 1vh;
-}
-
-#saveToken {
-    position: fixed;
-    left: 95vw;
-    top: 3vh;
-    width: 5vh;
-    height: 2.5vh;
-    background-color: var(--interaction);
-    border-radius: 10px;
-    border-color: var(--border);
-    border-style: double;
-    border-width: 2px;
-    color: var(--text);
-    font-weight: bold;
-}
-
-#saveToken:hover {
-    color: var(--text-hover);
-}
-
-#showTokenLabel {
-    position: fixed;
-    left: 79.5vw;
-    top: 5vh;
-    font-size: 1.2vh;
-}
-
 #tokenTutorial {
     position: fixed;
-    left: 88.5vw;
-    top: 5vh;
+    left: 85.5vw;
+    top: 10vh;
     font-family: 'Rajdhani', sans-serif;
     color: var(--text);
     z-index: 11;
@@ -576,4 +526,66 @@ span {
     margin: 0;
     width: 100vw;
     height: 100vh;
+}
+
+#identify {
+    position: fixed;
+    right: 4vw;
+    top: 5vh;
+    background-color: var(--interaction);
+    width: 15vw;
+    height: 3.5vh;
+    padding: 0.5vw;
+    display: flex;
+    align-items: center;
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--border);
+}
+
+#identify>button {
+    width: fit-content;
+    height: fit-content;
+    background-color: var(--interaction);
+    color: var(--text);
+    padding: 5%;
+    border-radius: 5px;
+    font-size: 1vh;
+    font-weight: bold;
+}
+
+#identify>button:last-child {
+    margin-left: auto;
+}
+
+#active-identify {
+    display: flex;
+    flex-direction: column;
+    width: 7vw;
+    height: 85%;
+    margin-left: 0.5vw;
+    /* align-items: top; */
+    /* justify-content: center; */
+}
+
+#iname {
+    background-color: var(--menu);
+    width: 100%;
+    height: fit-content;
+    text-align: center;
+    text-wrap: pretty;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    padding: 0;
+    margin: 0;
+    font-size: 1.5vh;
+}
+
+#ibot-status {
+    width: 100%;
+    height: fit-content;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    font-size: 1vh
 }

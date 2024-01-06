@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const getChannelId = async (channelName, CLIENT_ID) => {
+export const getChannelId = async (channelName, CLIENT_ID) => {
     try {
         const apiUrl = `https://api.twitch.tv/helix/users?login=${encodeURIComponent(channelName)}`;
         const headers = {
@@ -22,7 +22,7 @@ const getChannelId = async (channelName, CLIENT_ID) => {
     }
 };
 
-async function getTwitchUserIdFromName(username, clientId) {
+export async function getTwitchUserIdFromName(username, clientId) {
     try {
         const response = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, {
             headers: {
@@ -41,7 +41,7 @@ async function getTwitchUserIdFromName(username, clientId) {
     }
 }
 
-async function checkChannelStatus(USER_ID, CLIENT_ID) {
+export async function checkChannelStatus(USER_ID, CLIENT_ID) {
     try {
         const response = await axios.get(`https://api.twitch.tv/helix/streams?user_id=${USER_ID}`, {
             headers: {
@@ -61,12 +61,3 @@ async function checkChannelStatus(USER_ID, CLIENT_ID) {
 
 // // Periodically check channel status using polling
 // setInterval(checkChannelStatus, POLLING_INTERVAL);
-
-// // Initial check
-// checkChannelStatus();
-
-console.log(getChannelId("TASK360"))
-console.log(getTwitchUserIdFromName("TASK360"))
-console.log(checkChannelStatus())
-
-module.exports = { getChannelId, getTwitchUserIdFromName, checkChannelStatus };
