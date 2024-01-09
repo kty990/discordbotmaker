@@ -18,19 +18,25 @@ const iname = document.getElementById("iname");
 const ibot_status = document.getElementById("ibot-status");
 const identity_select = document.getElementById("identify-selection");
 
+const createblur = document.getElementById("createBot-blur");
+const createclose = document.getElementById("create-close");
+const createcontainer = document.getElementById("createBot-container");
+const nick = document.getElementById("_nick");
+const _token = document.getElementById("_token");
+const _create = document.getElementById("_create");
+
 let currentGuild = null;
 
 const load = async () => {
     let name = await window.api.invoke("get-cache", { key: "bot-name" });
     let status = await window.api.invoke("get-cache", { key: "bot-status" });
+    console.log(`Name: ${name}\nStatus: ${status}`);
     iname.textContent = name || "...";
-    ibot_status.textContent = status;
-    ibot_status.style.color = ((name || "...") != "Running") ? "#cc1111" : "117d11";
+    ibot_status.textContent = status || "Offline";
+    ibot_status.style.color = ((status != "Running") ? "#cc1111" : "#11cc11");
 }
 
-load().catch()
-
-ibot_status.style.color = "#cc1111";
+load().catch(console.error);
 
 const permissionsList = [
     'add_reactions',
@@ -86,7 +92,7 @@ const permissionsList = [
 
 window.api.on("set_bot_status", (status) => {
     ibot_status.textContent = status;
-    ibot_status.style.color = (status != "Running") ? "#cc1111" : "117d11";
+    ibot_status.style.color = (status != "Running") ? "#cc1111" : "#11cc11";
 })
 
 let visible = false;
@@ -98,7 +104,7 @@ select.addEventListener("click", async () => {
         identity_select.style.display = "block";
     }
     identity_select.innerHTML = "";
-    const bots = await window.api.invoke("getBots"); // {name:token}
+    const bots = await window.api.invoke("getBots"); // {name:[lastOperation,token]}
     for (const [name, data] of Object.entries(bots)) {
         const [lastOperation, token] = data;
         let botDiv = document.createElement("div");
@@ -111,7 +117,7 @@ select.addEventListener("click", async () => {
 
         let count = document.createElement("p");
         count.id = "";
-        count.textContent = `Last operational: ${lastOperation}`;
+        count.textContent = `${lastOperation}`;
         botDiv.appendChild(count);
 
         const listener = () => {
@@ -128,8 +134,58 @@ select.addEventListener("click", async () => {
 })
 
 create.addEventListener("click", () => {
-
+    createblur.style.display = "flex";
 })
+
+createclose.addEventListener("click", () => {
+    createblur.style.display = "none";
+})
+
+
+
+
+
+
+let nickLength = 0;
+let tokenLength = 0;
+nick.addEventListener("input", () => {
+    nickLength = nick.value.length;
+    if (nickLength == 0 || tokenLength == 0) {
+        _create.disabled = true;
+    } else {
+        _create.disabled = false;
+    }
+})
+
+_token.addEventListener("input", () => {
+    tokenLength = _token.value.length;
+    if (nickLength == 0 || tokenLength == 0) {
+        _create.disabled = true;
+    } else {
+        _create.disabled = false;
+    }
+})
+
+if (nickLength == 0 || tokenLength == 0) {
+    _create.disabled = true;
+} else {
+    _create.disabled = false;
+}
+
+
+_create.addEventListener("click", () => {
+    window.api.send("createBot", { name: nick.value, token: _token.value });
+})
+
+
+
+
+
+
+
+
+
+
 
 selectionArea.style.display = "none";
 identity_select.style.display = "none";
@@ -350,16 +406,6 @@ window.api.on("botStopped", () => {
     ibot_status.textContent = "Offline";
     ibot_status.style.color = "#cc1111";
     window.api.send("edit-cache", { key: "bot-status", value: "Offline" })
-})
-
-tokenTutorial.addEventListener("click", () => {
-    if (tutorial.style.display !== "block") {
-        tutorial.style.display = "block";
-        tutorialBlur.style.display = "block";
-    } else {
-        tutorial.style.display = "none";
-        tutorialBlur.style.display = "none";
-    }
 })
 
 

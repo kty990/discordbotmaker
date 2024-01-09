@@ -38,11 +38,7 @@ function saveAuth() {
             minute: '2-digit',
             second: '2-digit'
         };
-        if (!auth['bots'][ActiveBot].length == 3) {
-            auth['bots'][ActiveToken].push(currentDate.toLocaleString('en-US', options));
-        } else {
-            auth['bots'][ActiveBot][2] = currentDate.toLocaleString('en-US', options);
-        }
+        auth['bots'][ActiveBot][0] = currentDate.toLocaleString('en-US', options);
 
     }
     fs.writeFile('./dist/auth.json', JSON.stringify(auth, null, 2), err => {
@@ -693,7 +689,13 @@ Server2Server.on((d) => {
     }
 })
 
-
+ipcMain.on("createBot", (ev, data) => {
+    auth['bots'][data.name] = [
+        "err",
+        data.token
+    ]
+    saveAuth();
+})
 
 
 
