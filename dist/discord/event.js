@@ -21,6 +21,7 @@ class MyEvent {
     }
 
     fire(...args) {
+        console.debug(`${this.name} firing`);
         try {
             for (const handler of this.handlers) {
                 handler(args);

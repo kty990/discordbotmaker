@@ -16,6 +16,41 @@ const EXTENSION = "dbm"
 
 let devToolsOpened = false;
 let LoadedAuthToken = null;
+let ActiveBot = null; // Only name of bot
+
+function showObject(obj) {
+    let s = "\n\n--- Server Plugin Object ---\n\n";
+    for (const [key, value] of Object.entries(obj)) {
+        s = s + `{ ${key}\t${value} }\n`
+    }
+    return s + "\n\n --- End of Server Plugin Object ---\n";
+}
+
+function saveAuth() {
+    console.log(`\n\nSaving...\n\tActiveBot: ${ActiveBot}`);
+    if (ActiveBot) {
+        const currentDate = new Date();
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        if (!auth['bots'][ActiveBot].length == 3) {
+            auth['bots'][ActiveToken].push(currentDate.toLocaleString('en-US', options));
+        } else {
+            auth['bots'][ActiveBot][2] = currentDate.toLocaleString('en-US', options);
+        }
+
+    }
+    fs.writeFile('./dist/auth.json', JSON.stringify(auth, null, 2), err => {
+        if (err) {
+            discord.Action("err", err);
+        }
+    });
+}
 
 const getNumOfPlugins = () => {
     return new Promise((resolve, reject) => {
@@ -199,30 +234,6 @@ function getThemeByName(name) {
     })
 }
 
-function alertWindow() {
-    let window = new BrowserWindow({
-        maxWidth: 500,
-        maxHeight: 500,
-        minWidth: 500,   // Set the minimum width
-        minHeight: 500,  // Set the minimum height
-        width: 500,
-        height: 500,
-        webPreferences: {
-            nodeIntegration: true,
-            spellcheck: false,
-            preload: path.join(__dirname, './dist/js/preload.js')
-        },
-    });
-
-    window.loadFile('./dist/html/dialog.html');
-
-    // Set the window icon
-    const iconPath = path.join(__dirname, './dist/images/icon.png');
-    window.setIcon(iconPath);
-
-    return window;
-}
-
 const directoryPath = './dist/themes'; // Replace with your actual directory path
 
 const populateThemes = (window) => {
@@ -267,6 +278,7 @@ ipcMain.on("redirect", async (event, data) => {
     graphicsWindow.window.webContents.send("apply-theme", active_theme || null);*/
     await main(null);
     graphicsWindow.window.webContents.send("set-plugins", ALL_PLUGINS);
+    graphicsWindow.window.webContents.send("set_bot_status", (discord.checkStatus()) ? "Running" : "Offline");
 })
 
 
@@ -418,6 +430,7 @@ ipcMain.on("action", (event, data) => {
     } else if (data == "stop") {
         discord.Action.fire("Stopping...");
         discord.Stop();
+        graphicsWindow.window.webContents.send("terminate");
         discord.Action.fire("Successfully terminated bot execution.");
     }
 })
@@ -518,14 +531,6 @@ ipcMain.on("GetRolesViaGuildId", (event, data) => {
 
 ipcMain.on("pluginChange", (event, data) => {
     // Update in plugin file
-    const showObject = (obj) => {
-        let s = "\n\n--- Server Plugin Object ---\n\n";
-        for (const [key, value] of Object.entries(obj)) {
-            s = s + `{ ${key}\t${value} }\n`
-        }
-        return s + "\n\n --- End of Server Plugin Object ---\n";
-    }
-
     const DEFAULT_PLUGIN = {
         name: data.name,
         default_name: data.default_name,
@@ -640,9 +645,67 @@ ipcMain.on("toggle-dev-tools", () => {
     }
 })
 
-Server2Server.on((d) => {
-    const [meta, data] = d;
-    if (meta.client == true) {
-        graphicsWindow.window.webContents.send(meta.action, data);
+ipcMain.on("getBots", () => {
+    graphicsWindow.window.webContents.send("getBots", auth['bots']);
+})
+
+ipcMain.on("select-bot", (event, name) => {
+    // Check if the name is valid
+    let valid = false;
+    for (const [n, data] of Object.entries(auth['bots'])) {
+        let [lastOperation, token] = data;
+        if (n == name) {
+            valid = true;
+            LoadedAuthToken = token;
+            break;
+        }
     }
+
+    // If the name is valid, switch bots. If valid, stop the bot, switch bots, and then restart.
+    if (!valid) throw `Unable to switch to bot with name ${name}. Error 404`;
+    else {
+        ActiveBot = name;
+
+        Server2Server.fire({ action: "discord-setActiveBot", active: ActiveBot });
+        if (discord.checkStatus()) {
+            discord.Stop();
+            graphicsWindow.window.webContents.send("terminate");
+            discord.Start(LoadedAuthToken);
+        } else {
+            discord.Action.fire(`Switched active bot to ${name}`);
+        }
+    }
+})
+
+Server2Server.on((d) => {
+    try {
+        console.log(d[0]);
+        const { action, client, data } = d[0];
+        if (client == true) {
+            graphicsWindow.window.webContents.send(action, data);
+        } else {
+            if (action == "updateAuth") {
+                saveAuth();
+            }
+        }
+    } catch (e) {
+        console.log(`\n\nAn error occured at Server2Server.on @ index.js:\n\tAction: ${d[0].action}\n\tClient: ${d[0].client || false}\n\n${e}\n\n`);
+    }
+})
+
+
+
+
+
+
+const cache = {};
+
+ipcMain.on("edit-cache", (ev, data) => {
+    const { key, value } = data;
+    cache[key] = value;
+})
+
+ipcMain.on("get-cache", (ev, data) => {
+    const { key } = data;
+    graphicsWindow.window.webContents.send("get-cache", cache[key]);
 })

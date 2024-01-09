@@ -57,13 +57,15 @@ var selectedIntents = [
 
 var client = null;
 var settings = null;
+var running = false;
+var activeBot = null;
+
+function checkStatus() {
+    return running;
+}
 
 function setSettings(s) {
     settings = s;
-}
-
-function ShowError(msg) {
-    let e = {};
 }
 
 class Presence {
@@ -74,7 +76,7 @@ class Presence {
     }
 }
 
-var presence = new Presence(Discord.ActivityType.Playing, "the default game!", "idle");
+var presence = new Presence(Discord.ActivityType.Custom, "the default game!", "idle");
 
 const guilds = [];
 
@@ -180,6 +182,10 @@ function Start(token) {
         Action.fire("Already running...");
         return;
     }
+    if (!activeBot) {
+        Action.fire("err", "No bot selected.");
+        return;
+    }
     client = new Discord.Client({
         partials: selectedPartials,
         intents: selectedIntents,
@@ -203,7 +209,10 @@ function Start(token) {
         });
 
     client.on('ready', () => {
-        client.user.setActivity(presence.name, { type: presence.type, status: presence.status });
+        client.user.setPresence({ activities: [{ name: presence.name, type: Discord.ActivityType.Custom }], status: presence.status || 'online' });
+        running = true;
+        Server2Server.fire({ action: "botStarted", client: true });
+        Server2Server.fire({ action: 'updateAuth', client: false, active: running })
     })
 
 
@@ -308,7 +317,7 @@ function Start(token) {
                                 foo(Discord, args);
                             } catch (e) {
                                 cmd.status = "Error";
-                                Server2Server.fire({ meta: { action: "pluginError", client: true }, data: { error: e, name: cmd.name } });
+                                Server2Server.fire({ action: "pluginError", client: true, data: { error: e, name: cmd.name } });
                             }
 
                         } else if (userAdminLevel >= adminLevel) {
@@ -451,7 +460,9 @@ function Stop() {
     if (client !== null) {
         client.destroy();
         client = null;
+        running = false;
         Action.fire("Stopping...");
+        Server2Server.fire({ action: "botStopped", client: true });
     } else {
         Action.fire("Bot not running...");
     }
@@ -540,6 +551,17 @@ function setPresence(newPresence) {
     }
 }
 
+
+Server2Server.on(d => {
+    try {
+        const { action, active } = d[0];
+        console.log(action, active);
+        if (action == "discord-setActiveBot") {
+            activeBot = active;
+        }
+    } catch (e) { }
+})
+
 module.exports = {
     Start,
     Stop,
@@ -555,5 +577,6 @@ module.exports = {
     executeCommand,
     setSettings,
     startListening,
-    startSpeaking
+    startSpeaking,
+    checkStatus
 }

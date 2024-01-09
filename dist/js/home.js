@@ -1,67 +1,36 @@
-let information = document.getElementById("information");
-let modLog = document.getElementById("modLog");
-let commandLog = document.getElementById("commandLog");
+const information = document.getElementById("information");
+const modLog = document.getElementById("modLog");
+const commandLog = document.getElementById("commandLog");
 
-let start = document.getElementById("start");
-let stp = document.getElementById("stop");
+const start = document.getElementById("start");
+const stp = document.getElementById("stop");
 
-let guildSelect = document.getElementById("permission-guild-select");
-let selectionArea = document.getElementById("selection-area");
-let permissionsDiv = document.getElementById("perms");
+const guildSelect = document.getElementById("permission-guild-select");
+const selectionArea = document.getElementById("selection-area");
+const permissionsDiv = document.getElementById("perms");
 
-let tokenTutorial = document.getElementById("tokenTutorial");
-let tutorialBlur = document.getElementById("tutorialBlur");
+const tokenTutorial = document.getElementById("tokenTutorial");
+const tutorialBlur = document.getElementById("tutorialBlur");
+
+const select = document.getElementById("select");
+const create = document.getElementById("create");
+const iname = document.getElementById("iname");
+const ibot_status = document.getElementById("ibot-status");
+const identity_select = document.getElementById("identify-selection");
 
 let currentGuild = null;
 
-const pl = [
-    'CreateInstantInvite',
-    'KickMembers',
-    'BanMembers',
-    'Administrator',
-    'ManageChannels',
-    'ManageGuild',
-    'AddReactions',
-    'ViewAuditLog',
-    'PrioritySpeaker',
-    'Stream',
-    'ViewChannel',
-    'SendMessages',
-    'SendTTSMessages',
-    'ManageMessages',
-    'EmbedLinks',
-    'AttachFiles',
-    'ReadMessageHistory',
-    'MentionEveryone',
-    'UseExternalEmojis',
-    'ViewGuildInsights',
-    'Connect',
-    'Speak',
-    'MuteMembers',
-    'DeafenMembers',
-    'MoveMembers',
-    'UseVAD',
-    'ChangeNickname',
-    'ManageNicknames',
-    'ManageRoles',
-    'ManageWebhooks',
-    'ManageEmojisAndStickers',
-    'ManageGuildExpressions',
-    'UseApplicationCommands',
-    'RequestToSpeak',
-    'ManageEvents',
-    'ManageThreads',
-    'CreatePublicThreads',
-    'CreatePrivateThreads',
-    'UseExternalStickers',
-    'SendMessagesInThreads',
-    'UseEmbeddedActivities',
-    'ModerateMembers',
-    'ViewCreatorMonetizationAnalytics',
-    'UseSoundboard',
-    'UseExternalSounds',
-    'SendVoiceMessages'
-]
+const load = async () => {
+    let name = await window.api.invoke("get-cache", { key: "bot-name" });
+    let status = await window.api.invoke("get-cache", { key: "bot-status" });
+    iname.textContent = name || "...";
+    ibot_status.textContent = status;
+    ibot_status.style.color = ((name || "...") != "Running") ? "#cc1111" : "117d11";
+}
+
+load().catch()
+
+ibot_status.style.color = "#cc1111";
 
 const permissionsList = [
     'add_reactions',
@@ -115,7 +84,55 @@ const permissionsList = [
     'view_soundboard',
 ];
 
+window.api.on("set_bot_status", (status) => {
+    ibot_status.textContent = status;
+    ibot_status.style.color = (status != "Running") ? "#cc1111" : "117d11";
+})
+
+let visible = false;
+select.addEventListener("click", async () => {
+    visible = !visible;
+    if (identity_select.style.display == "block") {
+        identity_select.style.display = "none";
+    } else {
+        identity_select.style.display = "block";
+    }
+    identity_select.innerHTML = "";
+    const bots = await window.api.invoke("getBots"); // {name:token}
+    for (const [name, data] of Object.entries(bots)) {
+        const [lastOperation, token] = data;
+        let botDiv = document.createElement("div");
+        botDiv.classList.add("bot");
+
+        let n = document.createElement("p");
+        n.id = "name";
+        n.textContent = name;
+        botDiv.appendChild(n);
+
+        let count = document.createElement("p");
+        count.id = "";
+        count.textContent = `Last operational: ${lastOperation}`;
+        botDiv.appendChild(count);
+
+        const listener = () => {
+            window.api.send("select-bot", name);
+            iname.textContent = name;
+            window.api.send("edit-cache", { key: "bot-name", value: name });
+            ibot_status.textContent = "Offline";
+        }
+
+        botDiv.addEventListener("click", listener);
+
+        identity_select.appendChild(botDiv);
+    }
+})
+
+create.addEventListener("click", () => {
+
+})
+
 selectionArea.style.display = "none";
+identity_select.style.display = "none";
 
 guildSelect.addEventListener("click", async () => {
     if (selectionArea.style.display) {
@@ -239,6 +256,7 @@ function addAction(data) {
 
 function addError(data) {
     let p = document.createElement("p");
+    data.splice(0, 1);
     p.textContent = `${data}`;
     p.classList.add("red");
     information.appendChild(p);
@@ -316,6 +334,22 @@ window.api.on("action", (d) => {
     } else {
         addAction(data);
     }
+})
+
+window.api.on("terminate", () => {
+    selectionArea.innerHTML = "";
+})
+
+window.api.on("botStarted", () => {
+    ibot_status.textContent = "Running";
+    ibot_status.style.color = "#117d11";
+    window.api.send("edit-cache", { key: "bot-status", value: "Running" })
+})
+
+window.api.on("botStopped", () => {
+    ibot_status.textContent = "Offline";
+    ibot_status.style.color = "#cc1111";
+    window.api.send("edit-cache", { key: "bot-status", value: "Offline" })
 })
 
 tokenTutorial.addEventListener("click", () => {
