@@ -35,6 +35,7 @@ const deletePlugin = document.getElementById("deletePlugin");
 const pluginList = document.getElementById("pluginList");
 const disableBtn = document.getElementsByClassName("disableplugin")[0];
 const enableBtn = document.getElementsByClassName("enableplugin")[0];
+const exportBtn = document.getElementsByClassName("exportplugin")[0];
 
 const argsContainer = document.getElementById("args");
 const argUp = document.getElementById("argCountUp");
@@ -272,6 +273,10 @@ deletePlugin.addEventListener("mouseleave", () => {
 
 deletePlugin.addEventListener("click", () => {
     window.api.send("deleteCurrentPlugin", currentPlugin.default_name);
+})
+
+exportBtn.addEventListener("click", () => {
+    window.api.send("exportPlugin", currentPlugin.default_name);
 })
 
 newPlugin.addEventListener("click", async () => {

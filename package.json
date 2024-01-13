@@ -1,6 +1,6 @@
 {
   "name": "discordbotmaker",
-  "version": "0.7.1",
+  "version": "0.7.3",
   "main": "./index.js",
   "author": "Ty Kutcher",
   "scripts": {
@@ -19,6 +19,18 @@
       {
         "from": "./dist/plugins",
         "to": "./dist/plugins"
+      },
+      {
+        "from": "./dist/auth.json",
+        "to": "./dist/auth.json"
+      },
+      {
+        "from": "./dist/config.json",
+        "to": "./dist/config.json"
+      },
+      {
+        "from": "./dist/hist.json",
+        "to": "./dist/hist.json"
       },
       {
         "from": "license.md",

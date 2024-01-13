@@ -268,12 +268,42 @@ ipcMain.on("checkFirstUse", () => {
     graphicsWindow.window.webContents.send("checkFirstUse", auth['username'] == null || auth['password'] == null);
 })
 
-ipcMain.on("reset", (event, data) => {
-    auth['username'] = null;
-    auth['password'] = null;
-    auth['authToken'] = null;
-    fs.writeFileSync('./dist/auth.json', JSON.stringify(auth, null, 2));
-});
+ipcMain.on("exportPlugin", (ev, ...args) => {
+    let name = args[0];
+    let i = 0;
+    let found = false;
+    for (let x of ALL_PLUGINS) {
+        if (x.plugin.default_name == name) {
+            // export
+            fs.mkdir(`./plugins`, (err) => {
+                if (err) {
+                    console.error('Error creating directory:', err);
+                } else {
+                    console.log('Directory created successfully!');
+                }
+            });
+            fs.mkdir(`./plugins/export`, (err) => {
+                if (err) {
+                    console.error('Error creating directory:', err);
+                } else {
+                    console.log('Directory created successfully!');
+                }
+            });
+            fs.writeFile(`./plugins/export/${name}.json`, JSON.stringify(x.plugin, null, 2), (err) => {
+                if (err) {
+                    graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Error", err, "#7d1111"));
+                    console.error(err);
+                }
+            });
+            found = true;
+            break;
+        }
+        i++;
+    }
+    if (!found) {
+        graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Error", "Unable to export undefined plugin. A plugin must be selected.", "#7d1111"))
+    }
+})
 
 ipcMain.on("saveToken", (event, data) => {
     auth.authToken = `${data}`;
