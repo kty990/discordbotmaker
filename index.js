@@ -26,6 +26,17 @@ function showObject(obj) {
     return s + "\n\n --- End of Server Plugin Object ---\n";
 }
 
+function createNotification(t = "Notification", description = "Something went wrong! Error Code: 500", type) {
+    const notif = `<div class="notification">
+    <div id="topbar"${(type !== null) ? `style="background-color:${type};"` : ''}>
+        <p id="title">${t}</p>
+        <p id="close-notif">X</p>
+    </div>
+    <p id="description-notif">${description}</p>
+</div>`;
+    return notif;
+}
+
 function saveAuth() {
     console.log(`\n\nSaving...\n\tActiveBot: ${ActiveBot}`);
     if (ActiveBot) {
@@ -151,8 +162,6 @@ class GraphicsWindow {
         const iconPath = path.join(__dirname, './dist/images/icon.png');
         this.window.setIcon(iconPath);
 
-        await populateThemes(this.window).catch(console.error);
-
         const menu = Menu.buildFromTemplate([]);
         Menu.setApplicationMenu(menu);
 
@@ -216,46 +225,6 @@ const main = async (onload = false) => {
 let commandList = commands.commands;
 
 
-let themeList = [];
-let themesMenu = [];
-
-function getThemeByName(name) {
-    return new Promise((resolve, reject) => {
-        for (let theme in themeList) {
-            if (theme.name == name) {
-                resolve(theme);
-            }
-        }
-        reject(`No theme found matching the name ${name}`);
-    })
-}
-
-const directoryPath = './dist/themes'; // Replace with your actual directory path
-
-const populateThemes = (window) => {
-    themeList = [];
-    themesMenu = [];
-    return new Promise(async (resolve, reject) => {
-        const dir = await fs.promises.opendir(directoryPath);
-        for await (const file of dir) {
-            const filePath = path.join(directoryPath, file.name);
-            const data = require(".\\" + filePath);
-            let applyTheme = (d) => {
-                window.webContents.send("apply-theme", d);
-                active_theme = d;
-            }
-            themesMenu.push({
-                label: data.name, click: () => {
-                    applyTheme(data);
-                }
-            });
-            themeList.push(data);
-        }
-        resolve();
-    })
-}
-
-
 
 
 
@@ -267,11 +236,6 @@ app.on('window-all-closed', () => {
 
 
 ipcMain.on("redirect", async (event, data) => {
-    /*themeList = [];
-    themesMenu = [];
-    await populateThemes(graphicsWindow.window);
-    graphicsWindow.window.webContents.send("list-of-themes", themeList);
-    graphicsWindow.window.webContents.send("apply-theme", active_theme || null);*/
     await main(null);
     graphicsWindow.window.webContents.send("set-plugins", ALL_PLUGINS);
     graphicsWindow.window.webContents.send("set_bot_status", (discord.checkStatus()) ? "Running" : "Offline");
@@ -305,40 +269,6 @@ ipcMain.on("reset", (event, data) => {
     auth['password'] = null;
     auth['authToken'] = null;
     fs.writeFileSync('./dist/auth.json', JSON.stringify(auth, null, 2));
-});
-
-ipcMain.on("modTheme", async (event, data) => {
-    let themeName = await getThemeByName(data[0])
-    let theme = require(`./dist/themes/${themeName}.json`);
-    theme.body = data[1];
-    theme.menu = data[2];
-    theme.interaction = data[3];
-    theme.text = data[4];
-    theme['text-hover'] = data[5];
-    theme.active = data[6];
-    theme.border = data[7];
-    fs.writeFileSync(`./dist/themes/${themeName}.json`, JSON.stringify(theme, null, 2));
-    graphicsWindow.window.webContents.send("apply-theme", theme);
-    active_theme = theme;
-});
-
-ipcMain.on("newTheme", async (event, data) => {
-    const themeTemplate = {
-        "name": `New_Theme_${themeList.length + 1}`,
-        "body": "#ffffff",
-        "menu": "#000000",
-        "interaction": "#cccccc",
-        "text": "#7d7d7d",
-        "text-hover": "#7d7d7d",
-        "active": "#444444",
-        "border": "#ff00ff",
-        "notes": [
-            "Custom Theme"
-        ]
-    }
-    fs.writeFileSync(`./dist/themes/${`New_Theme_${themeList.length + 1}`}.json`, JSON.stringify(themeTemplate, null, 2));
-    await populateThemes(graphicsWindow.window);
-    graphicsWindow.window.webContents.send("newTheme", null);
 });
 
 ipcMain.on("saveToken", (event, data) => {
@@ -558,9 +488,8 @@ ipcMain.on("newPlugin", async () => {
     main();
 })
 
-ipcMain.on("runCommand", (event, data) => {
-    let name = data.name;
-    discord.executeCommand(name);
+ipcMain.on("executeCommand", (event, message) => {
+    discord.executeCommand(message);
 })
 
 ipcMain.on("AddModRole", (event, data) => {
@@ -695,6 +624,10 @@ ipcMain.on("createBot", (ev, data) => {
         data.token
     ]
     saveAuth();
+})
+
+ipcMain.on("new-info", (ev, msg) => {
+    graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Info", msg, "#7d7d7d"))
 })
 
 

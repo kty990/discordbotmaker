@@ -26,6 +26,7 @@ let themes = [];
 let active_theme = null;
 
 window.api.receive("list-of-themes", (list) => {
+    console.log(list);
     themes = list;
     for (let i = 0; i < list.length; i++) {
         let theme = list[i];

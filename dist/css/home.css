@@ -595,19 +595,60 @@ span {
     top: 5px;
 }
 
-#identify-selection {
-    width: 100%;
-    height: fit-content;
-    max-width: 50vh;
-    background-color: var(--menu);
-    border-style: solid;
-    border-width: 1px;
-    border-color: var(--border);
-    position: relative;
+#identify-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--active);
+    position: fixed;
+    left: 0;
+    top: 0;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    filter: opacity(0.75);
+    backdrop-filter: blur(2rem);
+    z-index: 99999;
+}
+
+#identify-selection {
+    width: 50%;
+    height: 25%;
+    position: relative;
+    left: 7.5%;
+}
+
+#view-title {
+    position: fixed;
+    top: 10vh;
+    left: 0;
+    width: 100vw;
+    height: fit-content;
+    text-align: center;
+    font-family: 'Montserrat';
+    font-size: 5vw;
+}
+
+#view-close {
+    position: fixed;
+    right: 15vw;
+    top: 10vh;
+    font-size: 2vw;
+    color: var(--text);
+    font-family: 'Montserrat';
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+}
+
+#view-close:hover {
+    color: var(--text-hover);
+}
+
+.bot:first-child {
+    margin-top: 10%;
 }
 
 .bot {
@@ -615,6 +656,7 @@ span {
     align-items: center;
     margin-bottom: 5px;
     background-color: var(--interaction);
+    width: 75%;
 }
 
 .bot:hover {

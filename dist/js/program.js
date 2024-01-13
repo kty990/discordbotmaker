@@ -15,13 +15,18 @@ window.api.on("add-to-body", (data) => {
 })
 
 window.api.on("add-to-notifs", (data) => {
+    console.log("Adding notification", data);
     let d = new DOMParser().parseFromString(data, 'text/html');
     let element = d.body.firstChild;
     d.getElementById("close-notif").addEventListener("click", () => {
         element.remove();
     })
+    if (!document.getElementById("notifications")) {
+        let e = document.createElement("div");
+        e.id = "notifications";
+        document.body.appendChild(e);
+    }
     document.getElementById("notifications").appendChild(element);
-
 })
 
 function createNotification(t = "Notification", description = "Something went wrong! Error Code: 500", type) {

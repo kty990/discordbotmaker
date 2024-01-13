@@ -17,6 +17,7 @@ const create = document.getElementById("create");
 const iname = document.getElementById("iname");
 const ibot_status = document.getElementById("ibot-status");
 const identity_select = document.getElementById("identify-selection");
+const identity_container = document.getElementById("identify-container")
 
 const createblur = document.getElementById("createBot-blur");
 const createclose = document.getElementById("create-close");
@@ -98,12 +99,16 @@ window.api.on("set_bot_status", (status) => {
 let visible = false;
 select.addEventListener("click", async () => {
     visible = !visible;
-    if (identity_select.style.display == "block") {
-        identity_select.style.display = "none";
+    if (identity_container.style.display == "flex") {
+        identity_container.style.display = "none";
     } else {
-        identity_select.style.display = "block";
+        identity_container.style.display = "flex";
     }
-    identity_select.innerHTML = "";
+    identity_select.innerHTML = `<p id="view-close">X</p>
+            <p id="view-title">SELECT A BOT</p>`;
+    document.getElementById("view-close").addEventListener("click", () => {
+        identity_container.style.display = "none";
+    })
     const bots = await window.api.invoke("getBots"); // {name:[lastOperation,token]}
     for (const [name, data] of Object.entries(bots)) {
         const [lastOperation, token] = data;
@@ -125,6 +130,7 @@ select.addEventListener("click", async () => {
             iname.textContent = name;
             window.api.send("edit-cache", { key: "bot-name", value: name });
             ibot_status.textContent = "Offline";
+            identity_container.style.display = "none";
         }
 
         botDiv.addEventListener("click", listener);
@@ -175,6 +181,10 @@ if (nickLength == 0 || tokenLength == 0) {
 
 _create.addEventListener("click", () => {
     window.api.send("createBot", { name: nick.value, token: _token.value });
+    createblur.style.display = "none";
+    _token.value = "";
+    nick.value = "";
+    window.api.send("new-info", `${nick.value} (Discord Bot) created!`);
 })
 
 
@@ -188,7 +198,7 @@ _create.addEventListener("click", () => {
 
 
 selectionArea.style.display = "none";
-identity_select.style.display = "none";
+identity_container.style.display = "none";
 
 guildSelect.addEventListener("click", async () => {
     if (selectionArea.style.display) {

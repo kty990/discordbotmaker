@@ -2,7 +2,6 @@
 
 ## Tasks
 - [ ] Plugins - Mostly complete
-- [ ] Themes
 - [ ] Settings UI
 - [ ] CLI
 - [x] Logs
@@ -12,7 +11,6 @@
 
 ## Currently working on:
 - Adding plugin functionality
-- Fixing themes so they can be updated
 - Settings panel in the UI
 - CLI panel in the UI
 

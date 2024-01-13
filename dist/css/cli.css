@@ -4,10 +4,12 @@
     height: 10vh;
     position: fixed;
     left: 10vw;
-    top: 0;
+    top: 30px;
     border-bottom-style: solid;
     border-color: var(--border);
     z-index: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 #commandLineInterface {
@@ -20,9 +22,29 @@
 }
 
 #hint {
-    position: fixed;
+    /* position: fixed;
     left: 11vw;
-    top: 10.25vh;
-    width: 89.5vw;
+    top: 10.25vh; */
+    width: 100%;
     height: 50vh;
+    display: flex;
+    flex-direction: column;
+    padding-left: 2vw;
+    padding-bottom: 3vh;
+    background-color: var(--menu);
+}
+
+#hint>p {
+    border-bottom-style: solid;
+    border-width: 1px;
+
+    width: fit-content;
+    border-color: var(--border);
+}
+
+#cli-output {
+    position: relative;
+    width: 100%;
+    height: 30vh;
+    background-color: var(--interaction);
 }

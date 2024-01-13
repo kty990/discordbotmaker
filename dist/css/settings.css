@@ -25,27 +25,12 @@
     background-color: var(--border);
 }
 
-#ui-settings {
-    background-color: var(--menu);
-    position: fixed;
-    left: 20vw;
-    top: 2.5vh;
-    width: 30vw;
-    height: 90vh;
-    display: flex;
-    flex-direction: column;
-    padding-top: 5vh;
-    border-radius: 10px;
-    border-color: var(--border);
-    border-style: double;
-}
-
 #settingsPanel {
     background-color: var(--menu);
     position: fixed;
     right: 10vw;
     top: 2.5vh;
-    width: 30vw;
+    width: 60vw;
     height: 90vh;
     display: flex;
     flex-direction: column;
@@ -59,13 +44,17 @@
     background-color: var(--interaction);
     border-color: var(--border);
     border-width: 1px;
+    border-radius: 10px;
     width: 80%;
+    height: fit-content;
+    font-size: 1.5vh;
     position: relative;
     left: 10%;
     color: var(--text);
     outline: unset;
     margin-bottom: 3vh;
     margin-top: 1vh;
+    font-family: 'Montserrat';
 }
 
 #settingsPanel>#nickname {

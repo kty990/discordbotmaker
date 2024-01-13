@@ -1,6 +1,6 @@
 {
   "name": "discordbotmaker",
-  "version": "0.5.9",
+  "version": "0.7.1",
   "main": "./index.js",
   "author": "Ty Kutcher",
   "scripts": {
@@ -16,10 +16,6 @@
       "output": "dist/installers"
     },
     "extraFiles": [
-      {
-        "from": "./dist/themes",
-        "to": "./dist/themes"
-      },
       {
         "from": "./dist/plugins",
         "to": "./dist/plugins"

@@ -359,7 +359,17 @@
     "Successful login!",
     "Stopping...",
     "Stopping...",
-    "Successfully terminated bot execution."
+    "Successfully terminated bot execution.",
+    "Switched active bot to testVot",
+    "Starting...",
+    "Error [TokenInvalid]: An invalid token was provided.",
+    "Switched active bot to testVot",
+    "Switched active bot to ewarasdfasdf",
+    "Switched active bot to testVot",
+    "Switched active bot to cfgg",
+    "Switched active bot to asdfasdftest",
+    "Switched active bot to cfgg",
+    "Switched active bot to asdfasdftest"
   ],
   "errors": [
     "err,TypeError: Cannot read properties of undefined (reading 'toLowerCase')",
