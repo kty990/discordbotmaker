@@ -1,8 +1,7 @@
 # Discord Bot Maker
 
 ## Tasks
-- [ ] Plugins - Mostly complete
-- [ ] Settings UI
+- [x] Plugins
 - [ ] CLI
 - [x] Logs
 - [x] Role permissions
@@ -10,7 +9,6 @@
 - [x] Command List
 
 ## Currently working on:
-- Adding plugin functionality
 - Settings panel in the UI
 - CLI panel in the UI
 

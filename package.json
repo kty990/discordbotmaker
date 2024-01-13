@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "build": "electron-builder",
-    "package": "electron-packager . \"Discord Bot Maker\" --platform=win32 --arch=x64 --out=build/ --overwrite"
+    "build": "python auth.py && electron-builder",
+    "package": "python auth.py && electron-packager . \"Discord Bot Maker\" --platform=win32 --arch=x64 --out=build/ --overwrite"
   },
   "build": {
     "appId": "me.bot.maker",

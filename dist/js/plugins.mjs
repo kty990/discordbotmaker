@@ -31,6 +31,7 @@ const argsDiv2 = document.getElementById("args");
 
 const newPlugin = document.getElementById("newPlugin");
 const savePlugin = document.getElementById("savePlugin");
+const deletePlugin = document.getElementById("deletePlugin");
 const pluginList = document.getElementById("pluginList");
 const disableBtn = document.getElementsByClassName("disableplugin")[0];
 const enableBtn = document.getElementsByClassName("enableplugin")[0];
@@ -259,6 +260,18 @@ savePlugin.addEventListener("click", () => {
     currentPlugin.code = codeArea.value;
     OnPluginChange(currentPlugin);
     window.api.send("pluginChange", currentPlugin.send());
+})
+
+deletePlugin.addEventListener("mouseenter", () => {
+    let color = getComputedStyle(deletePlugin).getPropertyValue('--interaction');
+    deletePlugin.style.backgroundColor = adjustBrightness(color, 0.5);
+})
+deletePlugin.addEventListener("mouseleave", () => {
+    deletePlugin.style.backgroundColor = "var(--interaction)";
+})
+
+deletePlugin.addEventListener("click", () => {
+    window.api.send("deleteCurrentPlugin");
 })
 
 newPlugin.addEventListener("click", async () => {

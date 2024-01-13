@@ -630,7 +630,16 @@ ipcMain.on("new-info", (ev, msg) => {
     graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Info", msg, "#7d7d7d"))
 })
 
-
+ipcMain.on("deleteCurrentPlugin", () => {
+    try {
+        auth['bots'][ActiveBot] = undefined;
+        saveAuth();
+        graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Info", `${ActiveBot} was successfully deleted!`, "#7d7d7d"));
+        ActiveBot = null;
+    } catch (e) {
+        console.log(`Unable to delete ${ActiveBot}.\n\tError: ${e}`);
+    }
+})
 
 
 const cache = {};
