@@ -271,7 +271,7 @@ deletePlugin.addEventListener("mouseleave", () => {
 })
 
 deletePlugin.addEventListener("click", () => {
-    window.api.send("deleteCurrentPlugin");
+    window.api.send("deleteCurrentPlugin", currentPlugin.default_name);
 })
 
 newPlugin.addEventListener("click", async () => {
@@ -427,6 +427,7 @@ function OnPluginSelect(plugin) {
         argsDiv.style.display = "none";
         argsDiv2.style.display = "none";
     }
+    OnPluginChange(plugin);
 }
 
 window.api.on("pluginError", (data) => {
@@ -434,6 +435,12 @@ window.api.on("pluginError", (data) => {
 })
 
 window.api.on("set-plugins", plugins => {
+    console.log(`Attempting to set plugins:`);
+    console.log(plugins);
+    let old_plugins = Array.from(document.getElementsByClassName("plugin"));
+    for (let x of old_plugins) {
+        x.remove();
+    }
     try {
         for (let plugin of plugins) {
             // console.log(`Attempt to set plugin ${Object.entries(plugin)}`);

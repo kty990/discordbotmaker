@@ -201,7 +201,7 @@ async function executeCommand(message = null, content = null) {
     let test = content.split(" ")[0].replace(prefix, "")
     let cmd = getCommandByName(test);
     const GetAdminLevel = () => {
-        if (isCLI) return true;
+        if (isCLI) return 2;
         const member = message.member;
         const roles = member.roles.cache;
         let adminLevel = 0;
@@ -283,9 +283,9 @@ async function executeCommand(message = null, content = null) {
 
             if (userAdminLevel >= adminLevel && status.toLowerCase() == "running" || status.toLowerCase() == "warning" || status.toLowerCase() == "info") {
 
-                const foo = new Function('discord', 'args', cmd.code || "");
+                const foo = new Function('discord', 'client', 'args', cmd.code || "");
                 try {
-                    foo(Discord, args);
+                    foo(Discord, client, args);
                 } catch (e) {
                     cmd.status = "Error";
                     Server2Server.fire({ action: "pluginError", client: true, data: { error: e, name: cmd.name } });

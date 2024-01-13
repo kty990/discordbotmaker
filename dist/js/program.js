@@ -27,6 +27,13 @@ window.api.on("add-to-notifs", (data) => {
         document.body.appendChild(e);
     }
     document.getElementById("notifications").appendChild(element);
+    setTimeout(() => {
+        try {
+            if (element.parentElement) {
+                element.remove();
+            }
+        } catch (e) { }
+    }, 5000);
 })
 
 function createNotification(t = "Notification", description = "Something went wrong! Error Code: 500", type) {

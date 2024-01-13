@@ -264,6 +264,10 @@ ipcMain.on("loginAttempt", (event, data) => {
     }
 });
 
+ipcMain.on("checkFirstUse", () => {
+    graphicsWindow.window.webContents.send("checkFirstUse", auth['username'] == null || auth['password'] == null);
+})
+
 ipcMain.on("reset", (event, data) => {
     auth['username'] = null;
     auth['password'] = null;
@@ -484,7 +488,7 @@ ipcMain.on("newPlugin", async () => {
         code: ""
     });
     discord.Action.fire(`${updated.name} (Plugin) was created!`);
-    graphicsWindow.window.webContents.send("newPlugin", { name: updated.name, author: auth['username'], status: "Running" });
+    graphicsWindow.window.webContents.send("newPlugin", { name: `Custom Plugin #${await getNumOfPlugins() - 1}`, author: auth['username'], status: "Running" });
     main();
 })
 
@@ -630,14 +634,31 @@ ipcMain.on("new-info", (ev, msg) => {
     graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Info", msg, "#7d7d7d"))
 })
 
-ipcMain.on("deleteCurrentPlugin", () => {
+ipcMain.on("deleteCurrentPlugin", (ev, ...args) => {
     try {
-        auth['bots'][ActiveBot] = undefined;
-        saveAuth();
-        graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Info", `${ActiveBot} was successfully deleted!`, "#7d7d7d"));
-        ActiveBot = null;
+        let filePath = `./dist/plugins/${args[0]}.json`;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(`Error deleting file: ${err}`);
+            } else {
+                console.log('File deleted successfully');
+                graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Info", `${args[0]} was successfully deleted!`, "#7d7d7d"));
+                //{ plugin: plugin, isCommand: false, status: "Running", errors: [] };
+                let i = 0;
+                for (let plugin of ALL_PLUGINS) {
+                    if (plugin.plugin.default_name == args[0]) {
+                        ALL_PLUGINS.splice(i, 1);
+                        break;
+                    }
+                    i++;
+                }
+                graphicsWindow.window.webContents.send("set-plugins", ALL_PLUGINS);
+            }
+        });
+
+
     } catch (e) {
-        console.log(`Unable to delete ${ActiveBot}.\n\tError: ${e}`);
+        console.log(`Unable to delete current plugin.\n\tError: ${e}`);
     }
 })
 

@@ -16,13 +16,11 @@
     </div>
  */
 
-let username = document.getElementsByTagName("input")[0];
-let password = document.getElementsByTagName("input")[1];
-let warning = document.getElementById("pw-warning-inactive");
-let submit = document.getElementById("submit");
-let reset = document.getElementById("reset");
-
-let form = document.getElementsByTagName("form")[0];
+const username = document.getElementsByTagName("input")[0];
+const password = document.getElementsByTagName("input")[1];
+const warning = document.getElementById("pw-warning-inactive");
+const submit = document.getElementById("submit");
+const form = document.getElementsByTagName("form")[0];
 
 async function wait(ms) {
     return new Promise((resolve, reject) => {
@@ -32,14 +30,23 @@ async function wait(ms) {
     })
 }
 
+async function init() {
+    try {
+        let value = await window.api.invoke("checkFirstUse");
+        console.log(`Value: ${value}`);
+        if (value) {
+            submit.value = "Create";
+        }
+    } catch (e) {
+        console.debug(e);
+    }
+}
+
+init();
+
 form.addEventListener("submit", event => {
     window.api.send("loginAttempt", { "username": username.value, "pw": password.value });
     event.preventDefault();
-})
-
-reset.addEventListener("click", () => {
-    window.api.send("reset", null);
-    alert("Your token, username, and password were reset to default settings.");
 })
 
 window.api.receive("loginAttempt", (...args) => {
