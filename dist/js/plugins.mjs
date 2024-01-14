@@ -35,6 +35,7 @@ const deletePlugin = document.getElementById("deletePlugin");
 const pluginList = document.getElementById("pluginList");
 const disableBtn = document.getElementsByClassName("disableplugin")[0];
 const enableBtn = document.getElementsByClassName("enableplugin")[0];
+const importBtn = document.getElementsByClassName("importplugin")[0];
 const exportBtn = document.getElementsByClassName("exportplugin")[0];
 
 const argsContainer = document.getElementById("args");
@@ -275,7 +276,15 @@ deletePlugin.addEventListener("click", () => {
     window.api.send("deleteCurrentPlugin", currentPlugin.default_name);
 })
 
+importBtn.addEventListener("click", () => {
+    window.api.send("importPlugin");
+})
+
 exportBtn.addEventListener("click", () => {
+    if (!currentPlugin) {
+        window.api.send("exportPlugin");
+        return;
+    }
     window.api.send("exportPlugin", currentPlugin.default_name);
 })
 

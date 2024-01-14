@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Discord Bot Maker</title>
-    <link rel="stylesheet" href="../css/twitch.css">
+    <link rel="stylesheet" href="../css/connections.css">
     <link rel="stylesheet" href="../css/program.css">
     <link rel="stylesheet" href="../css/global.css">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
@@ -19,6 +19,23 @@
 
     <div id="controls">
 
+        <div id="twitch-controls">
+            <p id="title">Twitch</p>
+            <p>Channel Name</p>
+            <div class="flex-row">
+                <input id="channelname">
+                <button id="tcheck">Check</button>
+            </div>
+
+            <p>Announcement Channel ID</p>
+            <div class="flex-row">
+                <input type="text" id="channelid">
+                <button id="dcheck">Check</button>
+            </div>
+
+            <p>Enabled</p>
+            <div id="enabled"></div>
+        </div>
     </div>
 
     <script src="../js/program.js"></script>

@@ -2,14 +2,13 @@ const { app, BrowserWindow, Menu, dialog, ipcMain, autoUpdater } = require('elec
 const path = require('path');
 const config = require("./dist/config.json");
 const fs = require('fs');
-// const exif = require('exif-parser');
 const commands = require('./dist/js/commands.js');
 const auth = require("./dist/auth.json");
 const settings = require('./dist/js/settings.json');
 const history = require('./dist/hist.json');
 
 const discord = require('./dist/discord/main.js');
-// const twitch = require('./dist/twitch/twi.js');
+const twitch = require('./dist/twitch/twi.js');
 const { Server2Server } = require('./dist/discord/event.js');
 
 const EXTENSION = "dbm"
@@ -74,7 +73,8 @@ async function updatePlugin(data) {
         author: data.author || auth['username'],
         description: data.description || "",
         isCommand: data.isCommand,
-        code: data.code || ""
+        code: data.code || "",
+        status: data.status || "Unknown"
     }
     fs.writeFileSync(`./dist/plugins/${DEFAULT_PLUGIN.name}.json`, JSON.stringify(DEFAULT_PLUGIN, null, 2));
 }
@@ -268,6 +268,16 @@ ipcMain.on("checkFirstUse", () => {
     graphicsWindow.window.webContents.send("checkFirstUse", auth['username'] == null || auth['password'] == null);
 })
 
+ipcMain.on("importPlugin", async () => {
+    let result = await dialog.showOpenDialog(graphicsWindow.window, {
+        properties: ['openFile'],
+        filters: [
+            { name: 'DBM Plugins', extensions: ['dbm'] }
+        ]
+    })
+    console.log(result);
+})
+
 ipcMain.on("exportPlugin", (ev, ...args) => {
     let name = args[0];
     let i = 0;
@@ -289,7 +299,7 @@ ipcMain.on("exportPlugin", (ev, ...args) => {
                     console.log('Directory created successfully!');
                 }
             });
-            fs.writeFile(`./plugins/export/${name}.json`, JSON.stringify(x.plugin, null, 2), (err) => {
+            fs.writeFile(`./plugins/export/${name}.dbm`, JSON.stringify(x.plugin, null, 2), (err) => {
                 if (err) {
                     graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Error", err, "#7d1111"));
                     console.error(err);
@@ -515,7 +525,8 @@ ipcMain.on("newPlugin", async () => {
         author: auth['username'],
         description: "",
         isCommand: true,
-        code: ""
+        code: "",
+        status: "Running"
     });
     discord.Action.fire(`${updated.name} (Plugin) was created!`);
     graphicsWindow.window.webContents.send("newPlugin", { name: `Custom Plugin #${await getNumOfPlugins() - 1}`, author: auth['username'], status: "Running" });
@@ -690,6 +701,15 @@ ipcMain.on("deleteCurrentPlugin", (ev, ...args) => {
     } catch (e) {
         console.log(`Unable to delete current plugin.\n\tError: ${e}`);
     }
+})
+
+ipcMain.on("check-twitch-channel", (ev, ...args) => {
+    const channelID = twitch.getChannelId(args[0]);
+    graphicsWindow.window.webContents.send("check-twitch-channel", channelID != null);
+})
+
+ipcMain.on("check-discord-channel", () => {
+
 })
 
 

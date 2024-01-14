@@ -404,16 +404,17 @@ span {
 }
 
 #permission-guild-select {
-    z-index: 1;
     position: fixed;
-    left: 58vw;
-    top: 82vh;
+    right: 20vw;
+    bottom: 0vh;
+    z-index: 1;
     font-weight: bold;
     font-size: 3vh;
     width: 18vw;
     height: 5vh;
     background-color: var(--interaction);
-    border-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
     border-style: solid;
     border-color: var(--border);
     padding: 0;
@@ -423,49 +424,35 @@ span {
     align-items: center;
 }
 
-#selection-area {
-    z-index: 0;
-    position: fixed;
-    display: none;
-    left: 58vw;
-    top: 85.5vh;
-    height: 12vh;
-    width: 18vw;
-    margin: 0;
-    padding: 0;
-    background-color: var(--interaction);
-    border-color: var(--border);
-    border-bottom-style: solid;
-    border-width: 1px;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    padding-top: 2vh;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
 #permission-guild-select>img {
-    height: 3.5vh;
-    width: 3.5vh;
-    margin-left: 1vh;
+    width: 3vh;
+    height: 3vh;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    left: 0.5vw;
+    border-radius: 50%;
 }
 
 #permission-guild-select>#guild-name {
     margin: 0;
     padding: 0;
     position: relative;
-    left: 0.5vw;
+    font-size: 2.5vh;
+    left: 2vw;
+    top: 0vh;
+    width: 14vw;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 #permission-guild-select>#guild-id {
-    position: fixed;
+    position: relative;
+    left: 0.5vw;
+    top: 0.5vh;
     margin: 0;
     padding: 0;
-    left: 61vw;
-    top: 85.5vh;
-    font-size: 10pt;
+    font-size: 1vh;
 }
 
 #permission-guild-select:hover {
@@ -484,8 +471,27 @@ span {
     filter: brightness(0.4);
 }
 
-
-
+#selection-area {
+    z-index: 0;
+    position: fixed;
+    display: none;
+    right: calc(20vw + 2.5px);
+    bottom: calc(5.25vh);
+    height: 12vh;
+    width: 18vw;
+    margin: 0;
+    padding: 0;
+    background-color: var(--interaction);
+    border-color: var(--border);
+    border-top-style: solid;
+    border-width: 1px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding-top: 2vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 50;
+}
 
 
 .guild {

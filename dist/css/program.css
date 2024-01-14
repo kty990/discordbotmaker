@@ -78,16 +78,21 @@ input {
 .sidebar-link {
     position: relative;
     margin: 0;
-    margin-bottom: 0.5vh;
+    margin-bottom: 1vh;
     padding-left: 2vw;
     font-weight: bold;
     background-color: var(--interaction);
     width: 8vw;
-    height: 3vh;
+    height: fit-content;
     padding-top: 1.5vh;
     font-size: 0.75vw;
     text-decoration: none;
     color: var(--text);
+    padding-bottom: 1.5vh;
+    border-top-style: groove;
+    border-bottom-style: solid;
+    border-width: 3px;
+    border-color: var(--border);
 }
 
 .sidebar-link:last-child {

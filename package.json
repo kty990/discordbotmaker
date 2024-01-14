@@ -1,71 +1,72 @@
 {
-  "name": "discordbotmaker",
-  "version": "0.7.3",
-  "main": "./index.js",
-  "author": "Ty Kutcher",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron .",
-    "build": "python auth.py && electron-builder",
-    "package": "python auth.py && electron-packager . \"Discord Bot Maker\" --platform=win32 --arch=x64 --out=build/ --overwrite"
-  },
-  "build": {
-    "appId": "me.bot.maker",
-    "productName": "Discord Bot Maker",
-    "directories": {
-      "output": "dist/installers"
+    "name": "discordbotmaker",
+    "version": "0.7.3",
+    "main": "./index.js",
+    "author": "Ty Kutcher",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "electron .",
+        "build": "python auth.py && electron-builder",
+        "package": "python auth.py && electron-packager . \"Discord Bot Maker\" --platform=win32 --arch=x64 --out=build/ --overwrite"
     },
-    "extraFiles": [
-      {
-        "from": "./dist/plugins",
-        "to": "./dist/plugins"
-      },
-      {
-        "from": "./dist/auth.json",
-        "to": "./dist/auth.json"
-      },
-      {
-        "from": "./dist/config.json",
-        "to": "./dist/config.json"
-      },
-      {
-        "from": "./dist/hist.json",
-        "to": "./dist/hist.json"
-      },
-      {
-        "from": "license.md",
-        "to": "license.md"
-      }
-    ],
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "icon": "./dist/images/icon.ico",
-      "fileAssociations": [
-        {
-          "ext": "dbm",
-          "name": "Discord Bot Maker",
-          "description": "Make custom discord bots!"
+    "build": {
+        "appId": "me.bot.maker",
+        "productName": "Discord Bot Maker",
+        "directories": {
+            "output": "dist/installers"
+        },
+        "extraFiles": [
+            {
+                "from": "./dist/plugins",
+                "to": "./dist/plugins"
+            },
+            {
+                "from": "./dist/auth.json",
+                "to": "./dist/auth.json"
+            },
+            {
+                "from": "./dist/config.json",
+                "to": "./dist/config.json"
+            },
+            {
+                "from": "./dist/hist.json",
+                "to": "./dist/hist.json"
+            },
+            {
+                "from": "license.md",
+                "to": "license.md"
+            }
+        ],
+        "win": {
+            "target": [
+                "nsis"
+            ],
+            "icon": "./dist/images/icon.ico",
+            "fileAssociations": [
+                {
+                    "ext": "dbm",
+                    "name": "Discord Bot Maker",
+                    "description": "Make custom discord bots!"
+                }
+            ]
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "license": "license.md"
         }
-      ]
     },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "license": "license.md"
+    "keywords": [],
+    "license": "MIT",
+    "description": "WIP",
+    "dependencies": {
+        "@discordjs/voice": "^0.16.1",
+        "axios": "^1.6.5",
+        "discord.js": "^14.0.3"
+    },
+    "devDependencies": {
+        "electron": "^28.1.1",
+        "electron-builder": "^24.9.1"
     }
-  },
-  "keywords": [],
-  "license": "MIT",
-  "description": "WIP",
-  "dependencies": {
-    "@discordjs/voice": "^0.16.1",
-    "discord.js": "^14.0.3"
-  },
-  "devDependencies": {
-    "electron": "^28.1.1",
-    "electron-builder": "^24.9.1"
-  }
 }

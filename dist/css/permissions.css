@@ -19,7 +19,8 @@
     width: 18vw;
     height: 5vh;
     background-color: var(--interaction);
-    border-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
     border-style: solid;
     border-color: var(--border);
     padding: 0;
@@ -37,9 +38,6 @@
     position: relative;
     left: 0.5vw;
     border-radius: 50%;
-    border-style: solid;
-    border-color: var(--border);
-    border-width: 1px;
 }
 
 #guild-select>#guild-name {
