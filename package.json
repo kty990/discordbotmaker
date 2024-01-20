@@ -1,6 +1,6 @@
 {
     "name": "discordbotmaker",
-    "version": "0.7.3",
+    "version": "1.0.0",
     "main": "./index.js",
     "author": "Ty Kutcher",
     "scripts": {
@@ -63,7 +63,8 @@
     "dependencies": {
         "@discordjs/voice": "^0.16.1",
         "axios": "^1.6.5",
-        "discord.js": "^14.0.3"
+        "discord.js": "^14.0.3",
+        "source-map-support": "^0.5.21"
     },
     "devDependencies": {
         "electron": "^28.1.1",

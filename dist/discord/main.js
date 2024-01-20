@@ -89,28 +89,28 @@ var setCommands = (cmds) => {
 let pluginCommands = [];
 
 var getCommandByName = (queryName) => {
-    try {
-        //
-        for (let x = 0; x < commands.length; x++) {
-            const command = commands[x];
-            const [name, adminLevel, description, args, code] = command.deconstruct();
-            if (name.toLowerCase().substring(0, queryName.length) == queryName.toLowerCase()) {
-                return command;
-            }
+    // try {
+    //
+    for (let x = 0; x < commands.length; x++) {
+        const command = commands[x];
+        const [name, adminLevel, description, args, code] = command.deconstruct();
+        if (name.toLowerCase().substring(0, queryName.length) == queryName.toLowerCase()) {
+            return command;
         }
-
-        for (let x = 0; x < pluginCommands.length; x++) {
-            const command = pluginCommands[x];
-            const { name, default_name, author, description, isCommand, code } = command;
-            if (name.toLowerCase().substring(0, queryName.length) == queryName.toLowerCase()) {
-                return command;
-            }
-        }
-        console.log(`Couldn't find command with name "${queryName}"`);
-        return null;
-    } catch (e) {
-        console.error(`An error occured trying to run ${queryName} (command):\n\t- ${e}`);
     }
+
+    for (let x = 0; x < pluginCommands.length; x++) {
+        const command = pluginCommands[x];
+        const { name, default_name, author, description, isCommand, code } = command;
+        if (name.toLowerCase().substring(0, queryName.length) == queryName.toLowerCase()) {
+            return command;
+        }
+    }
+    console.log(`Couldn't find command with name "${queryName}"`);
+    return null;
+    // } catch (e) {
+    // console.error(`An error occured trying to run ${queryName} (command):\n\t- ${e}`);
+    // }
 }
 let prefix = "!";
 
@@ -172,20 +172,29 @@ function getCurrentTimeInSeconds() {
     return secondsSinceEpoch;
 }
 
-async function executeCommand(message = null, content = null) {
+async function executeCommand(isConsole, msg = null, content = null) {
+    console.debug(`Message: ${msg}\n\tContent: ${content}`);
     let isCLI = false;
+    let message = msg;
     const guild = {};
+    let args = content.split(" ");
+    args.splice(0, 1);
+
     if (message == null) {
         // Run from CLI
+        console.log("Setting message");
         message = {
             author: {
                 name: "Console Command",
-                id: "0"
+                id: "0",
+                content: content
             },
             createdTimestamp: getCurrentTimeInSeconds(),
             channel: {
-                send: function (message) {
+                send: async function (message) {
                     // Need to save this as sent to the CLI output and display in the output
+                    console.log(`Sending to admin console: ${args}`)
+                    Server2Server.fire({ action: 'sendToAdminConsole', client: true, data: args }) //const { action, client, data } = d[0];
                 },
                 guild: null,
                 guildId: null,
@@ -225,14 +234,11 @@ async function executeCommand(message = null, content = null) {
     }
     const userAdminLevel = GetAdminLevel();
     if (cmd != null && cmd != undefined) {
-        let args = content.split(" ");
-        args.splice(0, 1);
-
         if (cmd.executeFunction != null && cmd.executeFunction != undefined) {
             // Not plugin
 
             if (GetAdminLevel() >= cmd.adminLevel) {
-                cmd.executeFunction(message, Discord, ...args).catch((e) => {
+                cmd.executeFunction(isConsole, message, Discord, ...args).catch((e) => {
                     Action.fire("err", `${e}`);
                 });
             } else {
@@ -343,7 +349,6 @@ async function executeCommand(message = null, content = null) {
                     YpermissionName = "Owner";
                 }
                 let d = new Date();
-                console.log("YES");
                 let embed = {
                     description: `<@${message.author.id}> does not have the valid permissions to use ${name}`,
                     fields: [{
@@ -430,11 +435,10 @@ function Start(token) {
     });
 
     client.on("messageCreate", async message => {
-        // console.log("Message recieved: ", message.content);
         if (message.author.id !== client.user.id) {
 
             if (message.content.startsWith(prefix)) {
-                executeCommand(message.content);
+                executeCommand(false, message, message.content);
             } else if (cmd != null) {
                 Action.fire("err", `${message.author.username} attempted to use ${cmd.name} without the proper permissions.`);
             }
@@ -581,7 +585,7 @@ function setPresence(newPresence) {
 Server2Server.on(d => {
     try {
         const { action, active } = d[0];
-        console.log(action, active);
+        // console.log(action, active);
         if (action == "discord-setActiveBot") {
             activeBot = active;
         }

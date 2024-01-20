@@ -76,4 +76,8 @@ cli.addEventListener("keydown", (e) => {
     }
 })
 
+window.api.on("sendToAdminConsole", (e) => {
+    console.log(`Send admin to console on cli: ${e}`);
+})
+
 main();

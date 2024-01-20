@@ -1,4 +1,15 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, remote } = require('electron');
+const sourceMapSupport = require('source-map-support');
+sourceMapSupport.install();
+
+// const CodeMirror = remote.require('codemirror');
+// require('codemirror/mode/javascript/javascript');
+
+// // Expose CodeMirror to the renderer process
+// contextBridge.exposeInMainWorld('CodeMirror', CodeMirror);
+
+
+// window.CodeMirror = CodeMirror;
 
 contextBridge.exposeInMainWorld("api", {
     send: (channel, data) => {
@@ -9,17 +20,34 @@ contextBridge.exposeInMainWorld("api", {
             try {
                 func(...args);
             } catch (e) {
-                console.error(e);
+                // Use source-map-support to get accurate source code position
+                sourceMapSupport.outputStream = process.stderr;
+                sourceMapSupport.install({
+                    hookRequire: true,
+                });
+
+                // Log the error with accurate position information
+                console.error(`Error at ${e.stack}`);
                 console.log(`^^ ${channel}`);
             }
         });
     },
+
+
+
     on: (channel, func) => {
         ipcRenderer.on(channel, (event, ...args) => {
             try {
                 func(...args);
             } catch (e) {
-                console.error(e);
+                // Use source-map-support to get accurate source code position
+                sourceMapSupport.outputStream = process.stderr;
+                sourceMapSupport.install({
+                    hookRequire: true,
+                });
+
+                // Log the error with accurate position information
+                console.error(`Error at ${e.stack}`);
                 console.log(`^^ ${channel}`);
             }
         });

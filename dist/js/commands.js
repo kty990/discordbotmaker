@@ -17,7 +17,7 @@ class Command {
         this.name = name;
         this.adminLevel = adminLevel;
         this.description = description;
-        this.executeFunction = async (message, ...a) => {
+        this.executeFunction = async (isConsole, message, discord, ...a) => {
             await message.channel.send(`DEFAULT COMMAND:\n\t**Args:**\n${a.join("\n")}`);
         };
         this.code = code;
@@ -244,10 +244,22 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 error.code = code || '';
 
 let notify = new Command("notify", owner, ["Type", "Description"], "Shows a notification for testing in the DBM UI.");
-notify.executeFunction = async (message, ...args) => {
+notify.executeFunction = async (isConsole, message, discord, ...args) => {
+
+    function createNotification(title = "Notification", description = "Something went wrong! Error Code: 500", t) {
+        const notif = `<div class="notification">
+    <div id="topbar"${(t !== null) ? `style="background-color:${t};"` : ''}>
+        <p id="title">${title}</p>
+        <p id="close-notif">X</p>
+    </div>
+    <p id="description-notif">${description}</p>
+</div>`;
+        return notif;
+    }
     let type = args[0];
     let notif = new Notification(Notification.types.info);
 
+    console.log(args, args.length);
     switch (type.toLowerCase()) {
         case "info": //This is not required since it is default
         case "error":
@@ -267,9 +279,11 @@ notify.executeFunction = async (message, ...args) => {
     description.splice(0, 1);
     description = description.join(" ");
 
-    let element = notif.create("Test", description);
+    let element = createNotification("Test", description, type);
+    console.log(element);
     Server2Server.fire({ client: true, action: "add-to-body" }, `<div id="notifications"></div>`);
     Server2Server.fire({ client: true, action: 'add-to-notifs' }, element)
+    console.log("THis is a test");
 }
 fs = notify.executeFunction.toString();
 code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();

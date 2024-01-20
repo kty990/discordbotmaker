@@ -23,7 +23,88 @@
     margin-bottom: 2vh;
 }
 
+#simple {
+    width: 3vw;
+    height: 1.5vw;
+    position: absolute;
+    display: flex;
+}
 
+#simple-code {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    width: 20vw;
+    top: 50vh;
+    left: 25vw;
+    position: absolute;
+}
+
+#simple-code>div:not(#simple-attrs) {
+    width: 100%;
+    height: fit-content;
+    text-align: center;
+}
+
+#toggle-simple {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+}
+
+.green {
+    background-color: #00ff00;
+    filter: blur(0.1rem);
+}
+
+.red {
+    background-color: #ff0000;
+    filter: blur(0.1rem);
+}
+
+.disabled-simple {
+    filter: opacity(0.5) blur(0.5rem);
+}
+
+#simple-attrs {
+    border-style: solid;
+    padding: 0.5vw;
+    border-width: 2px;
+    border-style: groove;
+    border-color: var(--border);
+    width: 50%;
+    position: absolute;
+    margin-left: 125%;
+    height: 35vh;
+    margin-bottom: 2vh;
+    background-color: var(--menu);
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.attr {
+    width: 100%;
+    text-align: center;
+    background-color: var(--interaction);
+    margin-bottom: 3px;
+}
+
+.attr:hover {
+    background-color: var(--body);
+}
+
+.simplePlugin {
+    position: relative;
+    background-color: var(--interaction);
+    width: fit-content;
+    border-radius: 5px;
+    font-size: 2vh;
+    margin-bottom: 1vh;
+}
+
+.simplePlugin:hover {
+    background-color: var(--body);
+}
 
 #pluginEdit {
     position: fixed;
@@ -40,6 +121,7 @@
 
 #pluginEdit>form {
     width: 20vw;
+    height: 85vh;
 }
 
 #pluginName,

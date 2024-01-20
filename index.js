@@ -5,7 +5,6 @@ const fs = require('fs');
 const commands = require('./dist/js/commands.js');
 const auth = require("./dist/auth.json");
 const settings = require('./dist/js/settings.json');
-const history = require('./dist/hist.json');
 
 const discord = require('./dist/discord/main.js');
 const twitch = require('./dist/twitch/twi.js');
@@ -224,7 +223,7 @@ const main = async (onload = false) => {
 }
 let commandList = commands.commands;
 
-
+discord.setCommands(commandList);
 
 
 
@@ -453,8 +452,6 @@ var consoleOutput = [];
 ipcMain.on("console-action-home", (event, data) => {
     if (data.set == true) {
         consoleOutput.push(data.value);
-        history.output.push(data.value);
-        fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
     }
     graphicsWindow.window.webContents.send("console-action-home", consoleOutput);
 })
@@ -463,8 +460,6 @@ var usedCommands = [];
 ipcMain.on("command-action-home", (event, data) => {
     if (data.set == true) {
         usedCommands.push(data.value);
-        history.commands.push(data.value);
-        fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
     }
     graphicsWindow.window.webContents.send("command-action-home", usedCommands);
 })
@@ -473,8 +468,6 @@ var modActions = [];
 ipcMain.on("mod-action-home", (event, data) => {
     if (data.set == true) {
         modActions.push(data.value);
-        history.moderator.push(data.value);
-        fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
     } graphicsWindow.window.webContents.send("mod-action-home", modActions);
 })
 
@@ -482,9 +475,6 @@ var errActions = [];
 ipcMain.on("err-action-home", (event, data) => {
     if (data.set == true) {
         errActions.push(data.value);
-        // Modify the history
-        history.errors.push(data.value);
-        fs.writeFileSync(`./dist/hist.json`, JSON.stringify(history, null, 2));
     } graphicsWindow.window.webContents.send("err-action-home", errActions);
 })
 
@@ -534,7 +524,7 @@ ipcMain.on("newPlugin", async () => {
 })
 
 ipcMain.on("executeCommand", (event, message) => {
-    discord.executeCommand(message);
+    discord.executeCommand(true, null, message);
 })
 
 ipcMain.on("AddModRole", (event, data) => {
@@ -649,7 +639,6 @@ ipcMain.on("select-bot", (event, name) => {
 
 Server2Server.on((d) => {
     try {
-        console.log(d[0]);
         const { action, client, data } = d[0];
         if (client == true) {
             graphicsWindow.window.webContents.send(action, data);

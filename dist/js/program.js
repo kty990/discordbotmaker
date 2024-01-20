@@ -15,6 +15,7 @@ window.api.on("add-to-body", (data) => {
 })
 
 window.api.on("add-to-notifs", (data) => {
+    console.log('Debug', data, ' end debug');
     console.log("Adding notification", data);
     let d = new DOMParser().parseFromString(data, 'text/html');
     let element = d.body.firstChild;

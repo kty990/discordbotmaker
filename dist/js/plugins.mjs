@@ -24,6 +24,55 @@ class Notification {
 
 }
 
+class CodeBox {
+    constructor(HTMLElement = null, lineNumbers = true, tabSpacing = 4) {
+        this.element = HTMLElement;
+        this.lineNumbers = lineNumbers;
+        this.spacing = tabSpacing;
+    }
+
+    format() {
+        let tmp = this.element.value;
+        let result = [];
+        let indent = 0;
+        let line = 1;
+
+        for (let i = 0; i < tmp.length; i++) {
+            let char = tmp[i];
+
+            if (char === "{") {
+                // If '{' is found, increment the indent level
+                indent++;
+                result.push({ indent: indent, value: char, line: line });
+            } else if (char === "}") {
+                // If '}' is found, decrement the indent level
+                indent--;
+                result.push({ indent: indent, value: char, line: line });
+            } else {
+                // Combine consecutive characters on the same line
+                let combinedValue = char;
+                while (i + 1 < tmp.length && tmp[i + 1] !== "\n") {
+                    combinedValue += tmp[i + 1];
+                    i++;
+                }
+                result.push({ indent: indent, value: combinedValue, line: line });
+            }
+
+            if (char === "\n") {
+                line++;
+            }
+        }
+
+        let returnable = "";
+        for (const line of result) {
+            let tabs = " ".repeat(line.indent);
+            returnable += `${tabs}${line.value}`;
+        }
+
+        this.element.value = returnable;
+    }
+}
+
 const iscommand = document.getElementById("iscommandToggle");
 const iscommandP = iscommand.querySelector("p");
 const argsDiv = document.getElementById("argContainer");
@@ -38,25 +87,66 @@ const enableBtn = document.getElementsByClassName("enableplugin")[0];
 const importBtn = document.getElementsByClassName("importplugin")[0];
 const exportBtn = document.getElementsByClassName("exportplugin")[0];
 
+const eventSimple = document.getElementsByClassName("eventSimple")[0];
+const simpleToggle = document.getElementById("toggle-simple");
+const simpleAttrs = document.getElementById("simple-attrs");
+
 const argsContainer = document.getElementById("args");
 const argUp = document.getElementById("argCountUp");
 const argDown = document.getElementById("argCountDown");
 const argCount = document.getElementById("argCountDisplay");
 
-const argsDropdown = document.getElementById("args-code");
-const argsDropdownChild = document.getElementById("argDropdown");
-
 const codeArea = document.getElementById("codeBox");
 const pluginNameInput = document.getElementById("pluginName");
 const pluginDescInput = document.getElementById("description");
 
-argsDropdownChild.style.marginTop = "-100%";
+const discordJsEvents = [
+    // Client Events
+    'ready',
+    'message',
+    'messageDelete',
+    'messageUpdate',
+    'guildCreate',
+    'guildDelete',
+
+    // Message Events
+    'messageReactionAdd',
+    'messageReactionRemove',
+
+    // User Events
+    'userUpdate',
+    'presenceUpdate',
+
+    // Voice Events
+    'voiceStateUpdate',
+
+    // Role Events
+    'guildMemberUpdate',
+
+    // Channel Events
+    'channelCreate',
+    'channelDelete',
+    'channelUpdate',
+
+    // Guild Events
+    'guildUpdate',
+    'guildMemberAdd',
+    'guildMemberRemove',
+    'guildMemberUpdate',
+
+    // Bot-specific Events
+    'shardDisconnect',
+    'shardReady',
+    'warn'
+];
 
 var plugins = [];
 var currentPlugin = null;
-let dropdown = true;
-let isAnimating = false;
 var numberOfArgs = 0;
+var startOfSelection = 0;
+var endOfSelection = 0;
+
+const codeBox = new CodeBox(codeArea);
 
 const showObject = (typeOfChange, obj) => {
     let s = `\n\n--- ${typeOfChange} Change ---\n\n`;
@@ -66,6 +156,25 @@ const showObject = (typeOfChange, obj) => {
     s += `--- ${typeOfChange} Change End ---\n\n`;
     return s;
 }
+
+function insertText(newText) {
+    var currentText = codeArea.value;
+    var newTextContent = currentText.substring(0, startOfSelection) + newText + currentText.substring(endOfSelection);
+    codeArea.value = newTextContent;
+    codeArea.setSelectionRange(startOfSelection + newText.length, startOfSelection + newText.length);
+    updateSelection();
+}
+
+function updateSelection() {
+    startOfSelection = codeArea.selectionStart;
+    endOfSelection = codeArea.selectionEnd;
+    // codeBox.format();
+}
+
+codeArea.addEventListener('input', updateSelection);
+codeArea.addEventListener('mouseup', updateSelection);
+
+
 
 function adjustBrightness(color, brightness) {
     // Check if the color is in RGB format (e.g., "rgb(255, 0, 0)")
@@ -138,46 +247,19 @@ class MyPlugin {
     }
 }
 
-function animateDropdown(bool) {
-    if (!isAnimating) {
-        isAnimating = true;
-    }
-    if (bool) {
-        let percentage = -100;
-        argsDropdownChild.style.marginTop = `${percentage}%`;
-        const animation = () => {
-            setTimeout(() => {
-                percentage++;
-                // Do animation logic here
-                argsDropdownChild.style.marginTop = `${percentage}%`;
-                if (percentage < 0) {
-                    animation();
-                }
-            }, 100);
-        }
-    } else {
-        let percentage = 0;
-        argsDropdownChild.style.marginTop = `${percentage}%`;
-        const animation = () => {
-            setTimeout(() => {
-                percentage--;
-                // Do animation logic here
-                argsDropdownChild.style.marginTop = `${percentage}%`;
-                if (percentage > -100) {
-                    animation();
-                } else {
-                    argsDropdownChild.style.marginTop = null;
-                }
-            }, 1000);
-        }
-    }
-    isAnimating = false;
-}
+eventSimple.addEventListener("click", () => {
+    simpleAttrs.innerHTML = "";
+    for (let x of discordJsEvents) {
+        let d = document.createElement("div");
+        d.classList.add("attr");
+        d.textContent = x;
+        simpleAttrs.appendChild(d);
+        d.addEventListener("click", () => {
+            insertText(`client.on("${x}", (event) => {
 
-
-argsDropdown.addEventListener("click", () => {
-    dropdown = !dropdown;
-    animateDropdown(dropdown);
+})`)
+        })
+    }
 })
 
 argUp.addEventListener("click", () => {
