@@ -46,7 +46,7 @@ span {
     overflow: auto;
 }
 
-.sidebar-link {
+/* .sidebar-link {
     position: relative;
     margin: 0;
     margin-bottom: 0.5vh;
@@ -59,12 +59,13 @@ span {
     font-size: 0.75vw;
     text-decoration: none;
     color: var(--text);
+    text-align: center;
 }
 
 .sidebar-link:hover {
     color: var(--text-hover);
     background-color: var(--menu);
-}
+} */
 
 
 #logo {

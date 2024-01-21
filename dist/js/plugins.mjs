@@ -1,3 +1,8 @@
+const pink = "#c586c0";
+const darkBlue = "#1f1f83";
+const lightBlue = "#4fc1ff";
+const yellow = "#c5c800";
+
 class Notification {
     static types = {
         info: null,
@@ -32,46 +37,68 @@ class CodeBox {
     }
 
     format() {
-        let tmp = this.element.value;
-        let result = [];
-        let indent = 0;
-        let line = 1;
-
-        for (let i = 0; i < tmp.length; i++) {
-            let char = tmp[i];
-
-            if (char === "{") {
-                // If '{' is found, increment the indent level
-                indent++;
-                result.push({ indent: indent, value: char, line: line });
-            } else if (char === "}") {
-                // If '}' is found, decrement the indent level
-                indent--;
-                result.push({ indent: indent, value: char, line: line });
-            } else {
-                // Combine consecutive characters on the same line
-                let combinedValue = char;
-                while (i + 1 < tmp.length && tmp[i + 1] !== "\n") {
-                    combinedValue += tmp[i + 1];
-                    i++;
-                }
-                result.push({ indent: indent, value: combinedValue, line: line });
-            }
-
-            if (char === "\n") {
-                line++;
-            }
+        let content = this.element.innerHTML;
+        console.log("Content:", content);
+        for (const [name, color] of Object.entries(javascriptKeywords)) {
+            //`<span style="">{0}</span>`
+            content = content.replace(name, `<span style="color:${color}">${name}</span>`);
         }
-
-        let returnable = "";
-        for (const line of result) {
-            let tabs = " ".repeat(line.indent);
-            returnable += `${tabs}${line.value}`;
-        }
-
-        this.element.value = returnable;
+        this.element.innerHTML = content;
     }
 }
+
+
+
+const javascriptKeywords = {
+    "(": yellow,
+    ")": yellow,
+    "{": yellow,
+    "}": yellow,
+    "[": yellow,
+    "]": yellow,
+    "await": pink,
+    "break": pink,
+    "case": pink,
+    "catch": pink,
+    "class": darkBlue,
+    "const": darkBlue,
+    "continue": pink,
+    "debugger": darkBlue,
+    "default": pink,
+    "delete": darkBlue,
+    "do": pink,
+    "else": pink,
+    "export": darkBlue,
+    "false": darkBlue,
+    "finally": pink,
+    "for": pink,
+    "function": darkBlue,
+    "goto": pink,
+    "if": pink,
+    "import": pink,
+    "in": darkBlue,
+    "instanceof": darkBlue,
+    "interface": darkBlue,
+    "let": darkBlue,
+    "new": darkBlue,
+    "null": darkBlue,
+    "package": pink,
+    "return": pink,
+    "static": darkBlue,
+    "super": darkBlue,
+    "switch": pink,
+    "this": darkBlue,
+    "throw": pink,
+    "true": darkBlue,
+    "try": pink,
+    "typeof": darkBlue,
+    "var": darkBlue,
+    "void": darkBlue,
+    "while": pink,
+    "with": pink,
+    "yield": pink,
+};
+
 
 const iscommand = document.getElementById("iscommandToggle");
 const iscommandP = iscommand.querySelector("p");

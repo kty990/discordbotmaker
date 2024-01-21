@@ -72,7 +72,9 @@ cli.addEventListener("beforeinput", async () => {
 cli.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
         window.api.send("executeCommand", cli.value);
-        cli.value = "";
+        setTimeout(() => {
+            cli.value = "";
+        }, 1000);
     }
 })
 

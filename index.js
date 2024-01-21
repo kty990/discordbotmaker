@@ -638,6 +638,7 @@ ipcMain.on("select-bot", (event, name) => {
 })
 
 Server2Server.on((d) => {
+    console.log(d);
     try {
         const { action, client, data } = d[0];
         if (client == true) {
@@ -645,6 +646,8 @@ Server2Server.on((d) => {
         } else {
             if (action == "updateAuth") {
                 saveAuth();
+            } else if (action == "sendToAdminConsole") {
+                console.log("Display");
             }
         }
     } catch (e) {

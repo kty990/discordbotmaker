@@ -32,12 +32,10 @@ contextBridge.exposeInMainWorld("api", {
             }
         });
     },
-
-
-
     on: (channel, func) => {
         ipcRenderer.on(channel, (event, ...args) => {
             try {
+                console.log(`Preload: ${args}`);
                 func(...args);
             } catch (e) {
                 // Use source-map-support to get accurate source code position

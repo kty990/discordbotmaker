@@ -36,7 +36,7 @@ let moderators = 1;
 let owner = 2;
 
 let help = new Command("help", everyone, [], "Get help regarding a specific mechanic of the bot, or general tips and tricks.");
-help.executeFunction = async (message, ...args) => {
+help.executeFunction = async (isConsole, message, discord, ...args) => {
     await message.channel.send(`This command is not ready quite yet!`);
 };
 let fs = help.executeFunction.toString();
@@ -44,7 +44,7 @@ let code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 help.code = code || '';
 
 let say = new Command("say", moderators, ["message"], "Repeats the given message in the same channel.");
-say.executeFunction = async (message, ...args) => {
+say.executeFunction = async (isConsole, message, discord, ...args) => {
     let msg = args.join(" ");
     await message.channel.send(msg);
 };
@@ -53,7 +53,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 say.code = code || '';
 
 let sayEmbed = new Command("embed", moderators, ["message"], "Repeats the given message in the same channel, in an embed.");
-sayEmbed.executeFunction = async (message, ...args) => {
+sayEmbed.executeFunction = async (isConsole, message, discord, ...args) => {
     let embed = {
         description: `${args.join(" ")}`,
         author: {
@@ -77,7 +77,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 sayEmbed.code = code || '';
 
 let info = new Command("info", everyone, [], "Provides information regarding the bot, a specific server, or a user.");
-info.executeFunction = async (message, ...args) => {
+info.executeFunction = async (isConsole, message, discord, ...args) => {
     await message.channel.send(`This command is not ready quite yet!`);
 };
 fs = info.executeFunction.toString();
@@ -85,7 +85,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 info.code = code || '';
 
 let kick = new Command("kick", moderators, ['target', 'reason'], "Attempts to kick given user(s). Provides a reason.");
-kick.executeFunction = async (message, ...args) => {
+kick.executeFunction = async (isConsole, message, discord, ...args) => {
     let target = args.splice(0, 1);
     let reason = args.join(" ");
     if (target !== null && target !== undefined && reason !== null && reason !== undefined) {
@@ -116,7 +116,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 kick.code = code || '';
 
 let ban = new Command("ban", moderators, ['target', 'reason'], "Attempts to ban given user(s). Provides a reason.");
-ban.executeFunction = async (message, ...args) => {
+ban.executeFunction = async (isConsole, message, discord, ...args) => {
     let target = args.splice(0, 1);
     let reason = args.join(" ");
     if (target !== null && target !== undefined && reason !== null && reason !== undefined) {
@@ -146,7 +146,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 ban.code = code || '';
 
 let play = new Command("play", everyone, ['query/url'], "Queues an audio track to be played.");
-play.executeFunction = async (message, ...args) => {
+play.executeFunction = async (isConsole, message, discord, ...args) => {
     await message.channel.send(`This command is not ready quite yet!`);
 };
 fs = play.executeFunction.toString();
@@ -154,7 +154,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 play.code = code || '';
 
 let pause = new Command("pause", everyone, [], "Pauses an audio track.");
-pause.executeFunction = async (message, ...args) => {
+pause.executeFunction = async (isConsole, message, discord, ...args) => {
     await message.channel.send(`This command is not ready quite yet!`);
 };
 fs = pause.executeFunction.toString();
@@ -162,7 +162,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 pause.code = code || '';
 
 let resume = new Command("resume", everyone, [], "Resumes a paused audio track.");
-resume.executeFunction = async (message, ...args) => {
+resume.executeFunction = async (isConsole, message, discord, ...args) => {
     await message.channel.send(`This command is not ready quite yet!`);
 };
 fs = resume.executeFunction.toString();
@@ -170,7 +170,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 resume.code = code || '';
 
 let stop = new Command("stop", everyone, [], "Stops playing audio tracks.");
-stop.executeFunction = async (message, ...args) => {
+stop.executeFunction = async (isConsole, message, discord, ...args) => {
     await message.channel.send(`This command is not ready quite yet!`);
 };
 fs = stop.executeFunction.toString();
@@ -178,7 +178,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 stop.code = code || '';
 
 let cmds = new Command("cmds", everyone, ['page'], "Displays a list of commands.");
-cmds.executeFunction = async (message, ...args) => {
+cmds.executeFunction = async (isConsole, message, discord, ...args) => {
     console.log("CMDS COMMAND");
     let commandList = "";
     for (let commandName in commands) {
@@ -193,7 +193,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 cmds.code = code || '';
 
 let about = new Command("about", everyone, [], "Displays information about the bot.");
-about.executeFunction = async (message, ...args) => {
+about.executeFunction = async (isConsole, message, discord, ...args) => {
     console.log("ABOUT COMMAND");
     let botName = message.client.user.username; // Replace with your bot's name
     let botDescription = "[ No description found ]"; // Replace with your bot's description
@@ -207,7 +207,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 about.code = code || '';
 
 let leave = new Command("leave", everyone, [], "Leaves a voice channel if the bot and the user share a common voice channel.");
-leave.executeFunction = async (message, ...args) => {
+leave.executeFunction = async (isConsole, message, discord, ...args) => {
     console.log("LEAVE COMMAND");
     if (message.guild.me.voice.channel) {
         await message.guild.me.voice.channel.leave();
@@ -221,7 +221,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 leave.code = code || '';
 
 let join = new Command("join", everyone, [], "Joins a voice channel with the user.");
-join.executeFunction = async (message, ...args) => {
+join.executeFunction = async (isConsole, message, discord, ...args) => {
     console.log("JOIN COMMAND");
     if (message.member && message.member.voice.channel) {
         await message.member.voice.channel.join();
@@ -235,7 +235,7 @@ code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();
 join.code = code || '';
 
 let error = new Command("error", owner, [], "Throws an error to be displayed in the console.");
-error.executeFunction = async (message, ...args) => {
+error.executeFunction = async (isConsole, message, discord, ...args) => {
     console.log("ERROR WAS USED");
     throw new Error("This is a test error using the \"error\" command.");
 };
@@ -245,7 +245,6 @@ error.code = code || '';
 
 let notify = new Command("notify", owner, ["Type", "Description"], "Shows a notification for testing in the DBM UI.");
 notify.executeFunction = async (isConsole, message, discord, ...args) => {
-
     function createNotification(title = "Notification", description = "Something went wrong! Error Code: 500", t) {
         const notif = `<div class="notification">
     <div id="topbar"${(t !== null) ? `style="background-color:${t};"` : ''}>
@@ -280,10 +279,9 @@ notify.executeFunction = async (isConsole, message, discord, ...args) => {
     description = description.join(" ");
 
     let element = createNotification("Test", description, type);
-    console.log(element);
+    console.log("Element: ", element, typeof (element));
     Server2Server.fire({ client: true, action: "add-to-body" }, `<div id="notifications"></div>`);
-    Server2Server.fire({ client: true, action: 'add-to-notifs' }, element)
-    console.log("THis is a test");
+    Server2Server.fire({ client: true, action: 'add-to-notifs', data: element })
 }
 fs = notify.executeFunction.toString();
 code = fs.match(/[^{]*\{([\s\S]*)\}/)[1].trim();

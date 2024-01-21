@@ -173,12 +173,13 @@ function getCurrentTimeInSeconds() {
 }
 
 async function executeCommand(isConsole, msg = null, content = null) {
-    console.debug(`Message: ${msg}\n\tContent: ${content}`);
+    console.debug(`isConsole: ${isConsole}\n\tMessage: ${msg}\n\tContent: ${content}`);
     let isCLI = false;
     let message = msg;
     const guild = {};
     let args = content.split(" ");
     args.splice(0, 1);
+    console.log(`From executeCommand: ${args}`);
 
     if (message == null) {
         // Run from CLI
@@ -187,14 +188,15 @@ async function executeCommand(isConsole, msg = null, content = null) {
             author: {
                 name: "Console Command",
                 id: "0",
-                content: content
+
             },
+            content: content,
             createdTimestamp: getCurrentTimeInSeconds(),
             channel: {
                 send: async function (message) {
                     // Need to save this as sent to the CLI output and display in the output
                     console.log(`Sending to admin console: ${args}`)
-                    Server2Server.fire({ action: 'sendToAdminConsole', client: true, data: args }) //const { action, client, data } = d[0];
+                    Server2Server.fire({ action: 'sendToAdminConsole', client: false, data: args }) //const { action, client, data } = d[0];
                 },
                 guild: null,
                 guildId: null,
@@ -207,6 +209,7 @@ async function executeCommand(isConsole, msg = null, content = null) {
         };
         isCLI = true;
     }
+    console.log("Double check message:", message);
     let test = content.split(" ")[0].replace(prefix, "")
     let cmd = getCommandByName(test);
     const GetAdminLevel = () => {
@@ -238,9 +241,10 @@ async function executeCommand(isConsole, msg = null, content = null) {
             // Not plugin
 
             if (GetAdminLevel() >= cmd.adminLevel) {
-                cmd.executeFunction(isConsole, message, Discord, ...args).catch((e) => {
-                    Action.fire("err", `${e}`);
-                });
+                cmd.executeFunction(isConsole, message, Discord, ...args)//.catch((e) => {
+                //Action.fire("err", `${e}`);
+
+                //});
             } else {
                 let permissionName = "Everyone";
                 if (cmd.adminLevel == 1) {

@@ -189,7 +189,7 @@ input:last-of-type {
     overflow: auto;
 }
 
-.sidebar-link {
+/* .sidebar-link {
     position: relative;
     margin: 0;
     margin-bottom: 0.5vh;
@@ -202,12 +202,13 @@ input:last-of-type {
     font-size: 0.75vw;
     text-decoration: none;
     color: var(--text);
+    text-align: center;
 }
 
 .sidebar-link:hover {
     color: var(--text-hover);
     background-color: var(--menu);
-}
+} */
 
 
 #logo {

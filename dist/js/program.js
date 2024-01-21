@@ -1,9 +1,9 @@
-console.log = (function (old) {
-    return (text) => {
-        old(text);
-        window.api.send("output", null);
-    }
-}(console.log.bind(console)));
+// console.log = (function (old) {
+//     return (text) => {
+//         old(text);
+//         window.api.send("output", null);
+//     }
+// }(console.log.bind(console)));
 
 let sbElement = document.getElementById("replacewithsidebar");
 
@@ -18,6 +18,7 @@ window.api.on("add-to-notifs", (data) => {
     console.log('Debug', data, ' end debug');
     console.log("Adding notification", data);
     let d = new DOMParser().parseFromString(data, 'text/html');
+    console.log(`Parsed: ${d}`);
     let element = d.body.firstChild;
     d.getElementById("close-notif").addEventListener("click", () => {
         element.remove();

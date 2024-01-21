@@ -28,6 +28,12 @@ html {
     cursor: url('../images/cursor_mk1.png');
 }
 
+a,
+button,
+input {
+    outline: unset;
+}
+
 html,
 body,
 input:hover,
@@ -79,7 +85,8 @@ input {
     position: relative;
     margin: 0;
     margin-bottom: 1vh;
-    padding-left: 2vw;
+    padding-left: 0.5vw;
+    padding-right: 1.5vw;
     font-weight: bold;
     background-color: var(--interaction);
     width: 8vw;
@@ -93,6 +100,7 @@ input {
     border-bottom-style: solid;
     border-width: 3px;
     border-color: var(--border);
+    text-align: center;
 }
 
 .sidebar-link:last-child {
