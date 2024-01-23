@@ -47,8 +47,6 @@ class CodeBox {
     }
 }
 
-
-
 const javascriptKeywords = {
     "(": yellow,
     ")": yellow,
@@ -99,6 +97,7 @@ const javascriptKeywords = {
     "yield": pink,
 };
 
+var variables = 0;
 
 const iscommand = document.getElementById("iscommandToggle");
 const iscommandP = iscommand.querySelector("p");
@@ -115,7 +114,8 @@ const importBtn = document.getElementsByClassName("importplugin")[0];
 const exportBtn = document.getElementsByClassName("exportplugin")[0];
 
 const eventSimple = document.getElementsByClassName("eventSimple")[0];
-const simpleToggle = document.getElementById("toggle-simple");
+const discordSimple = document.getElementsByClassName("discordSimple")[0];
+const storeSimple = document.getElementsByClassName("storeSimple")[0];
 const simpleAttrs = document.getElementById("simple-attrs");
 
 const argsContainer = document.getElementById("args");
@@ -185,9 +185,9 @@ const showObject = (typeOfChange, obj) => {
 }
 
 function insertText(newText) {
-    var currentText = codeArea.value;
+    var currentText = codeArea.textContent;
     var newTextContent = currentText.substring(0, startOfSelection) + newText + currentText.substring(endOfSelection);
-    codeArea.value = newTextContent;
+    codeArea.textContent = newTextContent;
     codeArea.setSelectionRange(startOfSelection + newText.length, startOfSelection + newText.length);
     updateSelection();
 }
@@ -285,6 +285,20 @@ eventSimple.addEventListener("click", () => {
             insertText(`client.on("${x}", (event) => {
 
 })`)
+        })
+    }
+})
+
+discordSimple.addEventListener("click", async () => {
+    simpleAttrs.innerHTML = "";
+    let discordClasses = await window.api.invoke("getDiscordClasses");
+    for (let x of discordClasses) {
+        let d = document.createElement("div");
+        d.classList.add("attr");
+        d.textContent = x;
+        simpleAttrs.appendChild(d);
+        d.addEventListener("click", () => {
+            insertText(`var variable_${++variables} = new ${x}();\n`);
         })
     }
 })
