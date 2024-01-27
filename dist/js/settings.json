@@ -4,14 +4,24 @@
   "logChannel": "749723501048365158",
   "moderatorRoles": [
     {
-      "id": "842971623598718996",
-      "name": "Authorized Tester",
-      "color": "#2ECC71"
-    },
-    {
       "id": "745481936558096524",
       "name": "Homie",
       "color": "#B7A8FF"
+    },
+    {
+      "id": "993829512397733889",
+      "name": "Developer",
+      "color": "#9440B6"
+    },
+    {
+      "id": "842971792091643914",
+      "name": "Bots",
+      "color": "#E91E63"
+    },
+    {
+      "id": "842971623598718996",
+      "name": "Authorized Tester",
+      "color": "#2ECC71"
     }
   ],
   "ownerRoles": [
@@ -29,6 +39,11 @@
       "id": "702033650396692490",
       "name": "TASK",
       "color": "#3498DB"
+    },
+    {
+      "id": "842971931710980119",
+      "name": "Homies Bot",
+      "color": "#E67E22"
     }
   ],
   "twitchChannels": []

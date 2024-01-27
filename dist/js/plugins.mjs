@@ -47,8 +47,6 @@ class CodeBox {
     }
 }
 
-
-
 const javascriptKeywords = {
     "(": yellow,
     ")": yellow,
@@ -98,7 +96,6 @@ const javascriptKeywords = {
     "with": pink,
     "yield": pink,
 };
-
 
 const iscommand = document.getElementById("iscommandToggle");
 const iscommandP = iscommand.querySelector("p");
@@ -200,7 +197,6 @@ function updateSelection() {
 
 codeArea.addEventListener('input', updateSelection);
 codeArea.addEventListener('mouseup', updateSelection);
-
 
 
 function adjustBrightness(color, brightness) {

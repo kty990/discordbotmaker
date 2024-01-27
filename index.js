@@ -193,7 +193,7 @@ const main = async (onload = false) => {
             let pData = { plugin: plugin, isCommand: false, status: "Running", errors: [] };
             try {
                 function* Run() {
-                    new Function(plugin.code)({ discord });
+                    new Function(`return new Promise((resolve, reject) => {${plugin.code}resolve()});`)({ discord });
                 }
                 let c = new Coroutine(Run);
                 if (plugin.status != "Disabled") {
@@ -210,7 +210,7 @@ const main = async (onload = false) => {
         }
 
         for (let plugin of cmdPlugins) {
-            let pData = { plugin: plugin, isCommand: true, status: "Running", errors: [] };
+            let pData = { plugin: plugin, isCommand: true, status: plugin.status || "Running", errors: [] };
             ALL_PLUGINS.push(pData);
         }
         if (onload === true) {
@@ -582,6 +582,16 @@ discord.setPrefix(settings.prefix);
 discord.setSettings(settings);
 
 main(true);
+
+/* HERE */
+ipcMain.on("storage", (ev, cmdName, action, key = null, value = null) => {
+    if (action == "get") {
+        let data = require(`./dist/storage/${cmdName}.json`);
+        graphicsWindow.window.webContents.send("storage", data);
+    } else {
+        fs.appendFile(`./dist/storage/${cmdName}.json`, { key, value });
+    }
+})
 
 ipcMain.on("dev-refresh", () => {
     graphicsWindow.window.reload();
