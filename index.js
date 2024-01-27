@@ -274,7 +274,20 @@ ipcMain.on("importPlugin", async () => {
             { name: 'DBM Plugins', extensions: ['dbm'] }
         ]
     })
-    console.log(result);
+    let files = result.filePaths;
+    for (let file of files) {
+        fs.readFile(file, 'utf8', (err, data) => {
+            if (err) {
+                console.error(err);
+            } else {
+                let name = file.split("\\");
+                console.log(name);
+                name = name[name.length - 1].replace(".dbm", ".json");
+                console.log(name);
+                fs.writeFile(`./dist/plugins/${name}`, data, (e) => { console.log(e) });
+            }
+        });
+    }
 })
 
 ipcMain.on("exportPlugin", (ev, ...args) => {
@@ -714,6 +727,13 @@ ipcMain.on("check-discord-channel", () => {
 
 })
 
+ipcMain.on("getDiscordClasses", () => {
+    let classes = [];
+    for (const [name, value] of Object.entries(discord.Discord)) {
+        classes.push(name);
+    }
+    graphicsWindow.window.webContents.send("getDiscordClasses", classes);
+})
 
 const cache = {};
 

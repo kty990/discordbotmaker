@@ -82,6 +82,7 @@
     background-color: var(--menu);
     padding-left: 0;
     padding-right: 0;
+    overflow-y: auto;
 }
 
 .attr {

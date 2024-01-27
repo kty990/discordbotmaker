@@ -612,5 +612,6 @@ module.exports = {
     setSettings,
     startListening,
     startSpeaking,
-    checkStatus
+    checkStatus,
+    Discord
 }
