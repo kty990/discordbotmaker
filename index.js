@@ -66,6 +66,7 @@ const getNumOfPlugins = () => {
 }
 
 async function updatePlugin(data) {
+    console.log(`Attempt to update plugin: ${showObject(data)}`);
     const DEFAULT_PLUGIN = {
         name: data.name,
         default_name: data.default_name || data.name,
@@ -75,7 +76,8 @@ async function updatePlugin(data) {
         code: data.code || "",
         status: data.status || "Unknown"
     }
-    fs.writeFileSync(`./dist/plugins/${DEFAULT_PLUGIN.name}.json`, JSON.stringify(DEFAULT_PLUGIN, null, 2));
+    fs.writeFileSync(`./dist/plugins/${DEFAULT_PLUGIN.default_name}.json`, JSON.stringify(DEFAULT_PLUGIN, null, 2));
+    return DEFAULT_PLUGIN;
 }
 
 let active_theme = null;
@@ -502,27 +504,25 @@ ipcMain.on("GetRolesViaGuildId", (event, data) => {
     graphicsWindow.window.webContents.send("GetRolesViaGuildId", newRoles);
 })
 
-ipcMain.on("pluginChange", (event, data) => {
+ipcMain.on("pluginChange", async (event, data) => {
     // Update in plugin file
-    const DEFAULT_PLUGIN = {
+    let updated = await updatePlugin({
         name: data.name,
         default_name: data.default_name,
         author: data.author,
-        description: data.description,
-        isCommand: data.isCommand,
-        code: data.code,
+        description: data.description || "",
+        isCommand: data.isCommand || true,
+        code: data.code || "",
         status: data.status || "Running"
-    }
-
-    fs.writeFileSync(`./dist/plugins/${data.default_name}.json`, JSON.stringify(DEFAULT_PLUGIN, null, 2));
+    });
     graphicsWindow.window.webContents.send("pluginChange", data);
 
-    discord.Action.fire(`${data.name} (Plugin) was modified`);
+    discord.Action.fire(`"${updated.name}" (Plugin) was modified`);
     main();
 })
 
 ipcMain.on("newPlugin", async () => {
-    let updated = updatePlugin({
+    let updated = await updatePlugin({
         name: `Custom Plugin #${await getNumOfPlugins()}`,
         default_name: `Custom Plugin #${await getNumOfPlugins()}`,
         author: auth['username'],
@@ -531,7 +531,7 @@ ipcMain.on("newPlugin", async () => {
         code: "",
         status: "Running"
     });
-    discord.Action.fire(`${updated.name} (Plugin) was created!`);
+    discord.Action.fire(`"${updated.name}" (Plugin) was created!`);
     graphicsWindow.window.webContents.send("newPlugin", { name: `Custom Plugin #${await getNumOfPlugins() - 1}`, author: auth['username'], status: "Running" });
     main();
 })
@@ -597,12 +597,12 @@ discord.setSettings(settings);
 main(true);
 
 /* HERE */
-ipcMain.on("storage", (ev, cmdName, action, key = null, value = null) => {
+ipcMain.on("storage", (ev, pluginName, action, key = null, value = null) => {
     if (action == "get") {
-        let data = require(`./dist/storage/${cmdName}.json`);
+        let data = require(`./dist/storage/${pluginName}.json`);
         graphicsWindow.window.webContents.send("storage", data);
     } else {
-        fs.appendFile(`./dist/storage/${cmdName}.json`, { key, value });
+        fs.appendFile(`./dist/storage/${pluginName}.json`, { key, value });
     }
 })
 

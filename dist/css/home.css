@@ -36,27 +36,6 @@ span {
     overflow: auto;
 }
 
-/* .sidebar-link {
-    position: relative;
-    margin: 0;
-    margin-bottom: 0.5vh;
-    padding-left: 2vw;
-    font-weight: bold;
-    background-color: var(--interaction);
-    width: calc(100% - 2vw);
-    height: 30px;
-    padding-top: 15px;
-    font-size: 0.75vw;
-    text-decoration: none;
-    color: var(--text);
-    text-align: center;
-}
-
-.sidebar-link:hover {
-    color: var(--text-hover);
-    background-color: var(--menu);
-} */
-
 
 #logo {
     font-family: 'Tilt Prism', cursive;
@@ -406,7 +385,7 @@ span {
 
 #permission-guild-select {
     position: fixed;
-    right: 20vw;
+    left: 58vw;
     bottom: 0vh;
     z-index: 1;
     font-weight: bold;
@@ -476,7 +455,7 @@ span {
     z-index: 0;
     position: fixed;
     display: none;
-    right: calc(20vw + 2.5px);
+    left: calc(58vw + 2.5px);
     bottom: calc(5.25vh);
     height: 12vh;
     width: 18vw;

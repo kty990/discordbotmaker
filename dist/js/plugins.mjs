@@ -177,7 +177,7 @@ const codeBox = new CodeBox(codeArea);
 const showObject = (typeOfChange, obj) => {
     let s = `\n\n--- ${typeOfChange} Change ---\n\n`;
     for (const [key, value] of Object.entries(obj)) {
-        s += `${key}\t${value}\n\n`
+        s += `${key}\t\t${value}\n\n`
     }
     s += `--- ${typeOfChange} Change End ---\n\n`;
     return s;
@@ -272,6 +272,74 @@ class MyPlugin {
     }
 }
 
+class CodeFormatter {
+    constructor(textarea) {
+        this.textarea = textarea;
+        this.textarea.addEventListener("keyup", (event) => this.formatCode(event)); // Trigger on "change" event
+    }
+
+    formatCode(event) {
+        const caretPosition = this.getCaretPosition(this.textarea);
+
+        const text = this.textarea.textContent;
+        const formattedText = this.applyFormatting(text);
+        const formattedWithBracket = this.autoCompleteBrackets(formattedText);
+        this.textarea.textContent = formattedWithBracket;
+
+        this.setCaretPosition(this.textarea, caretPosition); // Restore cursor position
+    }
+
+    getCaretPosition(element) {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            const preCaretRange = range.cloneRange();
+            preCaretRange.selectNodeContents(element);
+            preCaretRange.setEnd(range.endContainer, range.endOffset);
+            return preCaretRange.toString().length;
+        } else {
+            return 0;
+        }
+    }
+
+    setCaretPosition(element, position) {
+        const range = document.createRange();
+        range.setStart(element, 0);
+        range.setEnd(element, position);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+
+    applyFormatting(text) {
+        let formattedText = text
+            .replace(/\t/g, "    ")
+            .replace(/\n{3,}/g, "\n\n");
+
+        const keywords = /\b(if|else|while|for|function|var|let|const|return|true|false|null|undefined)\b/g;
+
+        // Prevent keyword highlighting loop
+        formattedText = formattedText.replace(keywords, (match) => {
+            if (!match.startsWith("<span class='keyword'>")) {
+                return "<span class='keyword'>" + match + "</span>";
+            }
+            return match;
+        });
+
+        return formattedText;
+    }
+
+    autoCompleteBrackets(text) {
+        if (text.endsWith("{") && !text.endsWith("\\{")) {
+            return text + "\t\n}";
+        }
+        return text;
+    }
+}
+
+
+// const formatter = new CodeFormatter(codeArea);
+
 eventSimple.addEventListener("click", () => {
     simpleAttrs.innerHTML = "";
     for (let x of discordJsEvents) {
@@ -297,6 +365,24 @@ discordSimple.addEventListener("click", async () => {
         simpleAttrs.appendChild(d);
         d.addEventListener("click", () => {
             insertText(`var variable_${++variables} = new ${x}();\n`);
+        })
+    }
+})
+
+storeSimple.addEventListener("click", async () => {
+    simpleAttrs.innerHTML = "";
+    let options = ['set', 'get'];
+    for (let x of options) {
+        let d = document.createElement("div");
+        d.classList.add("attr");
+        d.textContent = x;
+        simpleAttrs.appendChild(d);
+        d.addEventListener("click", () => {
+            if (x == 'set') {
+                insertText(`window.api.send("storage",${currentPlugin.name},"set",KEY,VALUE);\n`);
+            } else {
+                insertText(`var variable_${++variables} = await window.api.send("storage",${currentPlugin.name},"get",KEY);\n`);
+            }
         })
     }
 })
@@ -380,7 +466,7 @@ savePlugin.addEventListener("click", () => {
     currentPlugin.name = pluginNameInput.value;
     currentPlugin.description = pluginDescInput.value;
     currentPlugin.isCommand = (iscommandP.textContent != "X");
-    currentPlugin.code = codeArea.value;
+    currentPlugin.code = codeArea.textContent;
     OnPluginChange(currentPlugin);
     window.api.send("pluginChange", currentPlugin.send());
 })
@@ -517,6 +603,7 @@ function OnPluginChange(data) {
 
         div.querySelector("#name").textContent = name;
         div.querySelector("#author").textContent = author;
+
     } catch (e) {
         console.error(e);
     }
@@ -538,7 +625,7 @@ function OnPluginSelect(plugin) {
     let description = plugin.description;
     let code = plugin.code;
     let isCommand = plugin.isCommand;
-    codeArea.value = code;
+    codeArea.textContent = code;
     pluginNameInput.value = name;
     pluginDescInput.value = description;
 

@@ -392,6 +392,10 @@
     height: fit-content;
 }
 
+.keyword {
+    color: var(--menu);
+}
+
 #code>div {
     position: relative;
     width: 100%;

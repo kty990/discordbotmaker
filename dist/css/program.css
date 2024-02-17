@@ -26,6 +26,9 @@ html {
     font-size: 1vh;
     outline: unset;
     cursor: url('../images/cursor_mk1.png');
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 2px;
 }
 
 a,
