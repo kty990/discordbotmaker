@@ -278,22 +278,22 @@ ipcMain.on("importPlugin", async () => {
     })
     let files = result.filePaths;
     for (let file of files) {
-        fs.readFile(file, 'utf8', (err, data) => {
+        fs.readFile(file, 'utf8', async (err, d) => {
             if (err) {
                 console.error(err);
             } else {
-                let name = file.split("\\");
-                console.log(name);
-                name = name[name.length - 1].replace(".dbm", ".json");
-                console.log(name);
-                fs.writeFile(`./dist/plugins/${name}`, data, (e) => { console.log(e) });
+                const name = `Custom Plugin #${await getNumOfPlugins()}.json`; // To prevent duplicate default names
+                const data = JSON.parse(d);
+                data.default_name = name.replace(".json", ""); // To prevent duplicate default names
+                fs.writeFile(`./dist/plugins/${name}`, JSON.stringify(data, null, 2), (e) => { console.log(e) });
+                graphicsWindow.window.reload();
             }
         });
     }
 })
 
 ipcMain.on("exportPlugin", (ev, ...args) => {
-    let name = args[0];
+    let name = args[0].default;
     let i = 0;
     let found = false;
     for (let x of ALL_PLUGINS) {
@@ -301,19 +301,19 @@ ipcMain.on("exportPlugin", (ev, ...args) => {
             // export
             fs.mkdir(`./plugins`, (err) => {
                 if (err) {
-                    console.error('Error creating directory:', err);
+                    // console.error('Error creating directory:', err);
                 } else {
                     console.log('Directory created successfully!');
                 }
             });
             fs.mkdir(`./plugins/export`, (err) => {
                 if (err) {
-                    console.error('Error creating directory:', err);
+                    // console.error('Error creating directory:', err);
                 } else {
                     console.log('Directory created successfully!');
                 }
             });
-            fs.writeFile(`./plugins/export/${name}.dbm`, JSON.stringify(x.plugin, null, 2), (err) => {
+            fs.writeFile(`./plugins/export/${x.plugin.name}.dbm`, JSON.stringify(x.plugin, null, 2), (err) => {
                 if (err) {
                     graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Error", err, "#7d1111"));
                     console.error(err);
@@ -326,6 +326,8 @@ ipcMain.on("exportPlugin", (ev, ...args) => {
     }
     if (!found) {
         graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Error", "Unable to export undefined plugin. A plugin must be selected.", "#7d1111"))
+    } else {
+        graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Info", `Successfully exported ${name.name} plugin to ${__dirname}/plugins/${name.name}.dbm`, "#7d7d7d"))
     }
 })
 
@@ -608,6 +610,7 @@ ipcMain.on("storage", (ev, pluginName, action, key = null, value = null) => {
 
 ipcMain.on("dev-refresh", () => {
     graphicsWindow.window.reload();
+    main();
 })
 
 ipcMain.on("close", () => {
@@ -692,13 +695,13 @@ ipcMain.on("new-info", (ev, msg) => {
 
 ipcMain.on("deleteCurrentPlugin", (ev, ...args) => {
     try {
-        let filePath = `./dist/plugins/${args[0]}.json`;
+        let filePath = `./dist/plugins/${args[0].default}.json`;
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error(`Error deleting file: ${err}`);
+                return;
             } else {
                 console.log('File deleted successfully');
-                graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Info", `${args[0]} was successfully deleted!`, "#7d7d7d"));
                 //{ plugin: plugin, isCommand: false, status: "Running", errors: [] };
                 let i = 0;
                 for (let plugin of ALL_PLUGINS) {
@@ -708,7 +711,10 @@ ipcMain.on("deleteCurrentPlugin", (ev, ...args) => {
                     }
                     i++;
                 }
-                graphicsWindow.window.webContents.send("set-plugins", ALL_PLUGINS);
+                graphicsWindow.window.reload();
+                setTimeout(() => {
+                    graphicsWindow.window.webContents.send("add-to-notifs", createNotification("Info", `${args[0].name} was successfully deleted!`, "#7d7d7d"));
+                }, 500);
             }
         });
 

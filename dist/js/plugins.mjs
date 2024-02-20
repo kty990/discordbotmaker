@@ -126,6 +126,8 @@ const codeArea = document.getElementById("codeBox");
 const pluginNameInput = document.getElementById("pluginName");
 const pluginDescInput = document.getElementById("description");
 
+var variables = 0;
+
 const discordJsEvents = [
     // Client Events
     'ready',
@@ -187,18 +189,7 @@ function insertText(newText) {
     var currentText = codeArea.textContent;
     var newTextContent = currentText.substring(0, startOfSelection) + newText + currentText.substring(endOfSelection);
     codeArea.textContent = newTextContent;
-    codeArea.setSelectionRange(startOfSelection + newText.length, startOfSelection + newText.length);
-    updateSelection();
 }
-
-function updateSelection() {
-    startOfSelection = codeArea.selectionStart;
-    endOfSelection = codeArea.selectionEnd;
-    // codeBox.format();
-}
-
-codeArea.addEventListener('input', updateSelection);
-codeArea.addEventListener('mouseup', updateSelection);
 
 
 function adjustBrightness(color, brightness) {
@@ -341,6 +332,7 @@ class CodeFormatter {
 // const formatter = new CodeFormatter(codeArea);
 
 eventSimple.addEventListener("click", () => {
+    if (!currentPlugin) return;
     simpleAttrs.innerHTML = "";
     for (let x of discordJsEvents) {
         let d = document.createElement("div");
@@ -356,6 +348,7 @@ eventSimple.addEventListener("click", () => {
 })
 
 discordSimple.addEventListener("click", async () => {
+    if (!currentPlugin) return;
     simpleAttrs.innerHTML = "";
     let discordClasses = await window.api.invoke("getDiscordClasses");
     for (let x of discordClasses) {
@@ -370,6 +363,7 @@ discordSimple.addEventListener("click", async () => {
 })
 
 storeSimple.addEventListener("click", async () => {
+    if (!currentPlugin) return;
     simpleAttrs.innerHTML = "";
     let options = ['set', 'get'];
     for (let x of options) {
@@ -480,7 +474,7 @@ deletePlugin.addEventListener("mouseleave", () => {
 })
 
 deletePlugin.addEventListener("click", () => {
-    window.api.send("deleteCurrentPlugin", currentPlugin.default_name);
+    window.api.send("deleteCurrentPlugin", { default: currentPlugin.default_name, name: currentPlugin.name });
 })
 
 importBtn.addEventListener("click", () => {
@@ -492,7 +486,7 @@ exportBtn.addEventListener("click", () => {
         window.api.send("exportPlugin");
         return;
     }
-    window.api.send("exportPlugin", currentPlugin.default_name);
+    window.api.send("exportPlugin", { default: currentPlugin.default_name, name: currentPlugin.name });
 })
 
 newPlugin.addEventListener("click", async () => {

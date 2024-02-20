@@ -28,7 +28,7 @@ html {
     cursor: url('../images/cursor_mk1.png');
     border-color: var(--border);
     border-style: solid;
-    border-width: 2px;
+    border-width: 4px;
 }
 
 a,

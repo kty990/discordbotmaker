@@ -86,10 +86,14 @@
 }
 
 .attr {
-    width: 100%;
+    min-width: 100%;
+    max-width: fit-content;
     text-align: center;
     background-color: var(--interaction);
     margin-bottom: 3px;
+    font-size: 1vh;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
 }
 
 .attr:hover {
